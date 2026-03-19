@@ -287,18 +287,7 @@
             save: (data) => localStorage.setItem('architect_os_data', JSON.stringify(data)),
             load: () => JSON.parse(localStorage.getItem('architect_os_data')) || null
         };
-let appState = storage.load() || {
-    wave: 70,
-    integrity: 0,
-    mode: 'static',
-    activeTab: 'dash',
-    logs: [],
-    habits: []
-};
 
-// Sanitize critical values
-appState.wave = Number(appState.wave) || 70;
-appState.integrity = Number(appState.integrity) || 0;
         let appState = storage.load() || {
     wave: 70,
     integrity: 0,
