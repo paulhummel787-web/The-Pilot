@@ -602,7 +602,7 @@
                     <div class="mt-10 p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
                         <h4 class="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Minimum Viable Step (MVS)</h4>
                         <p class="text-white italic">"${chapter.mvs}"</p>
-                        <button onclick="closeModal(); setWave(appState.wave + 5);" 
+                        <button onclick="closeModal(); setWave(appState.wave) + 5);" 
                                 class="mt-4 px-6 py-2 bg-indigo-500 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-indigo-400 transition-colors">
                             Step Completed (+5 Wave)
                         </button>
@@ -743,7 +743,7 @@
             }, 300);
             
             // Interaction Reward
-            setWave(appState.wave + 2);
+            setWave(appState.wave) + 2);
         }
 
         function completeAuditStep(el) {
@@ -754,7 +754,7 @@
             
             // Visual feedback
             logSystemEvent("Audit Step Completed: System Calibrating...");
-            setWave(appState.wave + 4);
+            setWave(appState.wave) + 4);
             
             // Check if all done
             const parent = el.parentElement;
@@ -850,7 +850,7 @@
             if (task) {
                 task.completed = !task.completed;
                 if (task.completed) {
-                    setWave(appState.wave + 3);
+                    setWave(appState.wave) + 3);
                     logSystemEvent(`MVS Cleared: ${task.text}`);
                 }
                 storage.save(appState);
@@ -1086,7 +1086,7 @@
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
                         triggerAlert("FOCUS COMPLETE: System Cooling Initiated.");
-                        setWave(appState.wave - 10); // Focus costs energy
+                        setWave(appState.wave) - 10); // Focus costs energy
                         timeLeft = 25 * 60;
                         isTimerRunning = false;
                         renderView(appState.activeTab);
@@ -1166,7 +1166,7 @@
                 if (flushTime <= 0) {
                     clearInterval(flushInterval);
                     triggerAlert("FLUSH COMPLETE: The chemical spike has passed. Re-evaluating...");
-                    setWave(appState.wave + 10);
+                    setWave(appState.wave) + 10);
                 }
             }, 1000);
         }
@@ -1268,7 +1268,7 @@
             } else {
                 currentGroundingIdx = 0;
                 triggerAlert("SYSTEM ANCHORED: Flashback De-escalated.");
-                setWave(appState.wave + 15);
+                setWave(appState.wave) + 15);
                 switchTab('vault');
             }
         }
@@ -1404,7 +1404,7 @@
             el.querySelector('i').classList.replace('fa-circle', 'fa-circle-check');
             
             // Logic Update
-            setWave(appState.wave + reward);
+            setWave(appState.wave) + reward);
             logSystemEvent(`Pebble Cleared: System Baseline +${reward}%`);
             
             // Check for minor recovery
@@ -1428,7 +1428,7 @@
             appState.logs.unshift(`SIGNAL-FILTER: Offloaded "${rawText}" to storage.`);
             
             input.value = '';
-            setWave(appState.wave + 5); // Immediate relief bonus
+            setWave(appState.wave) + 5); // Immediate relief bonus
             triggerAlert("CARGO OFFLOADED: Pressure Decreasing.");
             renderView('purple_protocol');
         }
@@ -1525,7 +1525,7 @@
             } else {
                 currentRSDStep = 0;
                 triggerAlert("SHIELD ACTIVE: Emotional Sovereignty Restored.");
-                setWave(appState.wave + 10);
+                setWave(appState.wave) + 10);
                 switchTab('dash');
             }
         }
@@ -1627,7 +1627,7 @@
             el.classList.add('opacity-10', 'pointer-events-none', 'scale-95');
             
             logSystemEvent(`SCRUBBED: ${id} noise source terminated.`);
-            setWave(appState.wave + 5); // Removing noise restores energy
+            setWave(appState.wave) + 5); // Removing noise restores energy
             
             const remaining = document.querySelectorAll('.noise-item:not(.opacity-10)').length;
             if (remaining === 0) {
@@ -1705,7 +1705,7 @@
                 if (resetSeconds <= 0) {
                     clearInterval(resetTimer);
                     triggerAlert("SQUARE FOOT CLEARED: Visual Static Reduced.");
-                    setWave(appState.wave + 8);
+                    setWave(appState.wave) + 8);
                     renderView('environment_hub');
                 }
             }, 1000);
@@ -1748,7 +1748,7 @@
                         <h4 class="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-2">Sensory Landscaping</h4>
                         ${SENSORY_RESETS.map(reset => `
                             <div class="glass p-4 flex items-center gap-4 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer"
-                                 onclick="this.classList.add('opacity-30'); logSystemEvent('ENV: ${reset.label} Reset'); setWave(appState.wave+2);">
+                                 onclick="this.classList.add('opacity-30'); logSystemEvent('ENV: ${reset.label} Reset'); setWave(appState.wave)+2);">
                                 <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-emerald-400">
                                     <i class="fa-solid ${reset.icon}"></i>
                                 </div>
@@ -1794,7 +1794,7 @@
                 `;
                 
                 // Reward for letting go
-                setWave(appState.wave + 3);
+                setWave(appState.wave) + 3);
             }, 1200);
         }
 
@@ -1967,7 +1967,7 @@
             let energyBoost = 5;
             if (metricId === 'meds') energyBoost = 10;
             
-            setWave(appState.wave + energyBoost);
+            setWave(appState.wave) + energyBoost);
             logSystemEvent(`BIO-CALIBRATION: ${metricId.toUpperCase()} confirmed at ${now}.`);
             triggerAlert("SYSTEM STABILIZED: Battery levels rising.");
             renderView('bio_hub');
@@ -2027,7 +2027,7 @@
                     <div class="glass p-4 flex items-center justify-between">
                         <span class="text-[10px] font-bold uppercase text-white/40">Water Intake (Ounces)</span>
                         <div class="flex items-center gap-4">
-                            <button onclick="setWave(appState.wave + 1)" class="w-8 h-8 rounded-full bg-white/5 hover:bg-blue-500/20 text-blue-400">+</button>
+                            <button onclick="setWave(appState.wave) + 1)" class="w-8 h-8 rounded-full bg-white/5 hover:bg-blue-500/20 text-blue-400">+</button>
                             <span class="font-mono text-sm">8oz</span>
                         </div>
                     </div>
@@ -2132,7 +2132,7 @@
             triggerAlert("SHIFT COMPLETE: Momentum established.");
             
             // Every MVS generates a small but critical Wave boost
-            setWave(appState.wave + 7);
+            setWave(appState.wave) + 7);
             
             // Visual confirmation
             confetti({
@@ -2251,7 +2251,7 @@
                         </div>
                     </div>
 
-                    <button onclick="logSystemEvent('SPLIT: Integrated perspective achieved.'); setWave(appState.wave + 10); switchTab('dash');" 
+                    <button onclick="logSystemEvent('SPLIT: Integrated perspective achieved.'); setWave(appState.wave) + 10); switchTab('dash');" 
                             class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs transition-all shadow-lg">
                         Commit Integrated View
                     </button>
@@ -2354,7 +2354,7 @@
             btn.classList.add('bg-emerald-500/20', 'border-emerald-500/50', 'scale-[1.02]');
             
             logSystemEvent(`IDENTITY VERIFIED: ${IDENTITY_ANCHORS[index].label} active.`);
-            setWave(appState.wave + 5);
+            setWave(appState.wave) + 5);
             
             // Check if all are verified
             const verified = document.querySelectorAll('.anchor-btn.bg-emerald-500\/20').length;
@@ -2426,7 +2426,7 @@
             }
             
             // Reward for choosing "Healthy Static" over "Crisis Noise"
-            setWave(appState.wave + 5);
+            setWave(appState.wave) + 5);
             triggerAlert("STIMULATION SYNCED: Brain-loop neutralized.");
             renderView('boredom_hub');
         }
@@ -2498,7 +2498,7 @@
             
             // The logic here is counter-intuitive: Acknowledging the drain
             // actually restores "Wave" because it stops the "Denial" loop.
-            setWave(appState.wave + 5);
+            setWave(appState.wave) + 5);
             
             const btn = document.getElementById(`mask-${id}`);
             btn.classList.add('opacity-30', 'grayscale', 'pointer-events-none');
@@ -2581,7 +2581,7 @@
 
             input.value = '';
             triggerAlert("REQUEST BUFFERED: The Pilot remains focused.");
-            setWave(appState.wave + 3); // Reward for not immediate-acting
+            setWave(appState.wave) + 3); // Reward for not immediate-acting
             renderView('inbox_hub');
         }
 
@@ -2671,7 +2671,7 @@
                 if (burnSeconds <= 0) {
                     clearInterval(burnTimer);
                     triggerAlert("LOCKDOWN LIFTED: Neural Fever subsided. Pilot online.");
-                    setWave(appState.wave + 15);
+                    setWave(appState.wave) + 15);
                     renderView('burn_protocol');
                 }
             }, 1000);
@@ -2758,7 +2758,7 @@
         function clearPebble(id) {
             taskStack = taskStack.filter(t => t.id !== id);
             logSystemEvent("PEBBLE CLEARED: Momentum +10%");
-            setWave(appState.wave + 10);
+            setWave(appState.wave) + 10);
             
             if (taskStack.length === 0) {
                 triggerAlert("STACK DEPLETED: The Mountain is smaller now.");
@@ -2829,7 +2829,7 @@
             logSystemEvent("IDEALIZATION FILTER: Humanizing data integrated. Reducing 'Golden Noise'.");
             
             // Re-centering the Pilot
-            setWave(appState.wave + 12);
+            setWave(appState.wave) + 12);
             triggerAlert("PERSPECTIVE REALIGNED: They are a person, not a pedestal.");
             
             // Clear inputs and return
