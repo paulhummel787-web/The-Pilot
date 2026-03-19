@@ -1,70 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono&display=swap');
-
 :root {
     --yellow: #fbbf24; --red: #7f1d1d; --orange: #d97706;
     --purple: #4c1d95; --blue: #1e3a8a; --green: #065f46;
     --bg: #0a0a05;
 }
 
-body { 
-    background-color: var(--bg); 
-    background-image: radial-gradient(circle at 2px 2px, rgba(245, 158, 11, 0.05) 1px, transparent 0);
-    background-size: 24px 24px;
-    color: #fef3c7; 
-    font-family: 'Inter', sans-serif; 
-    min-height: 100vh;
-}
+body { background-color: var(--bg); color: #fef3c7; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
-.glass {
-    background: rgba(20, 20, 10, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(245, 158, 11, 0.1);
-    border-radius: 1.5rem;
-}
+.glass { background: rgba(20, 20, 10, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(245, 158, 11, 0.1); border-radius: 1.5rem; }
 
 .nav-btn { opacity: 0.3; border-bottom: 2px solid transparent; padding-bottom: 8px; transition: 0.4s; color: #f59e0b; }
-.nav-btn.active { opacity: 1; border-color: #f59e0b; color: white; text-shadow: 0 0 10px #f59e0b; }
+.nav-btn.active { opacity: 1; border-color: #f59e0b; color: white; }
 
 .view-section { display: none; }
-.view-section.active { display: block; animation: hiveFade 0.5s ease forwards; }
+.view-section.active { display: block; animation: fadeIn 0.4s ease forwards; }
 
-@keyframes hiveFade { 
-    from { opacity: 0; transform: scale(0.98); } 
-    to { opacity: 1; transform: scale(1); } 
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .execute-btn {
-    width: 100%; margin-top: 1.5rem; padding: 1.25rem;
-    background: rgba(245, 158, 11, 0.05);
-    border: 1px solid rgba(245, 158, 11, 0.2); 
-    border-radius: 1rem; color: #f59e0b;
-    text-transform: uppercase; font-weight: 900; font-size: 11px; letter-spacing: 0.4em;
-    transition: 0.3s;
+    width: 100%; margin-top: 1.5rem; padding: 1.25rem; background: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 1rem; color: #f59e0b;
+    text-transform: uppercase; font-weight: 900; font-size: 11px; letter-spacing: 0.4em; transition: 0.3s;
 }
 .execute-btn:hover { background: #f59e0b; color: #000; box-shadow: 0 0 30px #f59e0b; }
 
-/* Neural Pacer */
 @keyframes pacer {
-    0% { transform: scale(0.95); opacity: 0.1; border-width: 1px; }
-    50% { transform: scale(1.1); opacity: 0.4; border-width: 4px; }
-    100% { transform: scale(0.95); opacity: 0.1; border-width: 1px; }
+    0% { transform: scale(0.95); opacity: 0.1; }
+    50% { transform: scale(1.1); opacity: 0.4; }
+    100% { transform: scale(0.95); opacity: 0.1; }
 }
-
-.pacer-ring {
-    position: absolute; inset: 0; 
-    border: 2px solid #f59e0b;
-    border-radius: 1.5rem; pointer-events: none; opacity: 0;
-}
+.pacer-ring { position: absolute; inset: 0; border: 2px solid #f59e0b; border-radius: 1.5rem; pointer-events: none; opacity: 0; }
 .pacer-active .pacer-ring { animation: pacer 5s infinite ease-in-out; opacity: 1; }
 
-.state-btn {
-    transition: 0.3s;
-    border: 1px solid rgba(245, 158, 11, 0.1);
-    color: rgba(245, 158, 11, 0.4);
-}
-.state-btn.active { 
-    background: var(--state-color); 
-    color: white; 
-    border-color: white;
-    box-shadow: 0 0 20px var(--state-color);
-}
+.state-btn { transition: 0.3s; border: 1px solid rgba(245, 158, 11, 0.1); font-size: 9px; font-weight: 900; text-transform: uppercase; }
+.state-btn.active { background: var(--state-color); color: white; border-color: white; box-shadow: 0 0 20px var(--state-color); }
