@@ -795,10 +795,10 @@ const COMMANDS = {
         return `Error: State [${mode}] not recognized in kernel.`;
     },
     '/panic': () => {
-        updateSystemAtmosphere('sanctuary');
-        switchTab('vault');
-        return `EMERGENCY PROTOCOL: Sanctuary initiated. Breathe.`;
-    },
+    updateSystemAtmosphere('sanctuary');
+    switchTab('vault');
+    return `EMERGENCY PROTOCOL: Sanctuary initiated. Breathe.`;
+},
     '/clear': () => {
         appState.logs = [];
         renderTerminal();
