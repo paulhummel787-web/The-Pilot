@@ -299,13 +299,21 @@ let appState = storage.load() || {
 // Sanitize critical values
 appState.wave = Number(appState.wave) || 70;
 appState.integrity = Number(appState.integrity) || 0;
-        appState.wave = Number(appState.wave) || 70;
-            mode: 'regulated',
-            habitsCompleted: {},
-            lastUpdate: Date.now(),
-            logs: [],
-            mvs: []
-        };
+        let appState = storage.load() || {
+    wave: 70,
+    integrity: 0,
+    mode: 'static',
+    activeTab: 'dash',
+    logs: [],
+    habits: [],
+    habitsCompleted: {},
+    lastUpdate: Date.now(),
+    mvs: []
+};
+
+// Sanitize
+appState.wave = Number(appState.wave) || 70;
+appState.integrity = Number(appState.integrity) || 0;
 
         /* ==========================================================================
            🌊 THE WAVE ENGINE (CHARTING & MATH)
