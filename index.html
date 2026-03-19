@@ -846,34 +846,43 @@ function triggerBlackout() {
 }
 
 /* ==========================================================================
-   🚀 SYSTEM INITIALIZATION (THE ENGINE START)
-   ========================================================================== */
+           🚀 SYSTEM INITIALIZATION (THE ENGINE START)
+           ========================================================================== */
+        window.onload = function() {
+            // 1. Sync State with LocalStorage
+            const savedState = localStorage.getItem('architect_state');
+            if (savedState) {
+                const parsed = JSON.parse(savedState);
+                appState.wave = parsed.wave || 50;
+                appState.activeProtocol = parsed.activeProtocol || 'yellow';
+            }
 
+            // 2. Initial Visuals & Charts
+            initWaveChart();
+            updateSystemAtmosphere(appState.activeProtocol || appState.mode);
+            calculateIntegrity();
+            renderHabits();
 
-    // 2. Initial Atmosphere Calibration
-    updateSystemAtmosphere(appState.activeProtocol);
+            // 3. Launch the Cockpit
+            renderView('dash');
+            
+            // 4. Final System Log
+            logSystemEvent("SYSTEM ONLINE: Architect OS v21.0 Fully Integrated.");
+            console.log("Architect OS: Flight Readiness 100%. Persistence Active.");
+        };
 
-    // 3. Launch the Cockpit
-    renderView('dash');
-
-    // 4. Final System Log
-    logSystemEvent("SYSTEM ONLINE: Architect OS v1.0 Fully Integrated.");
-    triggerAlert("WELCOME HOME, PILOT. ALL SYSTEMS NOMINAL.");
-
-    console.log("Architect OS: Flight Readiness 100%. Persistence Active.");
-};
-
-/* ==========================================================================
-   💾 PERSISTENCE LOOP (AUTO-SAVE)
-   ========================================================================== */
-setInterval(() => {
-    const stateToSave = {
-        wave: appState.wave,
-        activeProtocol: appState.activeProtocol,
-        lastSync: Date.now()
-    };
-    localStorage.setItem('architect_state', JSON.stringify(stateToSave));
-}, 5000);
+        /* ==========================================================================
+           💾 PERSISTENCE LOOP (AUTO-SAVE)
+           ========================================================================== */
+        setInterval(() => {
+            const stateToSave = {
+                wave: appState.wave,
+                activeProtocol: appState.mode,
+                lastSync: new Date().getTime()
+            };
+            localStorage.setItem('architect_state', JSON.stringify(stateToSave));
+            storage.save(appState);
+        }, 5000); // Save every 5 seconds
 
         /* ==========================================================================
            📑 MVS TASK ENGINE (MINIMUM VIABLE STEPS)
