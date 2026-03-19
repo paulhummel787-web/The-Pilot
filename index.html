@@ -749,7 +749,7 @@ appState.integrity = Number(appState.integrity) || 0;
             }, 300);
             
             // Interaction Reward
-            setWave(appState.wave) + 2);
+            setWave(Number(appState.wave) + 2);
         }
 
         function completeAuditStep(el) {
