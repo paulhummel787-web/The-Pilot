@@ -1,2183 +1,733 @@
 <!DOCTYPE html>
 <html lang="en">
-<head
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
-<meta charset="UTF-8">
-<title>The Pilot and the Storm</title>
+    <title>Architect OS - Bee Well</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* =========================
+           🌈 CORE VARIABLES & SYSTEM COLORS
+           ========================= */
+        :root {
+            --yellow: #facc15;  /* ADHD / Static */
+            --red: #ef4444;     /* Heat */
+            --blue: #3b82f6;    /* Depression Gravity */
+            --purple: #8b5cf6;  /* Anxiety Pulse */
+            --green: #10b981;   /* Regulated Flow */
+            --orange: #fb923c;  /* Urgency */
+            --bg-base: #0a0a0a;
+        }
 
-<style>
-body {
-    background:#0a0a0a;
-    color:white;
-    font-family: system-ui;
-}
+        body {
+            background: var(--bg-base);
+            color: white;
+            font-family: system-ui, -apple-system, sans-serif;
+            transition: background-color 0.4s, filter 0.4s;
+            overflow-x: hidden;
+        }
 
-.glass {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    border:1px solid rgba(255,255,255,0.08);
-}
+        /* =========================
+           🌊 BACKGROUND ENERGY BLOBS
+           ========================= */
+        .bg-blob {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: floatBlob 20s infinite ease-in-out;
+            transition: background 1s ease;
+        }
+        .bg-blob:nth-child(1) { top: -100px; left: -100px; }
+        .bg-blob:nth-child(2) { bottom: -120px; right: -120px; animation-delay: 5s; }
+        .bg-blob:nth-child(3) { top: 40%; left: 30%; animation-delay: 10s; }
 
-.nav-btn { opacity:.4; }
-.nav-btn.active { opacity:1; color:#818cf8; }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, -40px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
 
-.terminal {
-    background:black;
-    color:#00ff88;
-    font-family: monospace;
-}/* =========================
-✨ UI POLISH ENGINE
-========================= */
+        /* =========================
+           ✨ GLASS & UI POLISH
+           ========================= */
+        .glass {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+        .glass:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
 
-/* Smooth everything */
-* {
-    transition: all .25s ease;
-}
+        /* Buttons & Nav */
+        .btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            transform: scale(1.03);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .nav-btn {
+            opacity: 0.4;
+            transition: 0.2s;
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-btn.active {
+            opacity: 1;
+            color: var(--purple);
+        }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--purple);
+        }
 
-/* Glass upgrade */
-.glass {
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-}
+        /* Terminal */
+        .terminal {
+            background: black;
+            color: #00ff88;
+            font-family: monospace;
+            text-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
+        }
 
-/* Button feel */
-button {
-    transition: all .2s ease;
-}
+        /* Overlays & Animations */
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-button:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 12px rgba(255,255,255,0.1);
-}
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
 
-button:active {
-    transform: scale(0.96);
-}
-
-/* Scroll styling */
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-}
-
-/* Fade animation */
-.fade-in {
-    animation: fadeIn .4s ease;
-}
-
-@keyframes fadeIn {
-    from {opacity:0; transform:translateY(10px)}
-    to {opacity:1; transform:translateY(0)}
-}
-
-/* Glow pulse */
-.soft-glow {
-    animation: glowPulse 3s infinite;
-}
-
-@keyframes glowPulse {
-    0% {box-shadow:0 0 0px transparent}
-    50% {box-shadow:0 0 20px rgba(255,255,255,0.1)}
-    100% {box-shadow:0 0 0px transparent}
-}
-
-/* Card hover lift */
-.glass:hover {
-    transform: translateY(-4px);
-}
-
-/* Terminal glow upgrade */
-.terminal {
-    box-shadow: 0 0 20px #00ff88;
-}
-
-/* Anchor emphasis */
-.anchor {
-    border-left: 3px solid #8b5cf6;
-    padding-left: 10px;
-}
-</style>
+        /* HUDs */
+        .hud-panel {
+            position: fixed;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            z-index: 999;
+            padding: 10px 14px;
+            font-size: 11px;
+        }
+    </style>
 </head>
 
 <body class="p-6">
-
-<h1 class="text-xl mb-4">The Pilot and the Storm</h1>
-
-<div class="flex gap-4 mb-4 text-xs">
-    <button class="nav-btn active" onclick="switchTab('base')">Base</button>
-    <button class="nav-btn" onclick="switchTab('book')">Book</button>
-    <button class="nav-btn" onclick="switchTab('anchor')">Anchors</button>
-    <button class="nav-btn" onclick="switchTab('terminal')">Terminal</button>
-</div>
-
-<div id="view"></div>
-
-<script>
-
-const state = {
-    tab:'base',
-    wave:70
-};
-
-const BOOK = [
-"Symptom Soup",
-"Shutdown",
-"Pilot vs Architect",
-"Color Grid",
-"Prime Directive",
-"... (continues)"
-];
-
-const ANCHORS = [
-["I am a mistake","Psalm 139:14","I am fearfully made"],
-["I am alone","Deuteronomy 31:8","God is ahead of me"]
-];
-
-let anchorIndex = 0;
-
-function switchTab(tab){
-    state.tab = tab;
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
-    render();
-}
-
-function render(){
-    const v = document.getElementById('view');
-
-    if(state.tab==='base'){
-        v.innerHTML = `
-        <div class="glass p-4">
-            Wave: ${state.wave}
-        </div>`;
-    }
-
-    if(state.tab==='book'){
-        v.innerHTML = BOOK.map((c,i)=>`
-            <div class="glass p-2 mb-2">Chapter ${i+1}: ${c}</div>
-        `).join('');
-    }
-
-    if(state.tab==='anchor'){
-        const a = ANCHORS[anchorIndex];
-        v.innerHTML = `
-        <div class="glass p-4">
-            <p>${a[0]}</p>
-            <p>${a[1]}</p>
-            <p>${a[2]}</p>
-            <button onclick="nextAnchor()">Next</button>
-        </div>`;
-    }
-
-    if(state.tab==='terminal'){
-        v.innerHTML = `
-        <div class="terminal p-3">
-            <input onkeydown="cmd(event)" placeholder="/wave 50">
-        </div>`;
-    }
-}
-
-function nextAnchor(){
-    anchorIndex = (anchorIndex+1)%ANCHORS.length;
-    render();
-}
-
-function cmd(e){
-    if(e.key==="Enter"){
-        const val = e.target.value;
-        if(val.startsWith("/wave")){
-            state.wave = parseInt(val.split(" ")[1]) || state.wave;
-            render();
-        }
-        e.target.value="";
-    }
-}
-
-render();
-<script>
-
-/* =========================
-📖 FULL 33 CHAPTER SYSTEM (REAL TEXT)
-========================= */
-
-const FULL_BOOK = [
-
-{
-title:"Chapter 1: The Landscape of the Storm",
-content:`The complex mind does not experience challenges in isolation; it lives within a "Symptom Soup"...`
-},
-
-{
-title:"Chapter 2: The Anatomy of Shutdown",
-content:`Shutdown is not a failure of will; it is a biological evacuation protocol...`
-},
-
-{
-title:"Chapter 3: The Architect vs The Pilot",
-content:`Two systems exist: the Pilot (reactive) and the Architect (planner)...`
-},
-
-{
-title:"Chapter 4: The Colour Frequencies",
-content:`Replace emotional analysis with colour recognition...`
-},
-
-{
-title:"Chapter 5: The Prime Directive",
-content:`Fix the State, then the Step. No movement without regulation.`
-},
-
-{
-title:"Chapter 6: The 90-Second Rule",
-content:`All emotional surges last ~90 seconds chemically.`
-},
-
-{
-title:"Chapter 7: Time Blindness",
-content:`Time is either Now or Not Now; externalize it.`
-},
-
-{
-title:"Chapter 8: Habit Stacking",
-content:`Attach actions to existing behaviors.`
-},
-
-{
-title:"Chapter 9: Fueling Logic",
-content:`Body chemistry dictates mental stability.`
-},
-
-{
-title:"Chapter 10: Fire Kit",
-content:`Pre-built tools for zero-thought crisis response.`
-},
-
-{
-title:"Chapter 11: Anxiety Pulse",
-content:`Anxiety is a simulation, not always a signal.`
-},
-
-{
-title:"Chapter 12: ADHD Scatter",
-content:`Attention is a signal seeking system.`
-},
-
-{
-title:"Chapter 13: Emotional Heat",
-content:`Emotions hit instantly at full intensity.`
-},
-
-{
-title:"Chapter 14: CPTSD Shadow",
-content:`The past imprints present perception.`
-},
-
-{
-title:"Chapter 15: Depression Gravity",
-content:`Energy collapses inward and downward.`
-},
-
-{
-title:"Chapter 16: Dissociation Fog",
-content:`System disconnects from present awareness.`
-},
-
-{
-title:"Chapter 17: MVS Protocol",
-content:`Move one pebble to break inertia.`
-},
-
-{
-title:"Chapter 18: 10/20 Brakes",
-content:`Interrupt loops with physical resets.`
-},
-
-{
-title:"Chapter 19: Memory Shield",
-content:`Externalize all mental load.`
-},
-
-{
-title:"Chapter 20: Sanctuary Design",
-content:`Reduce sensory noise in environment.`
-},
-
-{
-title:"Chapter 21: Social Governor",
-content:`Predefine boundaries and scripts.`
-},
-
-{
-title:"Chapter 22: Sensory Override",
-content:`Use body to reset brain.`
-},
-
-{
-title:"Chapter 23: Reporting Visibility",
-content:`Use color to communicate internal state.`
-},
-
-{
-title:"Chapter 24: Sleep Docking",
-content:`Sleep is system repair.`
-},
-
-{
-title:"Chapter 25: Medication Ledger",
-content:`Track signal vs noise.`
-},
-
-{
-title:"Chapter 26: Metabolic Reset",
-content:`Movement resets state.`
-},
-
-{
-title:"Chapter 27: Daily Ledger",
-content:`Turn wins into data.`
-},
-
-{
-title:"Chapter 28: Strategic Filter",
-content:`Drop non-essential tasks.`
-},
-
-{
-title:"Chapter 29: Chase the Fox",
-content:`Focus on one high-value task.`
-},
-
-{
-title:"Chapter 30: Bodyguards",
-content:`Protective patterns are not enemies.`
-},
-
-{
-title:"Chapter 31: Identity Anchors",
-content:`Truth over emotional weather.`
-},
-
-{
-title:"Chapter 32: Support Grid",
-content:`Use people as external scaffolding.`
-},
-
-{
-title:"Chapter 33: Architect’s Creed",
-content:`You are built to navigate, not eliminate the storm.`
-}
-
-];
-
-/* =========================
-📖 OVERRIDE BOOK TAB
-========================= */
-
-function renderBook(){
-    const v = document.getElementById('view');
-
-    v.innerHTML = `
-    <div class="space-y-3">
-        ${FULL_BOOK.map((ch,i)=>`
-            <div class="glass p-4">
-                <p class="text-xs opacity-40 mb-1">${ch.title}</p>
-                <p class="text-sm opacity-80">${ch.content}</p>
-            </div>
-        `).join('')}
-    </div>`;
-}
-
-/* Hook into main render */
-const originalRender = render;
-
-render = function(){
-    if(state.tab === 'book'){
-        renderBook();
-    } else {
-        originalRender();
-    }
-};
-
-</script><script>
-
-/* =========================
-✝️ FULL SCRIPTURE + IDENTITY ENGINE
-========================= */
-
-const FULL_ANCHORS = {
-
-identity: [
-{
-lie:"I am a mistake",
-verse:"Psalm 139:14",
-truth:"I am fearfully and wonderfully made; God does not make mistakes."
-},
-{
-lie:"I am unwanted",
-verse:"Ephesians 1:4",
-truth:"I am chosen by God before the world began; I am wanted."
-},
-{
-lie:"I am a burden",
-verse:"Psalm 55:22",
-truth:"I am sustained by God; He invites me to give Him my weight."
-},
-{
-lie:"I am broken",
-verse:"2 Corinthians 5:17",
-truth:"I am a new creation in Christ; the old is gone, the new is here."
-},
-{
-lie:"I am unloved",
-verse:"Romans 8:38-39",
-truth:"I am inseparable from the love of God; nothing can pull Him away."
-}
-],
-
-safety: [
-{
-verse:"Deuteronomy 31:8",
-truth:"I am never alone. God is already in my tomorrow."
-},
-{
-verse:"Psalm 34:18",
-truth:"When I feel crushed, God is at His closest to me."
-},
-{
-verse:"Isaiah 43:1",
-truth:"I am claimed. I belong to the Creator of the Universe."
-},
-{
-verse:"Psalm 27:10",
-truth:"My safety is not dependent on people; I am held by the Father."
-}
-],
-
-peace: [
-{
-verse:"2 Timothy 1:7",
-truth:"I reject fear. I have a sound and clear mind."
-},
-{
-verse:"Isaiah 26:3",
-truth:"As I fix my thoughts on Truth, my mind enters perfect peace."
-},
-{
-verse:"Philippians 4:7",
-truth:"God’s peace is guarding my mind like a soldier."
-},
-{
-verse:"1 Corinthians 14:33",
-truth:"Confusion is not from God. Peace will come."
-}
-],
-
-strength: [
-{
-verse:"Philippians 4:13",
-truth:"I have enough strength for the next step."
-},
-{
-verse:"2 Corinthians 12:9",
-truth:"My weakness is where God’s power shows up."
-},
-{
-verse:"Isaiah 40:31",
-truth:"I will walk and not faint. Strength is being renewed."
-},
-{
-verse:"Psalm 142:3",
-truth:"Even when I don’t know the path, God does."
-}
-]
-
-};
-
-/* =========================
-🔄 SMART ROTATION
-========================= */
-
-let anchorCategory = "identity";
-let anchorPointer = 0;
-
-function nextFullAnchor(){
-
-    const group = FULL_ANCHORS[anchorCategory];
-    const a = group[anchorPointer];
-
-    const v = document.getElementById('view');
-
-    v.innerHTML = `
-    <div class="glass p-6 max-w-md mx-auto text-center">
-
-        <p class="text-xs opacity-40 mb-2 uppercase">${anchorCategory}</p>
-
-        ${a.lie ? `<p class="text-red-400 mb-4">${a.lie}</p>` : ""}
-
-        <p class="opacity-40 text-xs">${a.verse}</p>
-        <p class="text-indigo-400 mt-2">${a.truth}</p>
-
-        <div class="flex gap-2 mt-6 justify-center">
-            <button onclick="nextFullAnchor()" class="bg-indigo-500 px-4 py-2 rounded text-xs">Next</button>
-            <button onclick="switchAnchorCategory()" class="bg-white/10 px-4 py-2 rounded text-xs">Switch</button>
+    <div class="bg-blob" id="blob1"></div>
+    <div class="bg-blob" id="blob2"></div>
+    <div class="bg-blob" id="blob3"></div>
+
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6 tracking-wide">Architect OS <span class="text-xs opacity-50 ml-2">v2.0 Bee Well</span></h1>
+
+        <div class="flex flex-wrap gap-4 mb-6 text-xs uppercase font-bold tracking-wider" id="main-nav">
+            <button class="nav-btn active" onclick="switchTab('base')">Cockpit</button>
+            <button class="nav-btn" onclick="switchTab('book')">Book</button>
+            <button class="nav-btn" onclick="switchTab('anchor')">Anchors</button>
+            <button class="nav-btn" onclick="switchTab('mvs')">MVS Engine</button>
+            <button class="nav-btn" onclick="switchTab('terminal')">Terminal</button>
+            <button class="nav-btn" onclick="openAnalytics()">Data</button>
+            <button class="nav-btn" onclick="openJournal()">Journal</button>
+            <button class="nav-btn" onclick="openDaily()">Fox</button>
+            <button class="nav-btn text-purple-400" onclick="openIdentity()">Identity</button>
         </div>
 
-    </div>`;
-
-    anchorPointer = (anchorPointer + 1) % group.length;
-}
-
-/* =========================
-🔀 CATEGORY SWITCH
-========================= */
-
-function switchAnchorCategory(){
-
-    const keys = Object.keys(FULL_ANCHORS);
-    let i = keys.indexOf(anchorCategory);
-
-    anchorCategory = keys[(i + 1) % keys.length];
-    anchorPointer = 0;
-
-    nextFullAnchor();
-}
-
-/* =========================
-🔌 HOOK INTO TAB
-========================= */
-
-const oldRender2 = render;
-
-render = function(){
-
-    if(state.tab === 'anchor'){
-        nextFullAnchor();
-    } else {
-        oldRender2();
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🌈 TRUE 6-STATE STORM SYSTEM
-========================= */
-
-function getStormState(){
-
-    const w = state.wave;
-
-    if(w <= 15){
-        return {name:"White Fog", color:"#e5e7eb", desc:"Dissociation / Shutdown"};
-    }
-
-    if(w <= 30){
-        return {name:"Blue Gravity", color:"#3b82f6", desc:"Depression / Low Energy"};
-    }
-
-    if(w <= 45){
-        return {name:"Purple Pulse", color:"#8b5cf6", desc:"Anxiety / Overactivation"};
-    }
-
-    if(w <= 60){
-        return {name:"Yellow Static", color:"#facc15", desc:"ADHD / Scattered"};
-    }
-
-    if(w <= 80){
-        return {name:"Red Heat", color:"#ef4444", desc:"Emotional Intensity"};
-    }
-
-    return {name:"Green Flow", color:"#22c55e", desc:"Regulated / Stable"};
-}
-
-/* =========================
-🎨 APPLY TO UI
-========================= */
-
-function applyStormUI(){
-
-    const s = getStormState();
-
-    document.body.style.boxShadow = `inset 0 0 160px ${s.color}`;
-
-    const v = document.getElementById('storm-indicator');
-
-    if(v){
-        v.innerHTML = `
-            <div class="glass p-3 rounded-xl text-xs">
-                <p class="opacity-40">${s.name}</p>
-                <p>${s.desc}</p>
-            </div>
-        `;
-    }
-}
-
-setInterval(applyStormUI, 1000);
-
-/* =========================
-🧠 UPGRADE BASE VIEW
-========================= */
-
-const oldRender3 = render;
-
-render = function(){
-
-    if(state.tab === 'base'){
-
-        const s = getStormState();
-
-        document.getElementById('view').innerHTML = `
-        <div class="grid grid-cols-2 gap-4">
-
-            <div class="glass p-5">
-                <p class="text-xs opacity-40">Wave</p>
-                <p class="text-2xl">${state.wave}%</p>
-            </div>
-
-            <div class="glass p-5">
-                <p class="text-xs opacity-40">State</p>
-                <p class="text-lg">${s.name}</p>
-            </div>
-
-            <div id="storm-indicator" class="col-span-2"></div>
-
-            <button onclick="toggleSanctuary()" class="glass p-4 col-span-2">
-                ${state.sanctuary?'Exit Sanctuary':'Enter Sanctuary'}
-            </button>
-
-        </div>
-        `;
-
-    } else {
-        oldRender3();
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🧭 COCKPIT UI SYSTEM
-========================= */
-
-function renderCockpit(){
-
-    const s = getStormState();
-
-    document.getElementById('view').innerHTML = `
-    
-    <div class="grid grid-cols-4 gap-4">
-
-        <!-- SIDEBAR -->
-        <div class="glass p-4 rounded-xl h-[75vh] overflow-y-auto">
-
-            <p class="text-xs opacity-40 mb-3">NAV</p>
-
-            ${["base","book","anchor","terminal"].map(tab=>`
-                <button onclick="switchTab('${tab}')" 
-                class="block w-full text-left text-xs py-2 px-2 rounded hover:bg-white/10">
-                    ${tab.toUpperCase()}
-                </button>
-            `).join('')}
-
-            <div class="mt-6 text-xs opacity-40">STATE</div>
-            <div class="mt-2 text-xs">${s.name}</div>
-
-        </div>
-
-        <!-- MAIN -->
-        <div class="col-span-3 space-y-4">
-
-            <div class="glass p-4 rounded-xl">
-                <p class="text-xs opacity-40">Wave</p>
-                <p class="text-xl">${state.wave}%</p>
-            </div>
-
-            <div id="cockpit-main"></div>
-
-        </div>
-
+        <div id="view" class="fade-in min-h-[60vh]"></div>
     </div>
-    `;
 
-    renderCockpitContent();
+    <div id="guidance-hud" class="hud-panel top-4 right-4 text-right">System Online</div>
+    <div id="score-hud" class="hud-panel bottom-4 left-4">Level 1 | XP: 0</div>
+    
+    <button onclick="panicMode()" class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(239,68,68,0.5)] z-50 transition hover:scale-105">⚠ PANIC</button>
+
+<script>
+/* ==========================================================================
+   🧠 STATE MANAGEMENT
+   ========================================================================== */
+const state = {
+    tab: 'base',
+    wave: 70,
+    integrity: 50,
+    color: 'green',
+    mode: 'steady', // low, steady, sharp, overloaded
+    personality: 'architect',
+    score: 0,
+    level: 1,
+    xp: 0,
+    mvsList: [],
+    metricsHistory: [],
+    journal: [],
+    achievements: [],
+    fox: null,
+    daily: { fox: null, completed: false, date: new Date().toDateString() },
+    focusMode: false,
+    sanctuary: false
+};
+
+// Auto-load state
+const savedState = localStorage.getItem("architect_os_state");
+if (savedState) Object.assign(state, JSON.parse(savedState));
+
+function saveState() {
+    localStorage.setItem("architect_os_state", JSON.stringify(state));
+}
+setInterval(saveState, 5000);
+
+/* ==========================================================================
+   📚 DATABASES
+   ========================================================================== */
+const FULL_BOOK = [
+    { title: "Chapter 1 — The Landscape of the Storm", content: "The complex mind lives inside what can only be described as a Symptom Soup — a constantly shifting blend of emotional, neurological, and physiological states.\n\nThere is no clean separation.\nAnxiety bleeds into restlessness.\nRestlessness mutates into avoidance.\nAvoidance hardens into depression.\nDepression dissolves into dissociation.\n\nThe mistake most systems make is trying to isolate a single 'problem.'\nThere is no single problem. There is only weather.\n\nAnd weather cannot be controlled — only navigated.\nThe shift happens when you stop asking: 'What’s wrong with me?'\nAnd start asking: 'What system am I currently in?'\n\nThis is the moment you stop being a victim of the storm… and become a navigator of it." },
+    { title: "Chapter 2 — The Anatomy of Shutdown", content: "Shutdown is not laziness.\nIt is not failure.\nIt is not weakness.\n\nIt is evacuation.\nWhen the nervous system exceeds capacity, the brain pulls power from higher functions to preserve life.\nLanguage goes offline.\nDecision-making collapses.\nTime disappears.\n\nThis is the White Fog.\nYou are not broken in this state.\nYou are protected.\n\nUnderstanding this changes everything.\nBecause you stop trying to push… and start learning how to reboot." },
+    { title: "Chapter 3 — The Architect vs The Pilot", content: "There are two versions of you:\n\nThe Pilot — reactive, emotional, in-the-moment.\nThe Architect — calm, strategic, future-focused.\n\nMost people try to strengthen the Pilot.\nThis fails because the Pilot disappears in storms.\n\nThe Architect does not.\nThe Architect builds systems that function when the Pilot cannot.\n\nYou don’t need more willpower.\nYou need better architecture." },
+    { title: "Chapter 4 — The Colour Frequencies", content: "When overwhelmed, the brain cannot process complexity.\nSo we remove complexity.\nWe replace it with color.\n\nYellow — Static (ADHD scatter)\nRed — Heat (emotional flooding)\nBlue — Gravity (depression)\nPurple — Pulse (anxiety)\nWhite — Fog (dissociation)\nGreen — Flow (regulated state)\n\nYou do not analyze.\nYou identify.\n\n'What color am I?'\nThat question alone restores control." },
+    { title: "Chapter 5 — The Prime Directive", content: "Fix the state.\nThen take the step.\n\nNever reverse this order.\nYou cannot think your way out of a dysregulated nervous system.\nYou must regulate first.\nThen act.\n\nThis is the law everything else follows." },
+    { title: "Chapter 6 — The 90 Second Rule", content: "Every emotional spike is chemical.\nIt lasts 90 seconds.\nAfter that, the story continues it.\n\nSo the rule is simple:\nDo nothing for 90 seconds.\nObserve.\nLet the wave pass.\nThen act." },
+    { title: "Chapter 7 — Time Blindness", content: "Time is not linear in a complex mind.\nIt is Now or Not Now.\n\nSo we externalize it.\nTimers.\nAnchors.\nVisual clocks.\n\nTime must be seen to be trusted." },
+    { title: "Chapter 8 — Habit Stacking", content: "You do not build habits from nothing.\nYou attach them.\n\nCoffee → check system\nShower → reset mind\nWake → anchor intention\n\nThis creates automatic flight paths.\nNo thinking required." },
+    { title: "Chapter 9 — Fueling Logic", content: "Your brain is a machine.\nLow fuel = low control.\n\nHydration.\nFood.\nSleep.\n\nThese are not optional.\nThey are system requirements." },
+    { title: "Chapter 10 — Fire Kit", content: "When overwhelmed, you cannot think.\nSo you prepare tools in advance.\n\nCold water.\nHeadphones.\nWeighted objects.\n\nNo decisions.\nJust action." },
+    { title: "Chapter 11 — Anxiety Pulse", content: "Anxiety simulates danger.\nIt is prediction — not reality.\n\nThe goal is not to eliminate it…\n…but to stop believing it." },
+    { title: "Chapter 12 — ADHD Scatter", content: "The mind cannot land.\nSo we force landing.\n\nOne task.\nOne movement.\nOne step.\n\nThis restores control." },
+    { title: "Chapter 13 — Emotional Heat", content: "Emotions hit instantly.\nYou must delay reaction.\n90 seconds.\nAlways." },
+    { title: "Chapter 14 — CPTSD Shadow", content: "The past projects onto the present.\nNot everything is danger.\nBut your system believes it is.\n\nAwareness breaks this loop." },
+    { title: "Chapter 15 — Depression Gravity", content: "Everything feels heavy.\nSo we reduce effort.\n\nTiny steps.\nMovement creates energy." },
+    { title: "Chapter 16 — Dissociation Fog", content: "Disconnection is protection.\nReturn through the body.\n\nTouch.\nSound.\nMovement.\n\nNot thought." },
+    { title: "Chapter 17 — MVS Protocol", content: "Minimum Viable Step.\nNot the whole task.\nJust one pebble.\n\nThis breaks inertia." },
+    { title: "Chapter 18 — 10/20 Brakes", content: "10 minutes stuck thinking → change body.\n20 minutes stuck physically → change location.\n\nInterrupt loops physically.\nAlways." },
+    { title: "Chapter 19 — Memory Shield", content: "Your brain is not storage.\nWrite everything down.\nClear the RAM.\nThen act." },
+    { title: "Chapter 20 — Sanctuary Design", content: "Less noise = more clarity.\nClean space.\nSoft light.\nMinimal input.\n\nCalm environment = calm mind." },
+    { title: "Chapter 21 — Social Governor", content: "Boundaries protect energy.\nYou do not owe constant access.\nScripts help.\nUse them." },
+    { title: "Chapter 22 — Sensory Override", content: "Cold water resets the system.\nPressure calms the body.\nBreathing restores control.\nUse biology." },
+    { title: "Chapter 23 — Reporting Visibility", content: "Say the color.\n'I’m Red.'\nThat is enough.\nNo explanation needed." },
+    { title: "Chapter 24 — Sleep Docking", content: "Sleep is repair.\nWithout it, everything fails.\nProtect it." },
+    { title: "Chapter 25 — Medication Ledger", content: "Track patterns.\nFind signals.\nAdjust accordingly." },
+    { title: "Chapter 26 — Metabolic Reset", content: "Move the body.\nReset the system.\nAlways works." },
+    { title: "Chapter 27 — Daily Ledger", content: "Track wins.\nEven small ones.\nThis rewires identity." },
+    { title: "Chapter 28 — The Filter", content: "Drop what doesn’t matter.\nFocus only on signal.\nEnergy is limited." },
+    { title: "Chapter 29 — Chase the Fox", content: "One high-impact task.\nNot ten small ones.\nFind it.\nChase it." },
+    { title: "Chapter 30 — Bodyguards", content: "Your resistance is protection.\nAcknowledge it.\nThen lead anyway." },
+    { title: "Chapter 31 — Identity Anchors", content: "Feelings lie.\nTruth stays.\nAnchor to truth." },
+    { title: "Chapter 32 — Support Grid", content: "You are not meant to do this alone.\nBuild support.\nUse it." },
+    { title: "Chapter 33 — The Architect’s Creed", content: "I do not fight my nature.\nI design for it.\n\nOne step.\nOne breath.\nOne system.\n\nI am the Architect." }
+];
+
+const SCRIPTURE_ENGINE = [
+    { category: "Identity", color: "blue", lie: "I am a mistake", verse: "Psalm 139:14", truth: "I am fearfully and wonderfully made; God does not make mistakes." },
+    { category: "Identity", color: "blue", lie: "I am unwanted", verse: "Ephesians 1:4", truth: "I am chosen by God before the world began; I am wanted." },
+    { category: "Identity", color: "blue", lie: "I am a burden", verse: "Psalm 55:22", truth: "I am sustained by God; He carries what I cannot." },
+    { category: "Identity", color: "blue", lie: "I am broken", verse: "2 Corinthians 5:17", truth: "I am a new creation; the old is gone, the new is here." },
+    { category: "Identity", color: "blue", lie: "I am unloved", verse: "Romans 8:38-39", truth: "Nothing can separate me from the love of God." },
+    { category: "Safety", color: "purple", lie: "I am alone", verse: "Deuteronomy 31:8", truth: "God goes before me; I am never alone." },
+    { category: "Safety", color: "purple", lie: "I am abandoned", verse: "Psalm 27:10", truth: "Even if people leave, God holds me close." },
+    { category: "Safety", color: "purple", lie: "I am too broken to be helped", verse: "Psalm 34:18", truth: "God is closest when I am most broken." },
+    { category: "Safety", color: "purple", lie: "I don't belong", verse: "Isaiah 43:1", truth: "I am called by name; I belong to God." },
+    { category: "Peace", color: "yellow", lie: "My mind is out of control", verse: "2 Timothy 1:7", truth: "I have power, love, and a sound mind." },
+    { category: "Peace", color: "yellow", lie: "I will always feel this way", verse: "Isaiah 26:3", truth: "God keeps my mind in perfect peace when I focus on Him." },
+    { category: "Peace", color: "yellow", lie: "I am overwhelmed", verse: "Philippians 4:7", truth: "God’s peace guards my heart and mind." },
+    { category: "Peace", color: "yellow", lie: "Everything is chaos", verse: "1 Corinthians 14:33", truth: "God is not the author of confusion but of peace." },
+    { category: "Strength", color: "red", lie: "I can't do this", verse: "Philippians 4:13", truth: "I can do all things through Christ who strengthens me." },
+    { category: "Strength", color: "red", lie: "I am too weak", verse: "2 Corinthians 12:9", truth: "God’s power is made perfect in my weakness." },
+    { category: "Strength", color: "red", lie: "I have no energy", verse: "Isaiah 40:31", truth: "God renews my strength; I will not faint." },
+    { category: "Strength", color: "red", lie: "I don’t know what to do", verse: "Psalm 142:3", truth: "Even when I don’t see the path, God does." }
+];
+
+const AUDITS = {
+    biological: { title: "Biological Reset", steps: ["Drink water now.", "Stand and stretch.", "Take 5 slow breaths.", "Check body tension.", "Reset posture."] },
+    mental: { title: "Mental Reset", steps: ["Name your color state.", "Drop the story.", "Focus on the body.", "Wait 90 seconds.", "Return to one step."] },
+    execution: { title: "Execution Reset", steps: ["Close distractions.", "Identify ONE task.", "Break into 1 step.", "Start for 60 seconds.", "Ignore outcome."] }
+};
+
+const PERSONALITIES = {
+    architect: ["Stabilize the system. Then execute.", "You are not behind. You are recalibrating.", "One clean move is enough."],
+    coach: ["Let’s go — small step right now.", "Momentum beats perfection.", "You’ve done harder things."],
+    calm: ["Slow down. You’re safe.", "Breathe. Nothing urgent.", "Stay here. That’s enough."]
+};
+
+/* ==========================================================================
+   ⚙️ CORE SYSTEM LOGIC
+   ========================================================================== */
+function updateSystemState() {
+    const w = state.wave;
+    const i = state.integrity;
+    
+    if (w < 30) state.mode = "low";
+    else if (w > 80 && i < 40) state.mode = "overloaded";
+    else if (w > 70 && i > 60) state.mode = "sharp";
+    else state.mode = "steady";
+
+    // Update Color based on wave
+    if(w < 30) state.color = 'blue';
+    else if(w < 50) state.color = 'purple';
+    else if(w < 70) state.color = 'yellow';
+    else if(w < 85) state.color = 'red';
+    else state.color = 'green';
+
+    // Apply background colors dynamically
+    const colorHex = { yellow: '#facc15', red: '#ef4444', blue: '#3b82f6', purple: '#8b5cf6', green: '#10b981', orange: '#fb923c' }[state.color];
+    document.getElementById('blob1').style.background = colorHex;
+    document.getElementById('blob2').style.background = state.color === 'yellow' ? '#ef4444' : '#facc15';
+    document.getElementById('blob3').style.background = state.color === 'blue' ? '#8b5cf6' : '#3b82f6';
+    
+    document.body.style.boxShadow = `inset 0 0 120px rgba(${hexToRgb(colorHex)}, 0.15)`;
+
+    // Update HUDs
+    const guidance = {
+        low: "Reduce everything. Drink water. One small movement.",
+        overloaded: "Too much input. Remove stimulation. Breathe.",
+        sharp: "High clarity detected. Chase the Fox.",
+        steady: "Maintain rhythm. Stay with the current step."
+    }[state.mode];
+    
+    document.getElementById('guidance-hud').innerText = `State: ${state.color.toUpperCase()} | ${guidance}`;
+    document.getElementById('score-hud').innerText = `Level ${state.level} | XP: ${state.xp} | Score: ${state.score}`;
 }
 
-/* =========================
-🧠 MAIN PANEL SWITCH
-========================= */
+function hexToRgb(hex) {
+    let bigint = parseInt(hex.replace('#',''), 16);
+    return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
+}
 
-function renderCockpitContent(){
+// Global loop
+setInterval(() => {
+    // Wave decay/recovery
+    if(state.wave > 50) state.wave -= 0.5; else state.wave += 0.2;
+    if(state.wave < 0) state.wave = 0;
+    if(state.wave > 100) state.wave = 100;
+    
+    updateSystemState();
+    
+    // Auto record metrics
+    if (Math.random() > 0.5) {
+        state.metricsHistory.push({ time: new Date().toLocaleTimeString(), wave: state.wave, integrity: state.integrity });
+        if(state.metricsHistory.length > 30) state.metricsHistory.shift();
+    }
+}, 5000);
 
-    const v = document.getElementById('cockpit-main');
+/* ==========================================================================
+   🖥️ UI RENDERERS
+   ========================================================================== */
+function switchTab(tab) {
+    state.tab = tab;
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    render();
+}
 
-    if(state.tab === 'book'){
+function render() {
+    updateSystemState();
+    const v = document.getElementById('view');
+    v.innerHTML = '';
+    
+    if (state.tab === 'base') v.innerHTML = renderCockpit();
+    if (state.tab === 'book') renderBook(); // Self managing DOM
+    if (state.tab === 'anchor') renderAnchor();
+    if (state.tab === 'mvs') renderMVS();
+    if (state.tab === 'terminal') v.innerHTML = renderTerminal();
+}
 
-        v.innerHTML = `
-        <div class="space-y-2 max-h-[60vh] overflow-y-auto">
-            ${FULL_BOOK.map((ch,i)=>`
-                <div onclick="openChapter(${i})" 
-                class="glass p-3 cursor-pointer hover:bg-white/10">
-                    ${ch.title}
+function renderCockpit() {
+    return `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
+        <div class="glass p-6 text-center glow-${state.color}">
+            <p class="text-xs opacity-50 mb-1 uppercase tracking-widest">System Wave</p>
+            <p class="text-5xl font-light mb-2">${Math.round(state.wave)}<span class="text-xl opacity-50">%</span></p>
+            <div class="w-full bg-white/10 h-1 rounded overflow-hidden mt-4">
+                <div class="bg-${state.color}-500 h-full" style="width: ${state.wave}%"></div>
+            </div>
+        </div>
+        <div class="glass p-6 text-center">
+            <p class="text-xs opacity-50 mb-1 uppercase tracking-widest">Integrity</p>
+            <p class="text-5xl font-light mb-2">${Math.round(state.integrity)}<span class="text-xl opacity-50">%</span></p>
+            <div class="w-full bg-white/10 h-1 rounded overflow-hidden mt-4">
+                <div class="bg-indigo-400 h-full" style="width: ${state.integrity}%"></div>
+            </div>
+        </div>
+        
+        <div class="glass p-6 col-span-1 md:col-span-2">
+            <p class="text-xs opacity-50 mb-4 uppercase tracking-widest text-center">System Audit Protocols</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="startAudit('biological')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">BIO RESET</button>
+                <button onclick="startAudit('mental')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">MENTAL RESET</button>
+                <button onclick="startAudit('execution')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">EXEC RESET</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+/* --- MVS Engine --- */
+function renderMVS() {
+    const v = document.getElementById('view');
+    v.innerHTML = `
+    <div class="glass p-6 max-w-2xl mx-auto fade-in">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-bold">Minimum Viable Steps</h2>
+            <button onclick="addMVS(prompt('Enter a tiny step:'))" class="btn px-4 py-2 text-xs rounded-lg">+ Add Step</button>
+        </div>
+        <div class="space-y-3">
+            ${state.mvsList.length === 0 ? '<p class="text-center opacity-40 text-sm">No active steps. System suggests: Drink water.</p>' : ''}
+            ${state.mvsList.map(m => `
+                <div class="flex justify-between items-center glass p-4 ${m.completed ? 'opacity-40' : ''}">
+                    <span class="${m.completed ? 'line-through' : ''} cursor-pointer select-none" onclick="toggleMVS(${m.id})">${m.task}</span>
+                    <button onclick="deleteMVS(${m.id})" class="text-red-400 hover:text-red-300 px-2">&times;</button>
                 </div>
             `).join('')}
         </div>
-        `;
-
-    }
-
-    else if(state.tab === 'anchor'){
-        nextFullAnchor();
-    }
-
-    else if(state.tab === 'terminal'){
-        v.innerHTML = `
-        <div class="terminal p-4 rounded-xl">
-            <div id="output" class="h-40 overflow-y-auto text-xs"></div>
-            <input id="cmd" class="w-full mt-2 bg-black outline-none"
-            onkeydown="handleCmd(event)">
-        </div>`;
-    }
-
-    else {
-        v.innerHTML = `
-        <div class="glass p-4">
-            System stable. Pilot active.
-        </div>`;
-    }
-
+    </div>`;
 }
 
-/* =========================
-📖 OPEN CHAPTER
-========================= */
+function addMVS(task) {
+    if (!task) return;
+    state.mvsList.push({ id: Date.now(), task, completed: false });
+    if(state.tab === 'mvs') renderMVS();
+}
+function toggleMVS(id) {
+    const m = state.mvsList.find(x => x.id === id);
+    if (!m) return;
+    m.completed = !m.completed;
+    if (m.completed) { state.integrity += 3; updateScore('mvs_complete'); }
+    if(state.tab === 'mvs') renderMVS();
+}
+function deleteMVS(id) {
+    state.mvsList = state.mvsList.filter(x => x.id !== id);
+    if(state.tab === 'mvs') renderMVS();
+}
 
-function openChapter(i){
-
-    const ch = FULL_BOOK[i];
-
-    document.getElementById('cockpit-main').innerHTML = `
-        <div class="glass p-6 max-h-[60vh] overflow-y-auto">
-            <h2 class="text-lg mb-4">${ch.title}</h2>
-            <p class="opacity-80">${ch.content}</p>
+/* --- Terminal --- */
+function renderTerminal() {
+    return `
+    <div class="terminal p-6 rounded-xl h-[60vh] flex flex-col fade-in">
+        <div id="output" class="flex-1 overflow-y-auto mb-4 text-sm opacity-90 space-y-1">
+            <div>> System Terminal Online. Type /help for commands.</div>
         </div>
-    `;
+        <input id="cmd" class="w-full bg-transparent border-t border-green-900 pt-4 outline-none text-green-400" placeholder="> Enter command..." onkeydown="handleCmd(event)">
+    </div>`;
 }
 
-/* =========================
-🔌 OVERRIDE MAIN RENDER
-========================= */
-
-const oldRender4 = render;
-
-render = function(){
-    renderCockpit();
-};
-
-</script><script>
-
-/* =========================
-🖥 ADVANCED TERMINAL ENGINE
-========================= */
-
-function log(msg){
-    const out = document.getElementById('output');
-    if(!out) return;
-    out.innerHTML += `<div>> ${msg}</div>`;
-    out.scrollTop = out.scrollHeight;
-}
-
-/* =========================
-⌨️ COMMAND HANDLER
-========================= */
-
-const oldCmd = handleCmd;
-
-handleCmd = function(e){
-
-    if(e.key !== "Enter") return;
-
+function handleCmd(e) {
+    if (e.key !== "Enter") return;
     const val = e.target.value.trim();
-    log(val);
-
+    if (!val) return;
+    
+    log("> " + val);
     const args = val.split(" ");
     const cmd = args[0];
 
-    switch(cmd){
-
+    switch(cmd) {
         case "/help":
-            log("Commands:");
-            log("/wave [0-100]");
-            log("/state");
-            log("/storm");
-            log("/anchor");
-            log("/reset");
-            log("/mvs");
-            break;
-
+            log("Commands: /wave [0-100], /audit, /mvs, /fox [task], /anchor, /truth, /clear"); break;
         case "/wave":
             const w = parseInt(args[1]);
-            if(!isNaN(w)){
-                state.wave = Math.max(0, Math.min(100, w));
-                log("Wave set to " + state.wave);
-                render();
-            }
+            if (!isNaN(w)) { state.wave = Math.max(0, Math.min(100, w)); log("Wave set to " + state.wave); render(); }
             break;
-
-        case "/state":
-            log("Wave: " + state.wave);
-            log("Integrity: " + state.integrity);
-            break;
-
-        case "/storm":
-            const s = getStormState();
-            log(s.name + " — " + s.desc);
-            break;
-
+        case "/audit": switchTab('base'); break;
+        case "/mvs": switchTab('mvs'); break;
+        case "/fox": state.fox = args.slice(1).join(" "); log("Fox locked: " + state.fox); break;
         case "/anchor":
-            switchTab('anchor');
-            break;
-
-        case "/reset":
-            state.wave = 70;
-            state.integrity = 60;
-            log("System reset to baseline.");
-            render();
-            break;
-
-        case "/mvs":
-            log("Minimum Viable Shift:");
-            log("→ Stand up");
-            log("→ Move body 10 seconds");
-            log("→ Do 1 tiny task");
-            break;
-
-        default:
-            log("Unknown command. Try /help");
+        case "/truth": switchTab('anchor'); break;
+        case "/clear": document.getElementById('output').innerHTML = ''; break;
+        default: log("Unknown command.");
     }
-
     e.target.value = "";
-
-};
-
-</script><script>
-
-/* =========================
-🧠 MEMORY SHIELD SYSTEM
-========================= */
-
-let memory = JSON.parse(localStorage.getItem("memory") || "[]");
-
-/* SAVE */
-function saveMemory(){
-    localStorage.setItem("memory", JSON.stringify(memory));
 }
 
-/* ADD ITEM */
-function addMemory(){
-
-    const input = document.getElementById("memory-input");
-    const val = input.value.trim();
-
-    if(!val) return;
-
-    memory.push({
-        text: val,
-        time: new Date().toLocaleTimeString()
-    });
-
-    input.value = "";
-    saveMemory();
-    renderMemory();
+function log(msg) {
+    const out = document.getElementById('output');
+    if (out) { out.innerHTML += `<div>${msg}</div>`; out.scrollTop = out.scrollHeight; }
 }
 
-/* DELETE ITEM */
-function deleteMemory(i){
-    memory.splice(i,1);
-    saveMemory();
-    renderMemory();
-}
-
-/* RENDER */
-function renderMemory(){
-
-    const v = document.getElementById("cockpit-main");
-
+/* --- Book Engine --- */
+let chapterIndex = 0;
+function renderBook() {
+    const v = document.getElementById('view');
     v.innerHTML = `
-    <div class="space-y-4">
-
-        <div class="glass p-4">
-            <p class="text-xs opacity-40 mb-2">Memory Shield</p>
-
-            <div class="flex gap-2">
-                <input id="memory-input" 
-                class="flex-1 bg-black p-2 text-sm outline-none"
-                placeholder="Dump thought...">
-
-                <button onclick="addMemory()" 
-                class="bg-indigo-500 px-3 text-xs rounded">
-                    ADD
-                </button>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 fade-in h-[60vh]">
+        <div class="glass p-4 overflow-y-auto hidden md:block">
+            <h3 class="text-xs uppercase tracking-widest opacity-50 mb-4">Index</h3>
+            ${FULL_BOOK.map((c, i) => `<button class="block w-full text-left text-xs py-2 opacity-60 hover:opacity-100 ${i === chapterIndex ? 'text-indigo-400 opacity-100 font-bold' : ''}" onclick="loadChapter(${i})">${c.title}</button>`).join('')}
+        </div>
+        <div class="glass p-8 md:col-span-3 overflow-y-auto relative">
+            <h2 class="text-2xl font-bold mb-6">${FULL_BOOK[chapterIndex].title}</h2>
+            <p class="opacity-80 leading-relaxed whitespace-pre-line text-sm md:text-base">${FULL_BOOK[chapterIndex].content}</p>
+            <div class="flex justify-between mt-10">
+                <button onclick="loadChapter(${chapterIndex - 1})" class="btn px-4 py-2 text-xs rounded">&larr; Prev</button>
+                <button onclick="openReaderMode()" class="btn px-4 py-2 text-xs rounded border-indigo-500">Immersive Mode</button>
+                <button onclick="loadChapter(${chapterIndex + 1})" class="btn px-4 py-2 text-xs rounded">Next &rarr;</button>
             </div>
         </div>
-
-        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
-            ${memory.map((m,i)=>`
-                <div class="glass p-3 flex justify-between items-center">
-                    <div>
-                        <p class="text-sm">${m.text}</p>
-                        <p class="text-xs opacity-40">${m.time}</p>
-                    </div>
-                    <button onclick="deleteMemory(${i})" 
-                    class="text-red-400 text-xs">X</button>
-                </div>
-            `).join('')}
-        </div>
-
-    </div>
-    `;
+    </div>`;
 }
 
-/* =========================
-🔌 ADD TO NAV
-========================= */
-
-const oldCockpitContent = renderCockpitContent;
-
-renderCockpitContent = function(){
-
-    if(state.tab === "memory"){
-        renderMemory();
-    } else {
-        oldCockpitContent();
-    }
-
-};
-
-/* =========================
-🧭 ADD NAV BUTTON
-========================= */
-
-const oldCockpit = renderCockpit;
-
-renderCockpit = function(){
-
-    oldCockpit();
-
-    const nav = document.querySelector(".glass");
-
-    if(nav && !document.getElementById("memory-btn")){
-        const btn = document.createElement("button");
-        btn.innerText = "MEMORY";
-        btn.id = "memory-btn";
-        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
-        btn.onclick = () => {
-            state.tab = "memory";
-            render();
-        };
-        nav.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-📊 DAILY LEDGER SYSTEM
-========================= */
-
-let ledger = JSON.parse(localStorage.getItem("ledger") || "[]");
-
-/* SAVE */
-function saveLedger(){
-    localStorage.setItem("ledger", JSON.stringify(ledger));
+function loadChapter(i) {
+    if (i < 0) i = FULL_BOOK.length - 1;
+    if (i >= FULL_BOOK.length) i = 0;
+    chapterIndex = i;
+    if(state.tab === 'book') renderBook();
 }
 
-/* ADD WIN */
-function addWin(){
-
-    const input = document.getElementById("win-input");
-    const val = input.value.trim();
-
-    if(!val) return;
-
-    ledger.unshift({
-        text: val,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
-    });
-
-    input.value = "";
-    saveLedger();
-    renderLedger();
-}
-
-/* DELETE */
-function deleteWin(i){
-    ledger.splice(i,1);
-    saveLedger();
-    renderLedger();
-}
-
-/* RENDER */
-function renderLedger(){
-
-    const v = document.getElementById("cockpit-main");
-
-    v.innerHTML = `
-    <div class="space-y-4">
-
-        <div class="glass p-4">
-            <p class="text-xs opacity-40 mb-2">Daily Ledger</p>
-
-            <div class="flex gap-2">
-                <input id="win-input" 
-                class="flex-1 bg-black p-2 text-sm outline-none"
-                placeholder="Log a win (even tiny)...">
-
-                <button onclick="addWin()" 
-                class="bg-green-500 px-3 text-xs rounded">
-                    LOG
-                </button>
-            </div>
-        </div>
-
-        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
-            ${ledger.map((w,i)=>`
-                <div class="glass p-3 flex justify-between items-center">
-                    <div>
-                        <p class="text-sm">${w.text}</p>
-                        <p class="text-xs opacity-40">${w.date} • ${w.time}</p>
-                    </div>
-                    <button onclick="deleteWin(${i})" 
-                    class="text-red-400 text-xs">X</button>
-                </div>
-            `).join('')}
-        </div>
-
-    </div>
-    `;
-}
-
-/* =========================
-🔌 ADD TO NAV
-========================= */
-
-const oldCockpitContent2 = renderCockpitContent;
-
-renderCockpitContent = function(){
-
-    if(state.tab === "ledger"){
-        renderLedger();
-    } else {
-        oldCockpitContent2();
-    }
-
-};
-
-/* =========================
-🧭 NAV BUTTON
-========================= */
-
-const oldCockpit2 = renderCockpit;
-
-renderCockpit = function(){
-
-    oldCockpit2();
-
-    const nav = document.querySelector(".glass");
-
-    if(nav && !document.getElementById("ledger-btn")){
-        const btn = document.createElement("button");
-        btn.innerText = "LEDGER";
-        btn.id = "ledger-btn";
-        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
-        btn.onclick = () => {
-            state.tab = "ledger";
-            render();
-        };
-        nav.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-⚡ MVS ENGINE (MICRO ACTIONS)
-========================= */
-
-function getMVS(){
-
-    const s = getStormState().name;
-
-    const MVS_MAP = {
-
-        "White Fog":[
-            "Touch something cold",
-            "Say your name out loud",
-            "Look around and name 5 objects"
-        ],
-
-        "Blue Gravity":[
-            "Stand up",
-            "Walk 10 steps",
-            "Drink water"
-        ],
-
-        "Purple Pulse":[
-            "Breathe in 4 seconds",
-            "Hold 4 seconds",
-            "Exhale slowly"
-        ],
-
-        "Yellow Static":[
-            "Pick 1 task only",
-            "Set 2 minute timer",
-            "Start without finishing"
-        ],
-
-        "Red Heat":[
-            "Splash cold water",
-            "Step away from people",
-            "Wait 90 seconds"
-        ],
-
-        "Green Flow":[
-            "Continue current task",
-            "Stack next step",
-            "Capture progress"
-        ]
-
-    };
-
-    const list = MVS_MAP[s] || ["Take one small step"];
-
-    return list[Math.floor(Math.random() * list.length)];
-}
-
-/* =========================
-🎯 RENDER MVS PANEL
-========================= */
-
-function renderMVS(){
-
-    const v = document.getElementById("cockpit-main");
-
-    const action = getMVS();
-
-    v.innerHTML = `
-    <div class="glass p-6 text-center">
-
-        <p class="text-xs opacity-40 mb-2">MVS Protocol</p>
-
-        <p class="text-lg mb-4">${action}</p>
-
-        <button onclick="renderMVS()" 
-        class="bg-indigo-500 px-4 py-2 rounded text-xs">
-            New Action
-        </button>
-
-    </div>
-    `;
-}
-
-/* =========================
-🔌 HOOK INTO NAV
-========================= */
-
-const oldCockpitContent3 = renderCockpitContent;
-
-renderCockpitContent = function(){
-
-    if(state.tab === "mvs"){
-        renderMVS();
-    } else {
-        oldCockpitContent3();
-    }
-
-};
-
-/* =========================
-🧭 ADD NAV BUTTON
-========================= */
-
-const oldCockpit3 = renderCockpit;
-
-renderCockpit = function(){
-
-    oldCockpit3();
-
-    const nav = document.querySelector(".glass");
-
-    if(nav && !document.getElementById("mvs-btn")){
-        const btn = document.createElement("button");
-        btn.innerText = "MVS";
-        btn.id = "mvs-btn";
-        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
-        btn.onclick = () => {
-            state.tab = "mvs";
-            render();
-        };
-        nav.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-⛔ 10/20 BRAKES SYSTEM
-========================= */
-
-let brakeStart = null;
-let brakeMode = null;
-
-/* START TRACKING */
-function startBrake(mode){
-
-    brakeMode = mode; // "mental" or "physical"
-    brakeStart = Date.now();
-
-    renderBrakes();
-}
-
-/* RESET */
-function resetBrake(){
-    brakeStart = null;
-    brakeMode = null;
-    renderBrakes();
-}
-
-/* TIMER */
-function getElapsed(){
-    if(!brakeStart) return 0;
-    return Math.floor((Date.now() - brakeStart)/1000);
-}
-
-/* RENDER */
-function renderBrakes(){
-
-    const v = document.getElementById("cockpit-main");
-
-    if(!brakeStart){
-
-        v.innerHTML = `
-        <div class="glass p-6 text-center">
-
-            <p class="text-xs opacity-40 mb-4">10 / 20 Brakes</p>
-
-            <button onclick="startBrake('mental')" 
-            class="bg-purple-500 px-4 py-2 rounded text-xs m-2">
-                Start Mental Loop (10)
-            </button>
-
-            <button onclick="startBrake('physical')" 
-            class="bg-yellow-500 px-4 py-2 rounded text-xs m-2">
-                Start Stuck (20)
-            </button>
-
-        </div>
-        `;
-
-    } else {
-
-        const sec = getElapsed();
-
-        let trigger = (brakeMode === "mental") ? 600 : 1200;
-
-        let message = "Tracking...";
-
-        if(sec >= trigger){
-            message = brakeMode === "mental"
-                ? "⚠ CHANGE BODY NOW (cold water / movement)"
-                : "⚠ CHANGE LOCATION NOW (move rooms)";
-        }
-
-        v.innerHTML = `
-        <div class="glass p-6 text-center">
-
-            <p class="text-xs opacity-40">${brakeMode.toUpperCase()} TRACK</p>
-
-            <p class="text-2xl mb-4">${sec}s</p>
-
-            <p class="mb-4">${message}</p>
-
-            <button onclick="resetBrake()" 
-            class="bg-red-500 px-4 py-2 rounded text-xs">
-                RESET
-            </button>
-
-        </div>
-        `;
-    }
-}
-
-/* LOOP UPDATE */
-setInterval(()=>{
-    if(state.tab === "brakes" && brakeStart){
-        renderBrakes();
-    }
-},1000);
-
-/* =========================
-🔌 HOOK INTO NAV
-========================= */
-
-const oldCockpitContent4 = renderCockpitContent;
-
-renderCockpitContent = function(){
-
-    if(state.tab === "brakes"){
-        renderBrakes();
-    } else {
-        oldCockpitContent4();
-    }
-
-};
-
-/* =========================
-🧭 NAV BUTTON
-========================= */
-
-const oldCockpit4 = renderCockpit;
-
-renderCockpit = function(){
-
-    oldCockpit4();
-
-    const nav = document.querySelector(".glass");
-
-    if(nav && !document.getElementById("brakes-btn")){
-        const btn = document.createElement("button");
-        btn.innerText = "BRAKES";
-        btn.id = "brakes-btn";
-        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
-        btn.onclick = () => {
-            state.tab = "brakes";
-            render();
-        };
-        nav.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🌙 SANCTUARY MODE SYSTEM
-========================= */
-
-function enableSanctuary(){
-
-    document.body.classList.add("sanctuary");
-
-    document.body.style.background = "#050508";
-    document.body.style.color = "#d4d4d8";
-
-    document.querySelectorAll('.glass').forEach(el=>{
-        el.style.background = "rgba(120,120,255,0.05)";
-        el.style.border = "1px solid rgba(255,255,255,0.05)";
-    });
-
-}
-
-/* DISABLE */
-function disableSanctuary(){
-
-    document.body.classList.remove("sanctuary");
-
-    document.body.style.background = "#0a0a0a";
-    document.body.style.color = "white";
-
-    document.querySelectorAll('.glass').forEach(el=>{
-        el.style.background = "rgba(255,255,255,0.05)";
-        el.style.border = "1px solid rgba(255,255,255,0.08)";
-    });
-
-}
-
-/* TOGGLE */
-function toggleSanctuary(){
-
-    state.sanctuary = !state.sanctuary;
-
-    if(state.sanctuary){
-        enableSanctuary();
-    } else {
-        disableSanctuary();
-    }
-
-}
-
-/* =========================
-🧠 AUTO MODE BASED ON STATE
-========================= */
-
-function autoSanctuary(){
-
-    const s = getStormState().name;
-
-    if(s === "Red Heat" || s === "White Fog"){
-        enableSanctuary();
-    }
-
-}
-
-setInterval(autoSanctuary, 3000);
-
-/* =========================
-🎛 ADD BUTTON TO BASE VIEW
-========================= */
-
-const oldRender5 = render;
-
-render = function(){
-
-    oldRender5();
-
-    const btn = document.createElement("button");
-
-    btn.innerText = state.sanctuary 
-        ? "Exit Sanctuary" 
-        : "Enter Sanctuary";
-
-    btn.className = "glass p-3 mt-4 text-xs";
-
-    btn.onclick = toggleSanctuary;
-
-    const main = document.querySelector("#cockpit-main");
-
-    if(main && !document.getElementById("sanctuary-btn")){
-        btn.id = "sanctuary-btn";
-        main.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🎞 MICRO ANIMATION TRIGGERS
-========================= */
-
-function animateView(){
-
-    const el = document.getElementById('view');
-
-    if(!el) return;
-
-    el.classList.remove('fade-in');
-
-    setTimeout(()=>{
-        el.classList.add('fade-in');
-    },10);
-}
-
-/* Hook into render */
-const oldRender6 = render;
-
-render = function(){
-    oldRender6();
-    animateView();
-};
-
-/* =========================
-✨ BUTTON RIPPLE EFFECT
-========================= */
-
-document.addEventListener('click', function(e){
-
-    if(e.target.tagName === "BUTTON"){
-
-        const ripple = document.createElement("span");
-
-        ripple.style.position = "absolute";
-        ripple.style.width = "10px";
-        ripple.style.height = "10px";
-        ripple.style.background = "rgba(255,255,255,0.4)";
-        ripple.style.borderRadius = "50%";
-        ripple.style.pointerEvents = "none";
-
-        ripple.style.left = "50%";
-        ripple.style.top = "50%";
-        ripple.style.transform = "translate(-50%, -50%) scale(1)";
-
-        ripple.style.animation = "ripple .5s ease-out";
-
-        e.target.appendChild(ripple);
-
-        setTimeout(()=> ripple.remove(), 500);
-    }
-
-});
-
-/* Ripple animation */
-const style = document.createElement("style");
-style.innerHTML = `
-@keyframes ripple {
-    from {transform: translate(-50%, -50%) scale(0); opacity:1}
-    to {transform: translate(-50%, -50%) scale(6); opacity:0}
-}`;
-document.head.appendChild(style);
-
-</script><script>
-
-/* =========================
-🔊 SOUND ENGINE
-========================= */
-
-const sounds = {
-
-click: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"),
-
-calm: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-soft-bell-556.mp3"),
-
-alert: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3")
-
-};
-
-/* volume control */
-Object.values(sounds).forEach(s=>{
-    s.volume = 0.3;
-});
-
-/* =========================
-🖱 CLICK FEEDBACK
-========================= */
-
-document.addEventListener("click", e=>{
-    if(e.target.tagName === "BUTTON"){
-        sounds.click.currentTime = 0;
-        sounds.click.play();
-    }
-});
-
-/* =========================
-🌈 STATE SOUND RESPONSE
-========================= */
-
-let lastState = null;
-
-function playStateSound(){
-
-    const s = getStormState().name;
-
-    if(s === lastState) return;
-
-    lastState = s;
-
-    if(s === "Red Heat"){
-        sounds.alert.play();
-    }
-
-    if(s === "Green Flow"){
-        sounds.calm.play();
-    }
-
-}
-
-setInterval(playStateSound, 2000);
-
-/* =========================
-🔕 MUTE TOGGLE
-========================= */
-
-let muted = false;
-
-function toggleSound(){
-
-    muted = !muted;
-
-    Object.values(sounds).forEach(s=>{
-        s.muted = muted;
-    });
-
-}
-
-/* =========================
-🎛 ADD BUTTON
-========================= */
-
-const oldRender7 = render;
-
-render = function(){
-
-    oldRender7();
-
-    const btn = document.createElement("button");
-
-    btn.innerText = muted ? "Sound OFF" : "Sound ON";
-    btn.className = "glass p-2 text-xs mt-2";
-    btn.onclick = toggleSound;
-
-    const main = document.querySelector("#cockpit-main");
-
-    if(main && !document.getElementById("sound-btn")){
-        btn.id = "sound-btn";
-        main.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-💾 EXPORT SYSTEM
-========================= */
-
-function exportData(){
-
-    const data = {
-        memory: memory || [],
-        ledger: ledger || [],
-        timestamp: new Date().toISOString()
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json"
-    });
-
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "pilot-system-backup.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
-
-/* =========================
-📥 IMPORT SYSTEM
-========================= */
-
-function importData(e){
-
-    const file = e.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(event){
-
-        try{
-            const data = JSON.parse(event.target.result);
-
-            if(data.memory) memory = data.memory;
-            if(data.ledger) ledger = data.ledger;
-
-            localStorage.setItem("memory", JSON.stringify(memory));
-            localStorage.setItem("ledger", JSON.stringify(ledger));
-
-            alert("System restored successfully.");
-
-            render();
-
-        }catch(err){
-            alert("Invalid file.");
-        }
-
-    };
-
-    reader.readAsText(file);
-}
-
-/* =========================
-🎛 ADD UI BUTTONS
-========================= */
-
-const oldRender8 = render;
-
-render = function(){
-
-    oldRender8();
-
-    const main = document.querySelector("#cockpit-main");
-
-    if(main && !document.getElementById("export-btn")){
-
-        const wrap = document.createElement("div");
-        wrap.className = "mt-4 flex gap-2";
-
-        const exportBtn = document.createElement("button");
-        exportBtn.innerText = "Export Data";
-        exportBtn.className = "glass p-2 text-xs";
-        exportBtn.onclick = exportData;
-
-        const importBtn = document.createElement("label");
-        importBtn.innerText = "Import Data";
-        importBtn.className = "glass p-2 text-xs cursor-pointer";
-
-        const input = document.createElement("input");
-        input.type = "file";
-        input.style.display = "none";
-        input.onchange = importData;
-
-        importBtn.appendChild(input);
-
-        wrap.appendChild(exportBtn);
-        wrap.appendChild(importBtn);
-
-        wrap.id = "export-btn";
-
-        main.appendChild(wrap);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🧠 INTELLIGENCE ENGINE
-========================= */
-
-function getSystemSuggestion(){
-
-    const storm = getStormState().name;
-
-    /* MEMORY PRESSURE */
-    const memLoad = memory.length;
-
-    /* LOW WINS */
-    const lowWins = ledger.length < 3;
-
-    /* =========================
-    DECISION TREE
-    ========================= */
-
-    if(storm === "White Fog"){
-        return {
-            type:"ground",
-            text:"You are in White Fog. Use Sensory Override → cold water or 5-4-3-2-1."
-        };
-    }
-
-    if(storm === "Red Heat"){
-        return {
-            type:"cool",
-            text:"Red Heat detected. Do nothing. Wait 90 seconds. Step away."
-        };
-    }
-
-    if(storm === "Purple Pulse"){
-        return {
-            type:"calm",
-            text:"Anxiety spike. Breathe 4-4-6. Do not engage thoughts."
-        };
-    }
-
-    if(storm === "Yellow Static"){
-        return {
-            type:"focus",
-            text:"Too many signals. Pick ONE task. Start 2 minutes only."
-        };
-    }
-
-    if(storm === "Blue Gravity"){
-        return {
-            type:"move",
-            text:"Low energy. Stand up. Move body 10 seconds."
-        };
-    }
-
-    if(storm === "Green Flow" && lowWins){
-        return {
-            type:"build",
-            text:"You are stable. Log a win to build momentum."
-        };
-    }
-
-    if(memLoad > 10){
-        return {
-            type:"clear",
-            text:"Memory load high. Offload or delete one item."
-        };
-    }
-
-    return {
-        type:"maintain",
-        text:"Maintain current course. Continue forward."
-    };
-
-}
-
-/* =========================
-🧠 RENDER PANEL
-========================= */
-
-function renderIntel(){
-
-    const v = document.getElementById("cockpit-main");
-
-    const s = getSystemSuggestion();
-
-    v.innerHTML = `
-    <div class="glass p-6 text-center soft-glow">
-
-        <p class="text-xs opacity-40 mb-2">Architect Guidance</p>
-
-        <p class="text-lg">${s.text}</p>
-
-        <button onclick="renderIntel()" 
-        class="mt-4 bg-indigo-500 px-4 py-2 rounded text-xs">
-            Re-evaluate
-        </button>
-
-    </div>
-    `;
-}
-
-/* =========================
-🔌 HOOK INTO NAV
-========================= */
-
-const oldCockpitContent5 = renderCockpitContent;
-
-renderCockpitContent = function(){
-
-    if(state.tab === "intel"){
-        renderIntel();
-    } else {
-        oldCockpitContent5();
-    }
-
-};
-
-/* =========================
-🧭 NAV BUTTON
-========================= */
-
-const oldCockpit5 = renderCockpit;
-
-renderCockpit = function(){
-
-    oldCockpit5();
-
-    const nav = document.querySelector(".glass");
-
-    if(nav && !document.getElementById("intel-btn")){
-        const btn = document.createElement("button");
-        btn.innerText = "INTEL";
-        btn.id = "intel-btn";
-        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
-        btn.onclick = () => {
-            state.tab = "intel";
-            render();
-        };
-        nav.appendChild(btn);
-    }
-
-};
-
-/* =========================
-🤖 AUTO SUGGEST (PASSIVE)
-========================= */
-
-setInterval(()=>{
-
-    if(state.tab === "base"){
-
-        const suggestion = getSystemSuggestion();
-
-        const indicator = document.getElementById("storm-indicator");
-
-        if(indicator){
-            indicator.innerHTML += `
-            <div class="mt-2 text-xs opacity-60">
-                ${suggestion.text}
-            </div>`;
-        }
-
-    }
-
-},5000);
-
-</script><script>
-
-/* =========================
-🧠 GOD MODE ENGINE
-========================= */
-
-let godMode = true;
-
-/* =========================
-🌈 AUTO RESPONSE SYSTEM
-========================= */
-
-function godModeLoop(){
-
-    if(!godMode) return;
-
-    const storm = getStormState().name;
-
-    /* =========================
-    RED HEAT
-    ========================= */
-    if(storm === "Red Heat"){
-
-        enableSanctuary();
-
-        showOverlay("RED HEAT — STOP. BREATHE. DO NOTHING.");
-
-        playQuickAction(()=>{
-            sounds.alert.play();
-        });
-
-    }
-
-    /* =========================
-    WHITE FOG
-    ========================= */
-    if(storm === "White Fog"){
-
-        enableSanctuary();
-
-        showOverlay("WHITE FOG — GROUND YOUR BODY NOW");
-
-        triggerMVS("Touch something cold");
-
-    }
-
-    /* =========================
-    PURPLE PULSE
-    ========================= */
-    if(storm === "Purple Pulse"){
-
-        showOverlay("ANXIETY — 4-4-6 BREATH");
-
-    }
-
-    /* =========================
-    YELLOW STATIC
-    ========================= */
-    if(storm === "Yellow Static"){
-
-        triggerMVS("Pick ONE task. 2 minutes.");
-
-    }
-
-    /* =========================
-    BLUE GRAVITY
-    ========================= */
-    if(storm === "Blue Gravity"){
-
-        triggerMVS("Stand up. Move body.");
-
-    }
-
-    /* =========================
-    GREEN FLOW
-    ========================= */
-    if(storm === "Green Flow"){
-
-        autoLogWin();
-
-    }
-
-    /* =========================
-    MEMORY PRESSURE
-    ========================= */
-    if(memory.length > 12){
-
-        memory.pop();
-
-        showOverlay("Memory cleared to reduce load");
-
-        saveMemory();
-    }
-
-}
-
-/* =========================
-⚡ QUICK ACTION WRAPPER
-========================= */
-
-function playQuickAction(fn){
-    try { fn(); } catch(e){}
-}
-
-/* =========================
-🪟 OVERLAY SYSTEM
-========================= */
-
-function showOverlay(text){
-
-    let existing = document.getElementById("god-overlay");
-    if(existing) existing.remove();
-
-    const overlay = document.createElement("div");
-
-    overlay.id = "god-overlay";
-
-    overlay.style.position = "fixed";
-    overlay.style.bottom = "20px";
-    overlay.style.left = "50%";
-    overlay.style.transform = "translateX(-50%)";
-    overlay.style.background = "rgba(0,0,0,0.8)";
-    overlay.style.color = "white";
-    overlay.style.padding = "10px 20px";
-    overlay.style.borderRadius = "12px";
-    overlay.style.zIndex = "9999";
-    overlay.style.fontSize = "12px";
-
-    overlay.innerText = text;
-
+function openReaderMode() {
+    const ch = FULL_BOOK[chapterIndex];
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 bg-[#050508] z-[9999] p-10 overflow-y-auto fade-in flex justify-center";
+    overlay.innerHTML = `
+        <div class="max-w-2xl w-full">
+            <button onclick="this.parentElement.parentElement.remove()" class="mb-10 opacity-50 hover:opacity-100 tracking-widest text-xs uppercase">&larr; Exit Reader</button>
+            <h2 class="text-3xl font-light mb-8">${ch.title}</h2>
+            <p class="opacity-80 leading-loose text-lg whitespace-pre-line">${ch.content}</p>
+        </div>`;
     document.body.appendChild(overlay);
-
-    setTimeout(()=>{
-        overlay.remove();
-    },3000);
-
 }
 
-/* =========================
-🧠 AUTO MVS TRIGGER
-========================= */
-
-function triggerMVS(text){
-
-    const v = document.getElementById("cockpit-main");
-
-    if(!v) return;
-
+/* --- Anchor & Identity Engine --- */
+function renderAnchor() {
+    const v = document.getElementById('view');
+    // Filter anchors by current system state color, fallback to blue
+    const activeAnchors = SCRIPTURE_ENGINE.filter(a => a.color === state.color) || SCRIPTURE_ENGINE.filter(a => a.color === 'blue');
+    const a = activeAnchors[Math.floor(Math.random() * activeAnchors.length)];
+    
     v.innerHTML = `
-    <div class="glass p-6 text-center pulse">
+    <div class="glass p-10 text-center fade-in max-w-2xl mx-auto mt-10 glow-${state.color}">
+        <p class="text-xs uppercase opacity-40 mb-2 tracking-widest">${a.category} Anchor</p>
+        <p class="text-red-400 mb-6 italic text-sm">Lie: "${a.lie}"</p>
+        <p class="text-2xl font-light text-indigo-300 mb-6 leading-relaxed">"${a.truth}"</p>
+        <p class="text-xs opacity-50 mb-10">${a.verse}</p>
+        
+        <div class="flex justify-center gap-4">
+            <button onclick="renderAnchor()" class="btn px-6 py-3 rounded-xl text-xs font-bold tracking-widest">NEXT TRUTH</button>
+            <button onclick="truthOverride()" class="btn px-6 py-3 rounded-xl text-xs font-bold tracking-widest bg-white/5 border-red-500/50 hover:bg-red-900/20">FORCE OVERRIDE</button>
+        </div>
+    </div>`;
+}
 
-        <p class="text-xs opacity-40 mb-2">AUTO ACTION</p>
-
-        <p>${text}</p>
-
-    </div>
+function truthOverride() {
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center p-10 text-center fade-in overflow-y-auto";
+    const identityTruths = SCRIPTURE_ENGINE.filter(a => a.category === "Identity");
+    overlay.innerHTML = `
+        <h2 class="text-xs uppercase tracking-widest opacity-50 mb-10 text-red-500">System Override Initiated</h2>
+        <div class="max-w-xl space-y-6">
+            ${identityTruths.map(a => `<p class="text-lg opacity-90">${a.truth}</p>`).join('')}
+        </div>
+        <button onclick="this.parentElement.remove()" class="mt-12 btn px-8 py-3 rounded-full text-xs">Acknowledge</button>
     `;
-
+    document.body.appendChild(overlay);
+    updateScore('anchor_used');
 }
 
-/* =========================
-📊 AUTO WIN LOG
-========================= */
+/* ==========================================================================
+   🛠️ MODULES & OVERLAYS
+   ========================================================================== */
 
-function autoLogWin(){
-
-    if(Math.random() > 0.95){
-
-        ledger.push("Maintained system stability");
-
-        localStorage.setItem("ledger", JSON.stringify(ledger));
-
-    }
-
+/* --- Audit Engine --- */
+let auditState = { active: false, type: null, step: 0 };
+function startAudit(type) {
+    auditState = { active: true, type, step: 0 };
+    renderAuditOverlay();
 }
-
-/* =========================
-🔁 LOOP
-========================= */
-
-setInterval(godModeLoop, 4000);
-
-/* =========================
-🎛 TOGGLE BUTTON
-========================= */
-
-function toggleGodMode(){
-    godMode = !godMode;
-}
-
-/* =========================
-🧭 ADD BUTTON
-========================= */
-
-const oldRender9 = render;
-
-render = function(){
-
-    oldRender9();
-
-    const main = document.querySelector("#cockpit-main");
-
-    if(main && !document.getElementById("god-btn")){
-
-        const btn = document.createElement("button");
-
-        btn.innerText = godMode ? "GOD MODE ON" : "GOD MODE OFF";
-
-        btn.className = "glass p-2 text-xs mt-2";
-
-        btn.onclick = ()=>{
-            toggleGodMode();
-            render();
-        };
-
-        btn.id = "god-btn";
-
-        main.appendChild(btn);
-    }
-
-};
-
-</script><script>
-
-/* =========================
-🚨 PANIC BUTTON
-========================= */
-
-function panicMode(){
-
-    enableSanctuary();
-
-    showOverlay("PAUSE. YOU ARE SAFE. BREATHE.");
-
-    triggerMVS("Cold water or hold something solid.");
-
-    sounds.calm.play();
-
-    state.tab = "anchor";
+function nextAudit() { auditState.step++; renderAuditOverlay(); }
+function endAudit() {
+    document.getElementById('audit-overlay').remove();
+    auditState.active = false;
+    state.integrity += 10;
+    updateScore('mvs_complete');
     render();
 }
+function renderAuditOverlay() {
+    let overlay = document.getElementById('audit-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = "audit-overlay";
+        overlay.className = "fixed inset-0 bg-black/95 z-[10000] flex flex-col items-center justify-center p-10 text-center fade-in";
+        document.body.appendChild(overlay);
+    }
+    const data = AUDITS[auditState.type];
+    const stepTxt = data.steps[auditState.step];
+    const isLast = auditState.step === data.steps.length - 1;
 
-/* =========================
-🎛 ADD BUTTON (GLOBAL)
-========================= */
-
-function addPanicButton(){
-
-    if(document.getElementById("panic-btn")) return;
-
-    const btn = document.createElement("button");
-
-    btn.id = "panic-btn";
-
-    btn.innerText = "⚠ PANIC";
-
-    btn.style.position = "fixed";
-    btn.style.bottom = "20px";
-    btn.style.right = "20px";
-    btn.style.zIndex = "9999";
-
-    btn.style.background = "#ef4444";
-    btn.style.color = "white";
-    btn.style.padding = "12px 16px";
-    btn.style.borderRadius = "999px";
-    btn.style.fontSize = "12px";
-
-    btn.onclick = panicMode;
-
-    document.body.appendChild(btn);
+    overlay.innerHTML = `
+        <div class="text-xs tracking-[3px] opacity-40 mb-8 uppercase">${data.title} • Step ${auditState.step + 1}/${data.steps.length}</div>
+        <div class="text-3xl font-light mb-12 max-w-2xl leading-relaxed">${stepTxt}</div>
+        <button onclick="${isLast ? 'endAudit()' : 'nextAudit()'}" class="btn px-10 py-4 rounded-full text-xs tracking-widest">${isLast ? 'COMPLETE' : 'NEXT'}</button>
+        <div class="flex gap-2 mt-12">
+            ${data.steps.map((_, i) => `<div class="w-2 h-2 rounded-full ${i === auditState.step ? 'bg-indigo-500 shadow-[0_0_10px_#818cf8]' : 'bg-white/10'}"></div>`).join('')}
+        </div>
+    `;
 }
 
-/* INIT */
-addPanicButton();
+/* --- Gamification & Score --- */
+function updateScore(type) {
+    const map = { mvs_complete: 5, anchor_used: 3, fox_set: 4 };
+    state.score += map[type] || 1;
+    state.xp += 5;
+    if (state.xp > state.level * 50) {
+        state.level++;
+        state.xp = 0;
+        alert(`System Level Up: ${state.level}`);
+    }
+}
+function openIdentity() {
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 bg-black/90 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
+    overlay.innerHTML = `
+        <div class="glass p-10 max-w-md w-full text-center">
+            <h2 class="text-xl font-bold mb-6">System Identity</h2>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white/5 p-4 rounded"><p class="text-xs opacity-50 uppercase">Level</p><p class="text-2xl">${state.level}</p></div>
+                <div class="bg-white/5 p-4 rounded"><p class="text-xs opacity-50 uppercase">XP</p><p class="text-2xl">${state.xp}</p></div>
+            </div>
+            <p class="text-xs opacity-50 uppercase mb-2">Voice Personality</p>
+            <select class="w-full bg-black border border-white/20 p-3 rounded mb-8 text-sm outline-none" onchange="state.personality = this.value">
+                <option value="architect" ${state.personality==='architect'?'selected':''}>Architect</option>
+                <option value="coach" ${state.personality==='coach'?'selected':''}>Coach</option>
+                <option value="calm" ${state.personality==='calm'?'selected':''}>Calm</option>
+            </select>
+            <button onclick="this.parentElement.parentElement.remove()" class="btn w-full py-3 rounded">Close</button>
+        </div>`;
+    document.body.appendChild(overlay);
+}
+
+/* --- Analytics (Chart.js) --- */
+let chartInstance = null;
+function openAnalytics() {
+    const overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
+    overlay.innerHTML = `
+        <div class="glass p-6 w-full max-w-4xl relative">
+            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
+            <h2 class="mb-6 font-bold tracking-widest uppercase text-xs opacity-50">System Analytics</h2>
+            <canvas id="metricsChart" class="w-full h-64"></canvas>
+        </div>`;
+    document.body.appendChild(overlay);
+
+    setTimeout(() => {
+        const ctx = document.getElementById("metricsChart");
+        if(chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: state.metricsHistory.map(x => x.time),
+                datasets: [
+                    { label: 'Wave', data: state.metricsHistory.map(x => x.wave), borderColor: '#ef4444', tension: 0.3 },
+                    { label: 'Integrity', data: state.metricsHistory.map(x => x.integrity), borderColor: '#818cf8', tension: 0.3 }
+                ]
+            },
+            options: { responsive: true, color: 'rgba(255,255,255,0.5)', scales: { y: { beginAtZero: true, max: 100 } } }
+        });
+    }, 50);
+}
+
+/* --- Journal & Daily Fox --- */
+function openJournal() {
+    const overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
+    overlay.innerHTML = `
+        <div class="glass p-8 w-full max-w-2xl relative">
+            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
+            <h2 class="mb-4 font-bold tracking-widest uppercase text-xs opacity-50">System Journal</h2>
+            <textarea id="journalInput" class="w-full bg-black/50 border border-white/10 p-4 rounded h-32 outline-none resize-none mb-4 text-sm" placeholder="Dump mental cache here..."></textarea>
+            <button onclick="saveJournalEntry()" class="btn px-6 py-2 rounded text-xs">Commit Memory</button>
+            <div class="mt-8 space-y-3 max-h-60 overflow-y-auto" id="journalList">
+                ${renderJournalEntries()}
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+}
+function renderJournalEntries() {
+    return state.journal.map(j => `<div class="bg-white/5 p-4 rounded text-sm"><p class="text-xs opacity-40 mb-2">${j.time}</p><p>${j.text}</p></div>`).reverse().join('');
+}
+function saveJournalEntry() {
+    const input = document.getElementById('journalInput');
+    if(!input.value.trim()) return;
+    state.journal.push({ time: new Date().toLocaleString(), text: input.value });
+    document.getElementById('journalList').innerHTML = renderJournalEntries();
+    input.value = '';
+}
+
+function openDaily() {
+    const overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
+    overlay.innerHTML = `
+        <div class="glass p-8 w-full max-w-md text-center relative">
+            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
+            <h2 class="mb-6 font-bold tracking-widest uppercase text-xs opacity-50">Chase the Fox</h2>
+            <p class="text-sm opacity-80 mb-4">Set ONE high-impact target for today.</p>
+            <input id="foxInput" class="w-full bg-black/50 border border-white/10 p-3 rounded text-center outline-none mb-6" value="${state.daily.fox || ""}" placeholder="Target...">
+            <div class="flex justify-center gap-2">
+                <button onclick="lockFox()" class="btn px-6 py-2 rounded text-xs bg-indigo-500/20 text-indigo-300">Lock Target</button>
+                <button onclick="completeFox()" class="btn px-6 py-2 rounded text-xs bg-green-500/20 text-green-300">Mark Complete</button>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+}
+function lockFox() {
+    const input = document.getElementById('foxInput').value;
+    state.daily.fox = input;
+    updateScore('fox_set');
+    alert("Fox Locked: " + input);
+}
+function completeFox() {
+    state.daily.completed = true;
+    state.integrity += 10;
+    updateScore('mvs_complete');
+    alert("Target Neutralized. Integrity Restored.");
+}
+
+/* --- Panic Mode --- */
+function panicMode() {
+    state.wave = 90;
+    switchTab('anchor');
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 bg-red-900/90 z-[10000] flex flex-col items-center justify-center p-10 text-center";
+    overlay.innerHTML = `
+        <h1 class="text-5xl font-bold mb-4">STOP</h1>
+        <p class="text-xl mb-12">Do nothing. Breathe. You are safe.</p>
+        <button onclick="this.parentElement.remove(); startAudit('biological');" class="btn px-10 py-4 bg-white text-black rounded-full font-bold">INITIATE EMERGENCY RESET</button>
+    `;
+    document.body.appendChild(overlay);
+}
+
+/* ==========================================================================
+   🚀 SYSTEM INIT
+   ========================================================================== */
+window.onload = () => {
+    // Initial metric entry
+    state.metricsHistory.push({ time: new Date().toLocaleTimeString(), wave: state.wave, integrity: state.integrity });
+    render();
+    
+    // Ambient System Voice Check-in
+    setInterval(() => {
+        const lines = PERSONALITIES[state.personality];
+        const line = lines[Math.floor(Math.random()*lines.length)];
+        const hud = document.createElement('div');
+        hud.className = "fixed bottom-16 right-4 hud-panel fade-in text-indigo-300";
+        hud.innerText = "🧠 " + line;
+        document.body.appendChild(hud);
+        setTimeout(() => hud.remove(), 6000);
+    }, 45000);
+};
 
 </script>
-</script>
-
 </body>
 </html>
