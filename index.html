@@ -458,7 +458,6 @@ const Visuals = {
 
     apply(color,intensity){
 
-        // base color glow
         const colors = {
             red: "255,0,0",
             yellow: "255,200,0",
@@ -469,20 +468,16 @@ const Visuals = {
 
         const c = colors[color] || "255,255,255";
 
-        // pulse effect
         this.pulse += 0.05;
         const pulseVal = (Math.sin(this.pulse)+1)/2;
 
         const glow = intensity * 0.6 + pulseVal * 0.2;
 
-        document.body.style.boxShadow = `
-            inset 0 0 ${200 + glow*200}px rgba(${c},${0.2 + glow*0.4})
-        `;
+        document.body.style.boxShadow =
+            "inset 0 0 " + (200 + glow*200) + "px rgba(" + c + "," + (0.2 + glow*0.4) + ")";
 
-        // subtle background shift
-        document.body.style.background = `
-            radial-gradient(circle at center, rgba(${c},${0.05 + glow*0.1}), #050508)
-        `;
+        document.body.style.background =
+            "radial-gradient(circle at center, rgba(" + c + "," + (0.05 + glow*0.1) + "), #050508)";
     }
 };
 
