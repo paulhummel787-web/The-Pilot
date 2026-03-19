@@ -1531,7 +1531,7 @@ appState.integrity = Number(appState.integrity) || 0;
             } else {
                 currentRSDStep = 0;
                 triggerAlert("SHIELD ACTIVE: Emotional Sovereignty Restored.");
-                setWaveNumber(appState.wave) + 10);
+                setWave(Number(appState.wave) + 10);
                 switchTab('dash');
             }
         }
