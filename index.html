@@ -1,73 +1,2360 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZION OMNI | Sovereign v7.0</title>
+    <title>Nexus OS | Cognitive Cockpit</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --yellow: #facc15; --red: #ef4444; --orange: #fb923c;
-            --purple: #a855f7; --blue: #3b82f6; --green: #10b981;
-            --pacer-color: var(--green);
+        /* THE SYSTEM GLOSS: PHASE 08 REFINEMENTS */
+        #neural-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.6;
         }
-        body { background: #050508; color: white; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
-        .bg-blob { position: fixed; width: 600px; height: 600px; background: radial-gradient(circle, var(--pacer-color), transparent); filter: blur(140px); opacity: 0.15; z-index: -1; transition: all 3s ease; }
-        .bg-blob:nth-child(1) { top: -200px; left: -100px; }
-        .bg-blob:nth-child(2) { bottom: -200px; right: -100px; }
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.07); }
-        .crt { position: fixed; inset: 0; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)); background-size: 100% 2px, 2px 100%; z-index: 100; }
-        @keyframes breathe { 0%, 100% { transform: scale(0.85); opacity: 0.2; } 50% { transform: scale(1.1); opacity: 0.5; box-shadow: 0 0 150px var(--pacer-color); } }
-        .pacer { position: absolute; inset: 0; border: 4px solid var(--pacer-color); border-radius: 50%; animation: breathe var(--pacer-speed, 10s) infinite ease-in-out; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--pacer-color); border-radius: 10px; }
+
+        .node-pulse {
+            animation: node-ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes node-ping {
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        .synapse-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .synapse-card:hover {
+            border-color: var(--active-color, #6366f1);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Scanline Effect for 'The Architect' Feel */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 9999;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        :root {
+            /* Core Variables */
+            --bg-base: #050505;
+            --bg-panel: rgba(20, 20, 20, 0.6);
+            --text-main: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --border-color: rgba(255, 255, 255, 0.08);
+            
+            /* State Colors (The Symptom Soup) */
+            --state-green: #10b981;  /* Flow / Regulated */
+            --state-yellow: #facc15; /* Static / ADHD */
+            --state-red: #ef4444;    /* Heat / BPD */
+            --state-orange: #f97316; /* Threat / CPTSD */
+            --state-purple: #a855f7; /* Pressure / GAD */
+            --state-blue: #3b82f6;   /* Gravity / MDD */
+            --state-white: #e5e7eb;  /* Fog / Dissociation */
+
+            /* Dynamic Theme Variable (Changes via JS) */
+            --active-glow: var(--state-green);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.8s ease, color 0.8s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography Classes */
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        /* Glassmorphism System */
+        .glass {
+            background: var(--bg-panel);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .glass:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px -5px var(--active-glow);
+        }
+
+        /* Environmental Energy Blobs */
+        .ambient-field {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.15;
+            transition: opacity 1s ease;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            transition: background-color 2s ease, transform 10s ease-in-out;
+            animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: var(--active-glow); }
+        .blob-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background-color: var(--active-glow); animation-delay: -5s; opacity: 0.7;}
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5%, 10%) scale(1.1); }
+            100% { transform: translate(-5%, 5%) scale(0.9); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Component Specifics */
+        .nav-link { opacity: 0.4; transition: all 0.3s ease; }
+        .nav-link.active { opacity: 1; color: var(--active-glow); transform: translateY(-4px); }
+        
+        .hide-section { display: none !important; }
+        
+        /* 70% Governor Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--active-glow);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 15px var(--active-glow);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        /* Pulse Animations */
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-subtle-pulse { animation: subtle-pulse 3s infinite; }
     </style>
 </head>
-<body class="p-8 h-screen flex flex-col">
-    <div class="bg-blob"></div><div class="bg-blob"></div><div class="crt"></div>
 
-    <header class="flex justify-between items-end border-b border-white/10 pb-8 mb-8">
-        <div>
-            <h1 class="text-6xl font-black italic tracking-tighter">ZION <span class="opacity-30">OMNI</span></h1>
-            <p id="active-protocol" class="text-[10px] tracking-[0.8em] uppercase opacity-40 mt-2">Protocol: APEX_ALIGNMENT</p>
+<body class="antialiased pb-32">
+
+    <div class="ambient-field" id="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
+    </div>
+
+    <header class="fixed top-0 w-full z-50 glass rounded-none border-t-0 border-x-0 px-8 py-4 flex justify-between items-center bg-black/40">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20 relative cursor-pointer hover:bg-white/20 transition">
+                <i class="fa-solid fa-cube text-white"></i>
+                <div id="status-dot" class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black animate-pulse"></div>
+            </div>
+            <div>
+                <h1 class="font-black tracking-tighter text-xl leading-none">NEXUS<span class="text-white/30 font-light">OS</span></h1>
+                <p class="font-mono text-[9px] text-white/50 tracking-[0.2em] uppercase" id="system-status-text">System Nominal</p>
+            </div>
         </div>
-        <div class="text-right">
-            <div class="text-[10px] opacity-30 uppercase tracking-widest">Nectar_Yield</div>
-            <div id="fuel-display" class="text-6xl font-black">0000</div>
+        <div class="flex items-center gap-6">
+            <div class="text-right hidden sm:block">
+                <div id="system-clock" class="font-mono text-xl font-bold tracking-tighter">00:00:00</div>
+                <div class="text-[8px] font-black uppercase tracking-widest text-white/30">Local Time</div>
+            </div>
+            <button class="w-10 h-10 glass-button rounded-full flex items-center justify-center text-red-400 border-red-500/30 hover:bg-red-500/20" onclick="triggerPanic()">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </button>
         </div>
     </header>
 
-    <main class="flex-1 grid grid-cols-12 gap-8 overflow-hidden">
-        <div class="col-span-2 flex flex-col gap-4" id="state-matrix"></div>
-
-        <div class="col-span-5 flex flex-col gap-8">
-            <div class="glass flex-1 relative overflow-hidden flex flex-col p-12" id="pacer-container">
-                <div class="pacer"></div>
-                <div class="relative z-20 flex-1" id="tech-display"></div>
-            </div>
-            <div class="glass h-32 p-4 text-[10px] opacity-30 overflow-y-auto custom-scroll" id="system-log"></div>
-        </div>
-
-        <div class="col-span-5 flex flex-col glass p-10 overflow-hidden shadow-2xl">
-            <nav class="flex gap-12 mb-8 border-b border-white/5 pb-6">
-                <button onclick="Core.setTab('spirit')" id="tab-spirit" class="text-xs font-black uppercase tracking-widest transition-all">01_The_Spirit</button>
-                <button onclick="Core.setTab('vault')" id="tab-vault" class="text-xs font-black uppercase tracking-widest opacity-20 transition-all">02_Omni_Archive</button>
-            </nav>
-            <div id="right-viewport" class="flex-1 overflow-y-auto custom-scroll pr-4"></div>
+    <main class="max-w-[100rem] mx-auto pt-32 px-6 sm:px-10">
+        
+        <section id="view-core" class="space-y-8 animate-fade-in">
             
-            <div id="governor-ui" class="mt-8 border-t border-white/10 pt-8">
-                <div class="flex justify-between text-[10px] uppercase tracking-widest opacity-40 mb-3">
-                    <span>System_Integrity</span>
-                    <span id="integrity-label">0%</span>
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-8 glass p-12 relative overflow-hidden flex flex-col justify-center">
+                    <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-4">The Prime Directive</h2>
+                    <h3 class="text-5xl sm:text-7xl font-black tracking-tighter leading-tight mb-6">Fix the state, <br><span class="font-serif italic font-light text-white/50">then take the step.</span></h3>
+                    <p class="text-white/60 max-w-2xl font-medium leading-relaxed">You are the Pilot of a complex craft. When the biological load exceeds capacity, do not attempt to "think". Follow the architecture. Trust the protocol.</p>
                 </div>
-                <div class="w-full bg-white/5 h-1 mb-8"><div id="integrity-bar" class="h-full bg-white transition-all duration-1000"></div></div>
-                <button id="deposit-btn" onclick="Core.executeDeposit()" class="w-full h-24 bg-white text-black font-black uppercase tracking-[1em] text-sm hover:tracking-[1.2em] transition-all duration-500">DEPOSIT_NECTAR</button>
+
+                <div class="xl:col-span-4 glass p-10 flex flex-col items-center justify-center text-center">
+                    <div class="relative w-48 h-48 flex items-center justify-center mb-6">
+                        <canvas id="capacityChart" class="absolute inset-0"></canvas>
+                        <div class="flex flex-col items-center z-10 mt-4">
+                            <span id="capacity-value" class="text-5xl font-black font-mono">70%</span>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mt-1">Available Wave</span>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">
+                            <span>System Load</span>
+                            <span id="load-value">30% Overhead</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="70" id="wave-slider" oninput="updateCapacity(this.value)">
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div class="glass p-10 border-l-4 border-l-amber-500">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 mb-2">Primary Objective</h4>
+                            <h3 class="text-3xl font-black tracking-tighter">The Great Fox</h3>
+                        </div>
+                        <i class="fa-solid fa-crosshairs text-2xl text-amber-500/30"></i>
+                    </div>
+                    <input type="text" id="fox-input" placeholder="Identify the singular high-leverage task..." class="w-full bg-black/20 border-b-2 border-white/10 py-4 text-xl focus:outline-none focus:border-amber-500 transition-colors text-white placeholder:text-white/20 mb-6">
+                    <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-6">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-2">Minimum Viable Shift (MVS)</h5>
+                        <input type="text" id="mvs-input" placeholder="Shrink the Fox to a 2-minute physical action..." class="w-full bg-transparent text-sm focus:outline-none text-white/80 placeholder:text-white/30">
+                    </div>
+                </div>
+
+                <div class="glass p-10">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 mb-2">Biological Scaffolding</h4>
+                            <h3 class="text-3xl font-black tracking-tighter">System Integrity</h3>
+                        </div>
+                        <span class="text-4xl font-black font-mono text-white/80" id="integrity-score">0%</span>
+                    </div>
+                    <div class="space-y-3" id="habit-container">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-triage" class="hide-section space-y-8 animate-fade-in">
+            
+            <div class="glass p-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b-4 border-white/5">
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 01: Identification</h2>
+                    <h3 class="text-4xl sm:text-5xl font-black tracking-tighter">Diagnostic Matrix</h3>
+                    <p class="text-white/50 text-sm mt-4 max-w-xl leading-relaxed">Identify the biological frequency currently dominating the internal architecture. Do not analyze the story; identify the color.</p>
+                </div>
+                <div class="text-left md:text-right bg-black/40 p-4 rounded-2xl border border-white/10 min-w-[200px]">
+                    <span class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">Active Frequency</span>
+                    <span id="current-state-label" class="text-2xl font-black tracking-tighter text-green-500">Regulated</span>
+                </div>
+            </div>
+
+            <div id="triage-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500">
+                </div>
+
+            <div id="active-protocol-panel" class="hidden glass p-0 overflow-hidden transition-all duration-700 border-l-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    
+                    <div class="lg:col-span-7 p-10 lg:p-14 flex flex-col justify-center">
+                        <div class="flex items-center gap-4 mb-6">
+                            <span id="protocol-icon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl bg-white/10"></span>
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase tracking-[0.4em] opacity-50" id="protocol-subtitle">Protocol</h4>
+                                <h3 class="text-4xl font-black tracking-tighter uppercase" id="protocol-title">Title</h3>
+                            </div>
+                        </div>
+                        
+                        <p class="text-lg font-medium opacity-80 mb-8 leading-relaxed" id="protocol-desc">Description goes here.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-black/30 p-6 rounded-2xl border border-white/5">
+                                <h5 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">1. Manual Reset</h5>
+                                <p class="text-sm font-bold text-white/90" id="protocol-fix">Fix instruction.</p>
+                            </div>
+                            <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                <h5 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">2. Minimum Viable Shift (MVS)</h5>
+                                <p class="text-sm font-bold text-white/90" id="protocol-mvs">MVS instruction.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex gap-4">
+                            <button onclick="closeProtocol()" class="px-6 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-widest transition-colors">Abort</button>
+                            <button onclick="executeMVSAndClose()" class="flex-1 px-6 py-4 rounded-xl bg-current text-black font-black uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-xl" id="btn-deploy-mvs">Acknowledge & Deploy</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 bg-black/40 p-10 flex flex-col items-center justify-center border-l border-white/5 relative">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-8 text-center w-full">Physiological Override</h4>
+                        
+                        <div class="relative w-64 h-64 flex items-center justify-center mb-8">
+                            <div class="absolute inset-0 rounded-full border-2 border-white/10"></div>
+                            <div id="breathe-circle" class="w-16 h-16 rounded-full bg-current opacity-20 transition-all duration-[4000ms] ease-in-out shadow-[0_0_50px_currentColor]"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="breathe-instruction" class="text-2xl font-black uppercase tracking-widest mix-blend-difference text-white">Ready</span>
+                            </div>
+                        </div>
+
+                        <button onclick="startFlushSequence()" id="btn-start-flush" class="w-full py-4 rounded-xl border border-current text-current font-bold uppercase tracking-widest hover:bg-current hover:text-black transition-all">Initiate 90s Flush</button>
+                        
+                        <p class="text-[9px] text-center opacity-40 mt-6 uppercase tracking-widest max-w-[200px]">Do not analyze the story. Just breathe.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+            <div class="glass p-12 text-center">
+                <h2 class="text-3xl font-black">Triage Engine Loading...</h2>
+                <p class="text-white/50 mt-4">Awaiting Part 2 Initialization.</p>
+            </div>
+        </section>
+<section id="view-engine" class="hide-section space-y-8 animate-fade-in pb-20">
+            
+            <div class="glass p-10 bg-gradient-to-br from-red-500/5 to-amber-500/5">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 03: Recalibration</h2>
+                        <h3 class="text-4xl font-black tracking-tighter">Engine Configuration</h3>
+                        <p class="text-white/50 text-sm mt-2">Adjust system sensitivity and modify core behavioral protocols.</p>
+                    </div>
+                    <div id="god-mode-indicator" class="hidden px-4 py-2 rounded-full border border-amber-500/50 text-amber-500 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                        God Mode Active
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="glass p-8 space-y-6">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">System Overrides</h4>
+                    
+                    <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <span class="text-sm font-bold">Haptic Feedback</span>
+                        <button onclick="toggleSetting('haptics')" id="toggle-haptics" class="w-12 h-6 rounded-full bg-green-500 relative transition-all">
+                            <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <span class="text-sm font-bold">Bio-Telemetry Overlay</span>
+                        <button onclick="toggleSetting('telemetry')" id="toggle-telemetry" class="w-12 h-6 rounded-full bg-white/10 relative transition-all">
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white/40 rounded-full"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <div>
+                            <span class="text-sm font-bold block">God Mode</span>
+                            <span class="text-[9px] text-white/30 uppercase">Bypass all safety limiters</span>
+                        </div>
+                        <button onclick="toggleGodMode()" id="toggle-god" class="w-12 h-6 rounded-full bg-white/10 relative transition-all">
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white/40 rounded-full"></div>
+                        </button>
+                    </div>
+
+                    <button onclick="factoryReset()" class="w-full py-4 rounded-xl border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-colors">
+                        <i class="fa-solid fa-skull mr-2"></i> Factory Reset Craft
+                    </button>
+                </div>
+
+                <div class="lg:col-span-2 glass p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Protocol Schema</h4>
+                        <span class="text-[9px] font-mono text-white/20 uppercase">6 Active Slots</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="engine-protocol-list">
+                        </div>
+                </div>
+            </div>
+
+            <div class="glass bg-black p-6 font-mono text-[11px] border-amber-500/20">
+                <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                    <span class="text-amber-500/50 uppercase tracking-widest font-black">System Terminal</span>
+                    <span class="text-white/20">v21.0.4-LTS</span>
+                </div>
+                <div id="terminal-output" class="space-y-1 h-48 overflow-y-auto custom-scrollbar text-green-500/70">
+                    <div>[SYSTEM] Boot sequence complete.</div>
+                    <div>[SYSTEM] Architect OS standing by...</div>
+                </div>
+            </div>
+        </section>
+        <section id="view-analytics" class="hide-section space-y-8 animate-fade-in pb-20">
+            
+            <div class="glass p-10 bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 border-b-4 border-emerald-500/20">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+                    <div>
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 04: Neural Audit</h2>
+                        <h3 class="text-4xl sm:text-5xl font-black tracking-tighter uppercase">System Telemetry</h3>
+                        <p class="text-white/50 text-sm mt-4 max-w-xl leading-relaxed">The Architect reviews the patterns. Objective data reveals the triggers that the Pilot's emotions might hide.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="glass px-6 py-4 rounded-2xl border-white/5 bg-black/20">
+                            <span class="block text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">Weekly Uptime</span>
+                            <span class="text-2xl font-mono font-bold" id="stat-uptime">94.2%</span>
+                        </div>
+                        <div class="glass px-6 py-4 rounded-2xl border-white/5 bg-black/20">
+                            <span class="block text-[9px] font-black text-cyan-500 uppercase tracking-widest mb-1">MVS Success</span>
+                            <span class="text-2xl font-mono font-bold" id="stat-mvs-rate">88%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-8 glass p-8 min-h-[450px] flex flex-col">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Resiliency Wave (7-Day)</h4>
+                            <p class="text-xs text-white/20 uppercase font-mono mt-1">Telemetry Source: System_Load_Logs</p>
+                        </div>
+                        <select onchange="updateAnalyticsRange(this.value)" class="bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-lg outline-none focus:border-emerald-500 transition">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 relative">
+                        <canvas id="waveHistoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-4 glass p-8 min-h-[450px] flex flex-col">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-8">Frequency Distribution</h4>
+                    <div class="flex-1 relative flex items-center justify-center">
+                        <canvas id="stateRadarChart"></canvas>
+                    </div>
+                    <div class="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 text-[10px] text-center text-white/40 italic">
+                        "Your system gravitates toward <span class="text-yellow-500 font-bold" id="dominant-state">STATIC</span> frequency during high-load events."
+                    </div>
+                </div>
+
+                <div class="xl:col-span-12 glass p-8">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Integrity Matrix</h4>
+                            <h5 class="text-2xl font-black tracking-tighter">Consistency Heatmap</h5>
+                        </div>
+                        <div class="flex gap-4 text-[9px] font-mono text-white/20 uppercase">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-sm bg-white/5"></div> 0%</div>
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-sm bg-emerald-500/30"></div> 50%</div>
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-sm bg-emerald-500"></div> 100%</div>
+                        </div>
+                    </div>
+                    
+                    <div id="integrity-heatmap" class="grid grid-cols-7 sm:grid-cols-14 md:grid-cols-21 lg:grid-cols-28 gap-2">
+                        </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass p-10 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-brain text-8xl"></i>
+                    </div>
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-4">Neural Correlative</h4>
+                    <h3 class="text-3xl font-black tracking-tighter mb-6 leading-tight">State/Task <br>Correlation Engine</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-white/40 italic">Low Wave + High Pressure:</span>
+                            <span class="font-bold text-red-400">92% Failure Risk</span>
+                        </div>
+                        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-red-400" style="width: 92%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-white/40 italic">High Wave + Static Mode:</span>
+                            <span class="font-bold text-emerald-400">Hyperfocus Likely</span>
+                        </div>
+                        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-400" style="width: 74%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-10 border-dashed border-2 border-white/10 flex flex-col items-center justify-center text-center">
+                    <i class="fa-solid fa-microchip text-4xl text-white/10 mb-6"></i>
+                    <h4 class="text-lg font-bold tracking-tight mb-2">Predictive Modeling</h4>
+                    <p class="text-xs text-white/40 max-w-xs uppercase tracking-widest leading-loose">The system is learning your biological rhythm. Continue logging for 14 days to unlock Predictive Mode.</p>
+                </div>
+            </div>
+        </section>
+        <section id="view-sanctuary" class="hide-section space-y-8 animate-fade-in pb-24">
+            
+            <div class="glass p-10 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 border-b-4 border-indigo-500/20">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <div>
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 05: Sensory Override</h2>
+                        <h3 class="text-4xl sm:text-5xl font-black tracking-tighter uppercase italic">The Sanctuary</h3>
+                        <p class="text-white/50 text-sm mt-4 max-w-xl leading-relaxed">Direct neurological calibration. Use high-frequency resonators to focus (ADHD) or low-frequency binaural beats to ground (CPTSD/BPD).</p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <div id="audio-status" class="text-[9px] font-black uppercase tracking-widest text-white/20 mb-2">Engine: Offline</div>
+                        <button onclick="toggleAudioEngine()" id="btn-audio-master" class="px-8 py-4 rounded-full bg-white text-black font-black uppercase tracking-widest hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                            Initialize Audio
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-7 glass p-10 space-y-10 relative overflow-hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">Frequency Resonator</h4>
+                        <div class="flex gap-4">
+                            <span id="freq-display" class="text-2xl font-mono font-bold text-white/80">10.0 Hz</span>
+                            <span class="text-[9px] font-black text-white/20 uppercase mt-2">Alpha State</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <input type="range" id="freq-slider" min="1" max="40" step="0.1" value="10" 
+                               class="w-full h-2 bg-white/5 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                               oninput="updateFrequency(this.value)">
+                        
+                        <div class="grid grid-cols-4 gap-4">
+                            <button onclick="setFreqPreset(2, 'Delta')" class="glass p-4 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition">Delta (Sleep)</button>
+                            <button onclick="setFreqPreset(6, 'Theta')" class="glass p-4 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition">Theta (Deep)</button>
+                            <button onclick="setFreqPreset(10, 'Alpha')" class="glass p-4 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition">Alpha (Flow)</button>
+                            <button onclick="setFreqPreset(20, 'Beta')" class="glass p-4 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition">Beta (Focus)</button>
+                        </div>
+                    </div>
+
+                    <div class="h-40 bg-black/40 rounded-3xl border border-white/5 relative flex items-center justify-center overflow-hidden">
+                        <canvas id="audio-visualizer" class="w-full h-full"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="text-[9px] font-mono text-indigo-500/50 uppercase tracking-[1em]">Waveform Telemetry</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-5 space-y-8">
+                    
+                    <div class="glass p-8">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6">Atmospheric Wash</h4>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button id="btn-noise-brown" onclick="toggleNoise('brown')" class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition group">
+                                <span class="text-xs font-bold uppercase tracking-widest group-hover:text-amber-500">Brown Noise (Deep)</span>
+                                <i class="fa-solid fa-water opacity-20 group-hover:opacity-100"></i>
+                            </button>
+                            <button id="btn-noise-pink" onclick="toggleNoise('pink')" class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition group">
+                                <span class="text-xs font-bold uppercase tracking-widest group-hover:text-rose-400">Pink Noise (Balance)</span>
+                                <i class="fa-solid fa-wind opacity-20 group-hover:opacity-100"></i>
+                            </button>
+                            <button id="btn-noise-white" onclick="toggleNoise('white')" class="flex justify-between items-center p-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition group">
+                                <span class="text-xs font-bold uppercase tracking-widest group-hover:text-white">White Noise (Static)</span>
+                                <i class="fa-solid fa-bolt-lightning opacity-20 group-hover:opacity-100"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass p-8 border-l-4 border-l-rose-500 bg-rose-500/5">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500">Haptic Grounding</h4>
+                                <p class="text-[10px] text-white/30 uppercase mt-1">Direct Somatic Override</p>
+                            </div>
+                            <i class="fa-solid fa-hand-dots text-rose-500/50"></i>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="triggerHaptic('heartbeat')" class="py-4 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest hover:bg-rose-500/20 transition">Heartbeat</button>
+                            <button onclick="triggerHaptic('pulse')" class="py-4 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest hover:bg-rose-500/20 transition">Rhythm</button>
+                        </div>
+                        <p class="mt-4 text-[9px] text-white/20 italic text-center">Note: Requires mobile device support.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="view-executive" class="hide-section space-y-8 animate-fade-in pb-24">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 glass p-10 bg-gradient-to-br from-white/5 to-white/[0.02]">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">System Authority: Architect</h2>
+                            <h3 class="text-5xl font-black tracking-tighter uppercase">Executive Hub</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-[10px] font-black uppercase tracking-widest text-white/30">Neural Sync</span>
+                            <span id="sync-percent" class="text-4xl font-mono font-bold text-emerald-500">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="relative h-4 bg-white/5 rounded-full overflow-hidden border border-white/10">
+                        <div id="sync-progress-bar" class="absolute top-0 left-0 h-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3 text-[9px] font-black uppercase tracking-widest text-white/20">
+                        <span>Desynchronized</span>
+                        <span>Neural Alignment Achieved</span>
+                    </div>
+                </div>
+
+                <div class="glass p-10 flex flex-col justify-center border-l-8 border-emerald-500/50">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4">Daily Directive</h4>
+                    <div id="active-directive" class="text-xl font-bold italic leading-tight text-white/80">
+                        "Your only job today is to maintain the Wave. Everything else is secondary."
+                    </div>
+                    <button onclick="openVaultModal('log')" class="mt-6 text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-white transition-colors text-left">
+                        Update Directive →
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-4 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Integrity Matrix</h4>
+                        <button onclick="resetHabits()" class="text-[9px] font-bold text-white/20 hover:text-white uppercase">Reset Day</button>
+                    </div>
+                    
+                    <div id="habit-list" class="space-y-3">
+                        </div>
+
+                    <div class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2">Sync Bonus</h5>
+                        <p class="text-xs text-white/50 leading-relaxed">Completing all Integrity tasks grants a <span class="text-white font-bold">+15% Resiliency Wave</span> boost for tomorrow's boot sequence.</p>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-8 space-y-6">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">The Priority Stack</h4>
+                    
+                    <div id="priority-stack" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+
+                    <div class="glass p-10 bg-black/40 border-dashed border-2 border-white/10 relative overflow-hidden group">
+                        <div id="focus-bg-glow" class="absolute inset-0 bg-emerald-500/0 transition-all duration-1000"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2">Deep Work Engine</h4>
+                                <div id="timer-display" class="text-7xl font-mono font-black tracking-tighter">25:00</div>
+                            </div>
+                            <div class="flex gap-4">
+                                <button id="btn-timer-toggle" onclick="toggleTimer()" class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center text-xl hover:scale-110 transition">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                                <button onclick="resetTimer()" class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xl hover:bg-white/10 transition">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="view-synapse" class="hide-section space-y-8 animate-fade-in pb-24">
+            
+            <div class="glass p-10 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 overflow-hidden relative">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 06: Cognitive Mapping</h2>
+                        <h3 class="text-4xl font-black tracking-tighter uppercase">Synaptic Map</h3>
+                        <p class="text-white/50 text-sm mt-2 max-w-md">Visualize the connections between your biological state, your stored truths, and your executive goals.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-right">
+                            <span class="block text-[9px] font-black text-white/20 uppercase tracking-widest">Active Connections</span>
+                            <span id="connection-count" class="text-3xl font-mono font-bold text-violet-400">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" /></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                
+                <div class="space-y-6">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">State Inputs</h4>
+                    <div id="synapse-state-node" class="synapse-card p-6 rounded-3xl border-l-4 border-l-blue-500">
+                        <span class="text-[9px] font-black text-blue-400 uppercase">System Load</span>
+                        <div class="text-xl font-bold mt-1" id="synapse-load-label">Normal</div>
+                        <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div id="synapse-load-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <div class="synapse-card p-6 rounded-3xl border-l-4 border-l-emerald-500">
+                        <span class="text-[9px] font-black text-emerald-500 uppercase">Neural Sync</span>
+                        <div class="text-xl font-bold mt-1" id="synapse-sync-label">0%</div>
+                        <p class="text-[10px] text-white/30 mt-2 uppercase tracking-tighter">Alignment with Architect Directives</p>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-2 glass p-4 min-h-[500px] relative rounded-[2rem] overflow-hidden bg-black/40">
+                    <div id="map-container" class="absolute inset-0 p-8 flex flex-wrap gap-4 items-center justify-center">
+                        <div class="p-10 text-center opacity-20">
+                            <i class="fa-solid fa-diagram-project text-6xl mb-4"></i>
+                            <p class="text-[10px] font-black uppercase tracking-widest">Generating Mind Map...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute bottom-6 left-6 flex gap-6">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Truths</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Events</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Habits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Active Clusters</h4>
+                    <div id="cluster-container" class="space-y-4">
+                        </div>
+                    
+                    <div class="glass p-6 bg-violet-500/5 border border-violet-500/20 rounded-3xl">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-violet-400 mb-2">Architect Insight</h5>
+                        <p id="insight-text" class="text-xs text-white/60 italic leading-relaxed">
+                            "Connecting 'Cold Splash' habit to 'High Pressure' logs suggest a 40% reduction in physiological heat."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="view-datacore" class="hide-section space-y-8 animate-fade-in pb-24">
+            
+            <div class="glass p-10 bg-gradient-to-br from-gray-500/10 to-black border-b-4 border-white/20">
+                <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 07: Long-Term Storage</h2>
+                <h3 class="text-4xl font-black tracking-tighter uppercase">The Data Core</h3>
+                <p class="text-white/50 text-sm mt-2">Your cognitive history is encrypted and stored locally. No data ever leaves this device.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="glass p-8 space-y-6 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4">Black Box Export</h4>
+                        <p class="text-xs text-white/40 leading-relaxed mb-6">Download your entire neural history. This file can be re-imported into any Architect OS instance to restore your state.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="exportSystemData()" class="w-full py-4 rounded-xl bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors">
+                            <i class="fa-solid fa-download mr-2"></i> Export .JSON
+                        </button>
+                        <label class="w-full py-4 rounded-xl border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center">
+                            <i class="fa-solid fa-upload mr-2"></i> Import Backup
+                            <input type="file" id="import-input" class="hidden" onchange="importSystemData(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 glass p-8 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-violet-400 mb-6">Architect Persona: Assessment</h4>
+                        <div id="architect-thought" class="min-h-[150px] font-mono text-sm text-white/80 leading-relaxed italic">
+                            "System standby... waiting for data injection."
+                        </div>
+                        <div class="mt-8 flex gap-4">
+                            <button onclick="runArchitectAnalysis()" class="px-6 py-3 rounded-lg bg-violet-500/20 border border-violet-500/50 text-violet-400 text-[9px] font-black uppercase tracking-widest hover:bg-violet-500 hover:text-white transition-all">
+                                Run Neural Audit
+                            </button>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-brain absolute -right-10 -bottom-10 text-[15rem] text-white/[0.02] pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass p-6 text-center">
+                    <span class="block text-[9px] font-black text-white/20 uppercase mb-2">Total Logs</span>
+                    <span id="meta-logs" class="text-2xl font-mono font-bold">0</span>
+                </div>
+                <div class="glass p-6 text-center">
+                    <span class="block text-[9px] font-black text-white/20 uppercase mb-2">Truth Anchors</span>
+                    <span id="meta-anchors" class="text-2xl font-mono font-bold">0</span>
+                </div>
+                <div class="glass p-6 text-center">
+                    <span class="block text-[9px] font-black text-white/20 uppercase mb-2">Days Active</span>
+                    <span id="meta-days" class="text-2xl font-mono font-bold">1</span>
+                </div>
+                <div class="glass p-6 text-center">
+                    <span class="block text-[9px] font-black text-white/20 uppercase mb-2">System Health</span>
+                    <span id="meta-health" class="text-2xl font-mono font-bold text-emerald-500">NOMINAL</span>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <script src="knowledge.js"></script>
-    <script src="app.js"></script>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass px-8 py-4 flex gap-10 bg-black/60">
+        <button onclick="switchView('core')" class="nav-link active flex flex-col items-center gap-2" id="nav-core">
+            <i class="fa-solid fa-gauge-high text-xl"></i>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Core</span>
+        </button>
+        <button onclick="switchView('triage')" class="nav-link flex flex-col items-center gap-2" id="nav-triage">
+            <i class="fa-solid fa-heart-pulse text-xl"></i>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Triage</span>
+        </button>
+        <button onclick="<section id="view-vault" class="hide-section space-y-8 animate-fade-in">
+            
+            <div class="glass p-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-gradient-to-br from-blue-500/5 to-purple-500/5">
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-[0.4em] text-white/30 mb-2">Phase 02: Externalization</h2>
+                    <h3 class="text-4xl sm:text-5xl font-black tracking-tighter italic font-serif">The Memory Shield</h3>
+                    <p class="text-white/50 text-sm mt-4 max-w-xl leading-relaxed">The Vault stores what the brain cannot hold during a storm. Use Truth Anchors to ground the craft and the Black Box to record data for the Architect's later review.</p>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="openVaultModal('anchor')" class="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition flex items-center gap-3">
+                        <i class="fa-solid fa-anchor text-blue-400"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Add Anchor</span>
+                    </button>
+                    <button onclick="openVaultModal('log')" class="px-6 py-4 rounded-2xl bg-blue-500 text-black hover:scale-105 transition flex items-center gap-3">
+                        <i class="fa-solid fa-plus font-bold"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">New Log</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-4 space-y-6">
+                    <div class="flex justify-between items-center px-2">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Truth Anchors</h4>
+                        <span class="text-[9px] font-mono text-blue-400">NON-NEGOTIABLE FACTS</span>
+                    </div>
+                    
+                    <div id="anchor-container" class="space-y-4">
+                        </div>
+
+                    <div class="glass p-6 border-l-4 border-l-blue-500 bg-blue-500/5">
+                        <h5 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Emergency Protocol</h5>
+                        <p class="text-sm italic opacity-70 mb-4">"I am in a safe place. This is a biological response, not a logical reality. It will pass in 90 seconds if I do not feed it."</p>
+                        <button onclick="startFlushSequence(); switchView('triage');" class="text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-white transition">Trigger 90s Flush →</button>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-8 space-y-6">
+                    <div class="flex justify-between items-center px-2">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">The Black Box</h4>
+                        <div class="flex gap-4 text-[9px] font-mono">
+                            <span class="text-green-500">● LIVE TELEMETRY</span>
+                            <span class="text-white/20">TOTAL RECORDS: <span id="log-count">0</span></span>
+                        </div>
+                    </div>
+
+                    <div id="blackbox-container" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="vault-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+            <div class="glass w-full max-w-2xl overflow-hidden animate-zoom-in">
+                <div class="p-8 border-b border-white/10 flex justify-between items-center">
+                    <h3 id="modal-title" class="text-2xl font-black tracking-tighter uppercase">New Entry</h3>
+                    <button onclick="closeVaultModal()" class="text-white/30 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                
+                <div class="p-8 space-y-6">
+                    <div id="modal-anchor-fields" class="hidden space-y-4">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-white/40">Anchor Statement (Objective Fact)</label>
+                        <input type="text" id="input-anchor-text" placeholder="e.g., I have $X in savings / I am in my office." class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+
+                    <div id="modal-log-fields" class="hidden space-y-6">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Log Category</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button onclick="selectLogCat('Event', this)" class="log-cat-btn px-4 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5">Event</button>
+                                <button onclick="selectLogCat('Feeling', this)" class="log-cat-btn px-4 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5">Feeling</button>
+                                <button onclick="selectLogCat('Fact', this)" class="log-cat-btn px-4 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5">Fact</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Description</label>
+                            <textarea id="input-log-text" rows="4" placeholder="What is happening? Stick to sensory data." class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-blue-500 text-white resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <button id="btn-vault-save" class="w-full py-4 rounded-xl bg-blue-500 text-black font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform">Commit to Vault</button>
+                </div>
+            </div>
+        </div>
+        </button>
+        <button onclick="switchView('engine')" class="nav-link flex flex-col items-center gap-2" id="nav-engine">
+            <i class="fa-solid fa-sliders text-xl"></i>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Engine</span>
+        </button>
+        <button onclick="switchView('sanctuary')" class="nav-link flex flex-col items-center gap-2" id="nav-sanctuary">
+    <i class="fa-solid fa-volume-high text-xl"></i>
+    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Sanctuary</span>
+</button>
+        <button onclick="switchView('executive')" class="nav-link flex flex-col items-center gap-2" id="nav-executive">
+    <i class="fa-solid fa-microchip text-xl"></i>
+    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Executive</span>
+</button>
+        <button onclick="switchView('synapse')" class="nav-link flex flex-col items-center gap-2" id="nav-synapse">
+    <i class="fa-solid fa-circle-nodes text-xl"></i>
+    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Synapse</span>
+</button>
+        <button onclick="switchView('datacore')" class="nav-link flex flex-col items-center gap-2" id="nav-datacore">
+    <i class="fa-solid fa-database text-xl"></i>
+    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Data Core</span>
+</button>
+    </nav>
+    <button onclick="switchView('analytics')" class="nav-link flex flex-col items-center gap-2" id="nav-analytics">
+    <i class="fa-solid fa-chart-line text-xl"></i>
+    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Analytics</span>
+</button>
+
+    <script>
+        // 1. STATE MANAGEMENT
+        const nexusState = {
+            wave: 70,
+            activeColor: 'green',
+            fox: '',
+            mvs: '',
+            habits: [
+                { id: 'h1', text: 'Hydration Check (20oz)', done: false, icon: 'fa-droplet' },
+                { id: 'h2', text: 'Visual Silence (Clear Desk)', done: false, icon: 'fa-eye-slash' },
+                { id: 'h3', text: 'Cold Exposure (Vagus Reset)', done: false, icon: 'fa-snowflake' }
+            ]
+        };
+
+        // 2. INITIALIZATION
+        let capacityChart;
+
+        window.onload = () => {
+            initClock();
+            initChart();
+            renderHabits();
+            loadState();
+        };
+
+        // 3. CLOCK ENGINE
+        function initClock() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('system-clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+            }, 1000);
+        }
+
+        // 4. CHART ENGINE (Doughnut for Capacity)
+        function initChart() {
+            const ctx = document.getElementById('capacityChart').getContext('2d');
+            Chart.defaults.color = 'rgba(255,255,255,0.5)';
+            Chart.defaults.font.family = "'JetBrains Mono', monospace";
+
+            capacityChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Available', 'System Overhead'],
+                    datasets: [{
+                        data: [70, 30],
+                        backgroundColor: ['#10b981', 'rgba(255,255,255,0.05)'],
+                        borderWidth: 0,
+                        cutout: '85%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    animation: { duration: 1000, easing: 'easeOutQuart' }
+                }
+            });
+        }
+
+        function updateCapacity(value) {
+            nexusState.wave = parseInt(value);
+            document.getElementById('capacity-value').innerText = `${value}%`;
+            document.getElementById('load-value').innerText = `${100 - value}% Overhead`;
+            
+            // Update Chart
+            capacityChart.data.datasets[0].data = [value, 100 - value];
+            
+            // Dynamic Color Logic
+            let color = '#10b981'; // Green
+            if (value < 30) color = '#ef4444'; // Red
+            else if (value < 50) color = '#f97316'; // Orange
+            else if (value < 70) color = '#facc15'; // Yellow
+
+            capacityChart.data.datasets[0].backgroundColor[0] = color;
+            document.documentElement.style.setProperty('--active-glow', color);
+            document.getElementById('status-dot').style.backgroundColor = color;
+            
+            capacityChart.update();
+            saveState();
+        }
+
+        // 5. HABIT ENGINE (Integrity)
+        function renderHabits() {
+            const container = document.getElementById('habit-container');
+            container.innerHTML = '';
+            
+            let completed = 0;
+
+            nexusState.habits.forEach(h => {
+                if(h.done) completed++;
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-2xl border transition-all cursor-pointer flex justify-between items-center group ${h.done ? 'bg-white/10 border-white/20 opacity-50' : 'bg-black/20 border-white/5 hover:border-white/10'}`;
+                div.onclick = () => toggleHabit(h.id);
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/50 group-hover:text-white transition">
+                            <i class="fa-solid ${h.icon}"></i>
+                        </div>
+                        <span class="text-sm font-medium ${h.done ? 'line-through' : ''}">${h.text}</span>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 ${h.done ? 'border-green-500 bg-green-500 flex items-center justify-center' : 'border-white/20'}">
+                        ${h.done ? '<i class="fa-solid fa-check text-black text-[10px]"></i>' : ''}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            const score = Math.round((completed / nexusState.habits.length) * 100);
+            document.getElementById('integrity-score').innerText = `${score}%`;
+        }
+
+        function toggleHabit(id) {
+            const habit = nexusState.habits.find(h => h.id === id);
+            if(habit) habit.done = !habit.done;
+            renderHabits();
+            saveState();
+        }
+
+        // 6. PERSISTENCE & INPUT SAVING
+        document.getElementById('fox-input').addEventListener('input', (e) => { nexusState.fox = e.target.value; saveState(); });
+        document.getElementById('mvs-input').addEventListener('input', (e) => { nexusState.mvs = e.target.value; saveState(); });
+
+        function saveState() {
+            localStorage.setItem('nexus_os_core', JSON.stringify(nexusState));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('nexus_os_core');
+            if(saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(nexusState, parsed);
+                document.getElementById('fox-input').value = nexusState.fox;
+                document.getElementById('mvs-input').value = nexusState.mvs;
+                document.getElementById('wave-slider').value = nexusState.wave;
+                updateCapacity(nexusState.wave);
+                renderHabits();
+            }
+        }
+
+        // 7. VIEW ROUTER
+        function switchView(viewId) {
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hide-section'));
+            // Show target
+            document.getElementById(`view-${viewId}`).classList.remove('hide-section');
+            
+            // Update Nav UI
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            document.getElementById(`nav-${viewId}`).classList.add('active');
+        }
+
+        // 8. EMERGENCY PANIC
+        function triggerPanic() {
+            // Force jump to Triage (will expand in Part 2)
+            switchView('triage');
+            updateCapacity(10); // Force redline
+            alert("EMERGENCY PROTOCOL: Stop thinking. Splash face with cold water immediately.");
+        }
+        // 9. TRIAGE DATA DICTIONARY (The Symptom Soup)
+        const triageData = {
+            yellow: { id: 'yellow', name: 'Static', type: 'ADHD', color: '#facc15', icon: 'fa-bolt', desc: 'Racing thoughts, overstimulated, paralyzed by options. The dopamine filter is broken; everything is equally loud.', fix: 'REDUCE. Noise-canceling headphones. Turn off screens.', mvs: 'Pick up ONE physical object and put it away.' },
+            red: { id: 'red', name: 'Heat', type: 'BPD/RSD', color: '#ef4444', icon: 'fa-fire', desc: 'Emotional redline. High reactivity, heart racing, skin feels hot. Amygdala is stuck at 100%.', fix: 'REGULATE. Splash ice-cold water on face or hold an ice cube.', mvs: 'Do not speak or type for 2 minutes.' },
+            orange: { id: 'orange', name: 'Threat', type: 'CPTSD', color: '#f97316', icon: 'fa-triangle-exclamation', desc: 'Jumpy, hyper-vigilant, feeling hunted or spacing out. The Smoke Detector is stuck ON.', fix: 'SAFEGUARD. 5-4-3-2-1 Sensory Grounding.', mvs: 'Name 3 things you can see out loud.' },
+            purple: { id: 'purple', name: 'Pressure', type: 'Anxiety', color: '#a855f7', icon: 'fa-compress', desc: 'Weight of everything. Trapped in What-Ifs. RAM overload simulating bad scenarios.', fix: 'SIMPLIFY. Focus ONLY on the next 5 minutes.', mvs: 'Write down the loudest worry, then close the notebook.' },
+            blue: { id: 'blue', name: 'Gravity', type: 'Depression', color: '#3b82f6', icon: 'fa-arrow-down', desc: 'The Fog. Heavy limbs, zero fuel, numbness. System has pulled the plug to prevent a crash.', fix: 'COMPASSION. Enter Power-Save Mode. Rest without guilt.', mvs: 'Drink 4oz of water and lie flat.' },
+            white: { id: 'white', name: 'Fog', type: 'Shutdown', color: '#e5e7eb', icon: 'fa-cloud', desc: 'Cognitive blackout. Word-finding failure. Evacuation protocol engaged.', fix: 'PAUSE. Logic brain has grounded the craft. Do not force thought.', mvs: 'Close your eyes and take 5 deep breaths.' }
+        };
+
+        let flushInterval;
+        let activeStateId = null;
+
+        // 10. RENDER TRIAGE GRID
+        function renderTriageGrid() {
+            const grid = document.getElementById('triage-grid');
+            grid.innerHTML = '';
+
+            Object.values(triageData).forEach(state => {
+                const btn = document.createElement('button');
+                btn.className = `glass p-8 rounded-3xl text-left border-2 border-transparent hover:scale-[1.02] transition-all group flex flex-col justify-between min-h-[200px]`;
+                btn.style.setProperty('--hover-color', state.color);
+                
+                // Add hover border effect via inline style for specific color
+                btn.addEventListener('mouseenter', () => btn.style.borderColor = state.color);
+                btn.addEventListener('mouseleave', () => btn.style.borderColor = 'transparent');
+                
+                btn.onclick = () => activateProtocol(state.id);
+
+                btn.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-colors" style="background-color: ${state.color}15; color: ${state.color};">
+                            <i class="fa-solid ${state.icon}"></i>
+                        </div>
+                        <span class="text-[9px] font-black uppercase tracking-widest opacity-30">${state.type}</span>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black tracking-tighter uppercase mb-1" style="color: ${state.color};">${state.name}</h4>
+                        <p class="text-xs opacity-50 line-clamp-2">${state.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        // 11. ACTIVATE PROTOCOL
+        function activateProtocol(stateId) {
+            activeStateId = stateId;
+            const state = triageData[stateId];
+            const panel = document.getElementById('active-protocol-panel');
+            const grid = document.getElementById('triage-grid');
+
+            // Update UI colors
+            panel.style.borderColor = state.color;
+            document.getElementById('protocol-icon').innerHTML = `<i class="fa-solid ${state.icon}"></i>`;
+            document.getElementById('protocol-icon').style.color = state.color;
+            document.getElementById('protocol-icon').style.backgroundColor = `${state.color}20`;
+            
+            document.getElementById('protocol-subtitle').innerText = `${state.type} Protocol`;
+            document.getElementById('protocol-title').innerText = state.name;
+            document.getElementById('protocol-title').style.color = state.color;
+            document.getElementById('protocol-desc').innerText = state.desc;
+            document.getElementById('protocol-fix').innerText = state.fix;
+            document.getElementById('protocol-mvs').innerText = state.mvs;
+            
+            document.getElementById('btn-deploy-mvs').style.backgroundColor = state.color;
+            document.getElementById('breathe-circle').style.backgroundColor = state.color;
+
+            // System State Update
+            nexusState.activeColor = state.color;
+            document.documentElement.style.setProperty('--active-glow', state.color);
+            document.getElementById('current-state-label').innerText = state.name.toUpperCase();
+            document.getElementById('current-state-label').style.color = state.color;
+
+            // Animations
+            grid.classList.add('hidden');
+            panel.classList.remove('hidden');
+            
+            // Reset Flush Engine
+            resetFlushEngine();
+        }
+
+        function closeProtocol() {
+            document.getElementById('active-protocol-panel').classList.add('hidden');
+            document.getElementById('triage-grid').classList.remove('hidden');
+            resetFlushEngine();
+            activeStateId = null;
+        }
+
+        function executeMVSAndClose() {
+            // Give a small wave boost for completing the MVS
+            updateCapacity(Math.min(100, nexusState.wave + 5));
+            closeProtocol();
+            
+            // Auto-switch back to Core dashboard after a win
+            setTimeout(() => switchView('core'), 300);
+        }
+
+        // 12. BREATHING / FLUSH ENGINE (4-7-8 Protocol)
+        function startFlushSequence() {
+            clearInterval(flushInterval);
+            let timeElapsed = 0;
+            const totalTime = 90; // 90 second chemical flush
+            const circle = document.getElementById('breathe-circle');
+            const instruction = document.getElementById('breathe-instruction');
+            const btn = document.getElementById('btn-start-flush');
+
+            btn.innerText = "Flush in Progress...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            flushInterval = setInterval(() => {
+                timeElapsed++;
+                let cycleTime = timeElapsed % 19; // 4 + 7 + 8 = 19 seconds per breath cycle
+
+                if (cycleTime < 4) {
+                    instruction.innerText = "Inhale";
+                    circle.style.transform = "scale(3)";
+                    circle.style.opacity = "0.6";
+                } else if (cycleTime < 11) {
+                    instruction.innerText = "Hold";
+                } else {
+                    instruction.innerText = "Exhale";
+                    circle.style.transform = "scale(1)";
+                    circle.style.opacity = "0.2";
+                }
+
+                if (timeElapsed >= totalTime) {
+                    resetFlushEngine();
+                    instruction.innerText = "Flush Complete";
+                    btn.innerText = "System Calibrated";
+                }
+            }, 1000);
+        }
+
+        function resetFlushEngine() {
+            clearInterval(flushInterval);
+            document.getElementById('breathe-circle').style.transform = "scale(1)";
+            document.getElementById('breathe-circle').style.opacity = "0.2";
+            document.getElementById('breathe-instruction').innerText = "Ready";
+            const btn = document.getElementById('btn-start-flush');
+            btn.innerText = "Initiate 90s Flush";
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+        }
+
+        // Initialize Grid on Load
+        window.addEventListener('DOMContentLoaded', renderTriageGrid);
+        // 13. VAULT STATE MANAGEMENT
+        const vaultState = {
+            anchors: [
+                { id: 'a1', text: 'My biological system is safe right now.', category: 'Safety' },
+                { id: 'a2', text: 'Feelings are data, not instructions.', category: 'Logic' }
+            ],
+            logs: [],
+            activeLogCat: 'Event'
+        };
+
+        // 14. INITIALIZE VAULT
+        function initVault() {
+            loadVaultData();
+            renderAnchors();
+            renderLogs();
+        }
+
+        // 15. ANCHOR ENGINE
+        function renderAnchors() {
+            const container = document.getElementById('anchor-container');
+            container.innerHTML = '';
+            
+            vaultState.anchors.forEach((anchor, index) => {
+                const div = document.createElement('div');
+                div.className = 'glass p-5 flex justify-between items-start group border-white/5 hover:border-blue-500/30 transition-all';
+                div.innerHTML = `
+                    <div class="flex gap-4">
+                        <div class="mt-1 w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                        <p class="text-sm font-medium text-white/80 leading-snug">${anchor.text}</p>
+                    </div>
+                    <button onclick="deleteAnchor(${index})" class="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteAnchor(index) {
+            vaultState.anchors.splice(index, 1);
+            saveVaultData();
+            renderAnchors();
+        }
+
+        // 16. BLACK BOX ENGINE
+        function renderLogs() {
+            const container = document.getElementById('blackbox-container');
+            const countLabel = document.getElementById('log-count');
+            container.innerHTML = '';
+            
+            countLabel.innerText = vaultState.logs.length;
+
+            if (vaultState.logs.length === 0) {
+                container.innerHTML = `
+                    <div class="p-20 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                        <i class="fa-solid fa-box-open text-4xl text-white/10 mb-4"></i>
+                        <p class="text-xs font-black uppercase tracking-widest text-white/20">The Black Box is Empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            vaultState.logs.slice().reverse().forEach((log, index) => {
+                const actualIndex = vaultState.logs.length - 1 - index;
+                const div = document.createElement('div');
+                div.className = 'glass p-6 border-white/5 hover:bg-white/5 transition-all animate-slide-up';
+                
+                const catColors = { 'Event': 'text-purple-400', 'Feeling': 'text-orange-400', 'Fact': 'text-green-400' };
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[9px] font-mono text-white/30">${log.timestamp}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-white/5 text-[8px] font-black uppercase tracking-widest ${catColors[log.category] || 'text-white/40'}">${log.category}</span>
+                        </div>
+                        <button onclick="deleteLog(${actualIndex})" class="text-white/10 hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <p class="text-sm text-white/70 font-medium leading-relaxed">${log.text}</p>
+                    <div class="mt-4 flex gap-2">
+                        <div class="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-current opacity-20" style="width: 100%; color: ${nexusState.activeColor}"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteLog(index) {
+            vaultState.logs.splice(index, 1);
+            saveVaultData();
+            renderLogs();
+        }
+
+        // 17. MODAL LOGIC
+        let activeModalMode = 'anchor';
+
+        function openVaultModal(mode) {
+            activeModalMode = mode;
+            const modal = document.getElementById('vault-modal');
+            const anchorFields = document.getElementById('modal-anchor-fields');
+            const logFields = document.getElementById('modal-log-fields');
+            const title = document.getElementById('modal-title');
+
+            modal.classList.remove('hidden');
+            
+            if (mode === 'anchor') {
+                title.innerText = "New Truth Anchor";
+                anchorFields.classList.remove('hidden');
+                logFields.classList.add('hidden');
+            } else {
+                title.innerText = "Black Box Entry";
+                logFields.classList.remove('hidden');
+                anchorFields.classList.add('hidden');
+            }
+        }
+
+        function closeVaultModal() {
+            document.getElementById('vault-modal').classList.add('hidden');
+            document.getElementById('input-anchor-text').value = '';
+            document.getElementById('input-log-text').value = '';
+        }
+
+        function selectLogCat(cat, btn) {
+            vaultState.activeLogCat = cat;
+            document.querySelectorAll('.log-cat-btn').forEach(b => b.classList.remove('bg-blue-500', 'text-black', 'border-blue-500'));
+            btn.classList.add('bg-blue-500', 'text-black', 'border-blue-500');
+        }
+
+        document.getElementById('btn-vault-save').onclick = () => {
+            if (activeModalMode === 'anchor') {
+                const val = document.getElementById('input-anchor-text').value;
+                if (!val) return;
+                vaultState.anchors.push({ id: Date.now(), text: val, category: 'User' });
+            } else {
+                const val = document.getElementById('input-log-text').value;
+                if (!val) return;
+                const now = new Date();
+                vaultState.logs.push({
+                    id: Date.now(),
+                    text: val,
+                    category: vaultState.activeLogCat,
+                    timestamp: now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0'),
+                    systemState: nexusState.wave
+                });
+            }
+            saveVaultData();
+            renderAnchors();
+            renderLogs();
+            closeVaultModal();
+        };
+
+        // 18. PERSISTENCE
+        function saveVaultData() {
+            localStorage.setItem('nexus_os_vault', JSON.stringify(vaultState));
+        }
+
+        function loadVaultData() {
+            const saved = localStorage.getItem('nexus_os_vault');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(vaultState, parsed);
+            }
+        }
+
+        // Hook into existing window.onload
+        const originalOnload = window.onload;
+        window.onload = () => {
+            if(originalOnload) originalOnload();
+            initVault();
+        };
+        // 19. ENGINE & SETTINGS STATE
+        const engineState = {
+            haptics: true,
+            telemetry: false,
+            godMode: false,
+            logs: []
+        };
+
+        // 20. TERMINAL LOGGING
+        function logToTerminal(msg, type = 'INFO') {
+            const terminal = document.getElementById('terminal-output');
+            const entry = document.createElement('div');
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            let color = 'text-green-500/70';
+            if (type === 'WARN') color = 'text-amber-500/70';
+            if (type === 'ERROR') color = 'text-red-500/70';
+            if (type === 'CMD') color = 'text-blue-400';
+
+            entry.className = color;
+            entry.innerHTML = `<span class="opacity-30">[${time}]</span> <span class="font-bold">[${type}]</span> ${msg}`;
+            
+            terminal.appendChild(entry);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // 21. ENGINE CONTROLS
+        function toggleSetting(key) {
+            engineState[key] = !engineState[key];
+            const btn = document.getElementById(`toggle-${key}`);
+            const circle = btn.querySelector('div');
+
+            if (engineState[key]) {
+                btn.classList.replace('bg-white/10', 'bg-green-500');
+                circle.classList.replace('left-1', 'right-1');
+                circle.classList.replace('bg-white/40', 'bg-white');
+                logToTerminal(`Setting enabled: ${key}`, 'INFO');
+            } else {
+                btn.classList.replace('bg-green-500', 'bg-white/10');
+                circle.classList.replace('right-1', 'left-1');
+                circle.classList.replace('bg-white', 'bg-white/40');
+                logToTerminal(`Setting disabled: ${key}`, 'WARN');
+            }
+            saveEngineState();
+        }
+
+        function toggleGodMode() {
+            engineState.godMode = !engineState.godMode;
+            const indicator = document.getElementById('god-mode-indicator');
+            const btn = document.getElementById('toggle-god');
+            const circle = btn.querySelector('div');
+
+            if (engineState.godMode) {
+                indicator.classList.remove('hidden');
+                btn.classList.add('bg-amber-500');
+                circle.classList.add('translate-x-6');
+                logToTerminal("GOD MODE ACTIVATED. Safety governors bypassed.", "ERROR");
+                document.body.classList.add('border-4', 'border-amber-500/20');
+            } else {
+                indicator.classList.add('hidden');
+                btn.classList.remove('bg-amber-500');
+                circle.classList.remove('translate-x-6');
+                logToTerminal("God Mode deactivated. Re-engaging limiters.", "INFO");
+                document.body.classList.remove('border-4', 'border-amber-500/20');
+            }
+            saveEngineState();
+        }
+
+        function factoryReset() {
+            if (confirm("CRITICAL WARNING: This will permanently delete all protocols, anchors, and logs. Are you sure?")) {
+                localStorage.clear();
+                logToTerminal("Wiping memory banks...", "ERROR");
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        }
+
+        // 22. PROTOCOL EDITOR LIST
+        function renderEngineProtocols() {
+            const container = document.getElementById('engine-protocol-list');
+            container.innerHTML = '';
+
+            Object.values(triageData).forEach(protocol => {
+                const div = document.createElement('div');
+                div.className = 'p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-3';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${protocol.color}"></div>
+                            <span class="text-xs font-black uppercase tracking-widest">${protocol.name}</span>
+                        </div>
+                        <button class="text-[10px] text-white/20 hover:text-white uppercase font-bold">Edit</button>
+                    </div>
+                    <div class="text-[10px] text-white/40 line-clamp-1">${protocol.fix}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 23. PERSISTENCE
+        function saveEngineState() {
+            localStorage.setItem('nexus_os_engine', JSON.stringify(engineState));
+        }
+
+        function loadEngineState() {
+            const saved = localStorage.getItem('nexus_os_engine');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(engineState, parsed);
+                // Update UI based on loaded state
+                if(engineState.godMode) toggleGodMode(); // Force UI update
+            }
+        }
+
+        // Hook into initialization
+        const engineOnload = window.onload;
+        window.onload = () => {
+            if(engineOnload) engineOnload();
+            loadEngineState();
+            renderEngineProtocols();
+            logToTerminal("Neural Engine v21.0 Online.", "INFO");
+        };
+        // 24. ANALYTICS STATE & DATA STRUCTURES
+        const analyticsState = {
+            history: [], // [{timestamp, wave, stateId, integrityScore}]
+            charts: {}
+        };
+
+        // 25. DATA GENERATOR (Mock Data for first-time use)
+        function generateMockHistory() {
+            if (analyticsState.history.length > 0) return;
+            
+            const now = new Date();
+            for (let i = 28; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                analyticsState.history.push({
+                    timestamp: date.toISOString(),
+                    wave: 40 + Math.floor(Math.random() * 50),
+                    stateId: ['yellow', 'red', 'orange', 'purple', 'blue', 'white'][Math.floor(Math.random() * 6)],
+                    integrityScore: Math.floor(Math.random() * 100)
+                });
+            }
+            saveAnalytics();
+        }
+
+        // 26. INITIALIZE ANALYTICS
+        function initAnalytics() {
+            loadAnalytics();
+            generateMockHistory();
+            renderHeatmap();
+            initHistoryChart();
+            initRadarChart();
+            logToTerminal("Analytics Engine: Synaptic mapping complete.", "INFO");
+        }
+
+        // 27. CHART ENGINES
+        function initHistoryChart() {
+            const ctx = document.getElementById('waveHistoryChart').getContext('2d');
+            const data = analyticsState.history.slice(-7);
+            
+            analyticsState.charts.history = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => new Date(d.timestamp).toLocaleDateString('en-US', {weekday: 'short'})),
+                    datasets: [{
+                        label: 'Resiliency Wave',
+                        data: data.map(d => d.wave),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#10b981',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function initRadarChart() {
+            const ctx = document.getElementById('stateRadarChart').getContext('2d');
+            
+            // Calculate state frequency
+            const freq = { yellow: 0, red: 0, orange: 0, purple: 0, blue: 0, white: 0 };
+            analyticsState.history.forEach(h => freq[h.stateId]++);
+
+            analyticsState.charts.radar = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Static', 'Heat', 'Threat', 'Pressure', 'Gravity', 'Fog'],
+                    datasets: [{
+                        data: [freq.yellow, freq.red, freq.orange, freq.purple, freq.blue, freq.white],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        pointBackgroundColor: '#3b82f6',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: 'rgba(255,255,255,0.5)', font: { size: 10, weight: 'bold' } },
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 28. HEATMAP GENERATOR
+        function renderHeatmap() {
+            const container = document.getElementById('integrity-heatmap');
+            container.innerHTML = '';
+            
+            // Render 28 days of history
+            analyticsState.history.slice(-28).forEach(entry => {
+                const day = document.createElement('div');
+                day.className = `aspect-square rounded-sm transition-all hover:scale-150 cursor-crosshair`;
+                
+                const opacity = entry.integrityScore / 100;
+                day.style.backgroundColor = `rgba(16, 185, 129, ${opacity})`;
+                day.title = `Integrity: ${entry.integrityScore}% on ${new Date(entry.timestamp).toLocaleDateString()}`;
+                
+                if(entry.integrityScore === 0) day.classList.add('bg-white/5');
+                
+                container.appendChild(day);
+            });
+        }
+
+        function updateAnalyticsRange(days) {
+            const data = analyticsState.history.slice(-parseInt(days));
+            const chart = analyticsState.charts.history;
+            
+            chart.data.labels = data.map(d => new Date(d.timestamp).toLocaleDateString('en-US', {weekday: 'short', day: 'numeric'}));
+            chart.data.datasets[0].data = data.map(d => d.wave);
+            chart.update();
+            logToTerminal(`Analytics range updated to ${days} days.`, "CMD");
+        }
+
+        // 29. PERSISTENCE & DATA CAPTURE
+        function captureSnaphot() {
+            // Call this whenever a major action happens
+            const snapshot = {
+                timestamp: new Date().toISOString(),
+                wave: nexusState.wave,
+                stateId: activeStateId || 'white',
+                integrityScore: parseInt(document.getElementById('integrity-score').innerText) || 0
+            };
+            analyticsState.history.push(snapshot);
+            saveAnalytics();
+        }
+
+        function saveAnalytics() {
+            localStorage.setItem('nexus_os_analytics', JSON.stringify(analyticsState.history));
+        }
+
+        function loadAnalytics() {
+            const saved = localStorage.getItem('nexus_os_analytics');
+            if (saved) {
+                analyticsState.history = JSON.parse(saved);
+            }
+        }
+
+        // 30. SYSTEM SYNC (Every 10 minutes)
+        setInterval(() => {
+            captureSnaphot();
+            logToTerminal("Background telemetry snapshot captured.", "INFO");
+        }, 600000);
+
+        // Update Nav switch logic to handle analytics
+        const originalSwitch = switchView;
+        switchView = (viewId) => {
+            originalSwitch(viewId);
+            if(viewId === 'analytics') {
+                setTimeout(() => {
+                    if(analyticsState.charts.history) analyticsState.charts.history.update();
+                    if(analyticsState.charts.radar) analyticsState.charts.radar.update();
+                }, 100);
+            }
+        };
+
+        // Hook into initialization
+        const analyticsOnload = window.onload;
+        window.onload = () => {
+            if(analyticsOnload) analyticsOnload();
+            initAnalytics();
+        };
+        /* ==========================================================================
+           🎧 NEURAL AUDIO ENGINE (Phase 05)
+           ========================================================================== */
+        
+        let audioCtx;
+        let masterGain;
+        let leftOsc, rightOsc;
+        let noiseNode;
+        let isAudioInitialized = false;
+        let activeNoise = null;
+
+        // 31. ENGINE CORE
+        function toggleAudioEngine() {
+            if (!isAudioInitialized) {
+                initAudioEngine();
+                document.getElementById('btn-audio-master').innerText = "Deactivate Audio";
+                document.getElementById('btn-audio-master').classList.replace('bg-white', 'bg-red-500');
+                document.getElementById('audio-status').innerText = "Engine: Running";
+                document.getElementById('audio-status').classList.replace('text-white/20', 'text-green-500');
+                logToTerminal("Audio Engine Initialized. Neural pathways open.", "INFO");
+            } else {
+                stopAllAudio();
+                document.getElementById('btn-audio-master').innerText = "Initialize Audio";
+                document.getElementById('btn-audio-master').classList.replace('bg-red-500', 'bg-white');
+                document.getElementById('audio-status').innerText = "Engine: Offline";
+                document.getElementById('audio-status').classList.replace('text-green-500', 'text-white/20');
+                logToTerminal("Audio Engine Terminated.", "WARN");
+            }
+            isAudioInitialized = !isAudioInitialized;
+        }
+
+        function initAudioEngine() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.3;
+            masterGain.connect(audioCtx.destination);
+
+            // Setup Binaural Osc
+            leftOsc = audioCtx.createOscillator();
+            rightOsc = audioCtx.createOscillator();
+            
+            const leftPanner = audioCtx.createStereoPanner();
+            const rightPanner = audioCtx.createStereoPanner();
+            leftPanner.pan.value = -1;
+            rightPanner.pan.value = 1;
+
+            leftOsc.connect(leftPanner).connect(masterGain);
+            rightOsc.connect(rightPanner).connect(masterGain);
+
+            leftOsc.frequency.value = 200;
+            rightOsc.frequency.value = 210; // 10Hz Binaural Beat
+
+            leftOsc.start();
+            rightOsc.start();
+            
+            startVisualizer();
+        }
+
+        // 32. FREQUENCY CONTROL
+        function updateFrequency(val) {
+            if (!isAudioInitialized) return;
+            const freq = parseFloat(val);
+            document.getElementById('freq-display').innerText = freq.toFixed(1) + " Hz";
+            
+            // Base frequency is 200Hz. Offset by binaural value.
+            rightOsc.frequency.setTargetAtTime(200 + freq, audioCtx.currentTime, 0.1);
+        }
+
+        function setFreqPreset(val, label) {
+            document.getElementById('freq-slider').value = val;
+            updateFrequency(val);
+            logToTerminal(`Frequency recalibrated to ${label} (${val}Hz).`, "CMD");
+        }
+
+        // 33. NOISE ENGINE (Procedural Generation)
+        function toggleNoise(type) {
+            if (!isAudioInitialized) { alert("Initialize Audio Engine first."); return; }
+            
+            if (activeNoise === type) {
+                if (noiseNode) noiseNode.stop();
+                activeNoise = null;
+                return;
+            }
+
+            if (noiseNode) noiseNode.stop();
+            activeNoise = type;
+
+            const bufferSize = 2 * audioCtx.sampleRate,
+            noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
+            output = noiseBuffer.getChannelData(0);
+
+            let lastOut = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                if (type === 'brown') {
+                    output[i] = (lastOut + (0.02 * white)) / 1.02;
+                    lastOut = output[i];
+                    output[i] *= 3.5; // Gain compensation
+                } else if (type === 'pink') {
+                    // Simple pink noise approximation
+                    output[i] = (lastOut + (0.12 * white)) / 1.12;
+                    lastOut = output[i];
+                    output[i] *= 2.5;
+                } else {
+                    output[i] = white;
+                }
+            }
+
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+            noiseNode.connect(masterGain);
+            noiseNode.start();
+            logToTerminal(`Atmospheric Wash: ${type} initiated.`, "INFO");
+        }
+
+        function stopAllAudio() {
+            if (leftOsc) leftOsc.stop();
+            if (rightOsc) rightOsc.stop();
+            if (noiseNode) noiseNode.stop();
+            if (audioCtx) audioCtx.close();
+        }
+
+        // 34. HAPTIC ENGINE
+        function triggerHaptic(mode) {
+            if (!("vibrate" in navigator)) {
+                logToTerminal("Haptic feedback not supported on this device.", "ERROR");
+                return;
+            }
+
+            if (mode === 'heartbeat') {
+                navigator.vibrate([100, 100, 400]);
+            } else if (mode === 'pulse') {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+            logToTerminal(`Haptic pattern deployed: ${mode}`, "CMD");
+        }
+
+        // 35. VISUALIZER ENGINE
+        function startVisualizer() {
+            const canvas = document.getElementById('audio-visualizer');
+            const ctx = canvas.getContext('2d');
+            const analyser = audioCtx.createAnalyser();
+            masterGain.connect(analyser);
+            analyser.fftSize = 256;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function draw() {
+                if (!isAudioInitialized) return;
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = nexusState.activeColor || '#6366f1';
+                ctx.beginPath();
+
+                const sliceWidth = canvas.width * 1.0 / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * canvas.height / 2;
+
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                    x += sliceWidth;
+                }
+                ctx.stroke();
+            }
+            draw();
+        }
+        /* ==========================================================================
+           🧠 EXECUTIVE HUB LOGIC (Phase 06)
+           ========================================================================== */
+
+        const executiveState = {
+            habits: [
+                { id: 'h1', label: 'Morning Hydration (16oz)', done: false, impact: 10 },
+                { id: 'h2', label: 'Cold Exposure / Face Splash', done: false, impact: 15 },
+                { id: 'h3', label: '90s Breathing Protocol', done: false, impact: 20 },
+                { id: 'h4', label: 'Priority 1 Defined', done: false, impact: 10 },
+                { id: 'h5', label: 'Digital Sunset Initiated', done: false, impact: 15 }
+            ],
+            timer: {
+                seconds: 1500, // 25 mins
+                isActive: false,
+                interval: null
+            },
+            syncScore: 0
+        };
+
+        // 36. INITIALIZE EXECUTIVE HUB
+        function initExecutive() {
+            loadExecutiveState();
+            renderHabits();
+            updateSyncScore();
+            renderPriorityStack();
+            logToTerminal("Executive Hub: Prefrontal cortex online.", "INFO");
+        }
+
+        // 37. HABIT ENGINE
+        function renderHabits() {
+            const container = document.getElementById('habit-list');
+            container.innerHTML = '';
+
+            executiveState.habits.forEach(habit => {
+                const div = document.createElement('div');
+                div.className = `glass p-4 flex justify-between items-center cursor-pointer transition-all ${habit.done ? 'bg-emerald-500/10 border-emerald-500/30 opacity-60' : 'hover:bg-white/5'}`;
+                div.onclick = () => toggleHabit(habit.id);
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${habit.done ? 'bg-emerald-500 border-emerald-500' : 'border-white/20'}">
+                            ${habit.done ? '<i class="fa-solid fa-check text-[10px] text-black font-bold"></i>' : ''}
+                        </div>
+                        <span class="text-xs font-bold ${habit.done ? 'line-through text-white/30' : 'text-white/80'}">${habit.label}</span>
+                    </div>
+                    <span class="text-[9px] font-mono text-white/20">+${habit.impact}%</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleHabit(id) {
+            const habit = executiveState.habits.find(h => h.id === id);
+            habit.done = !habit.done;
+            
+            // Visual feedback
+            if(habit.done) {
+                triggerHaptic('pulse');
+                logToTerminal(`Integrity Task Completed: ${habit.label}`, "INFO");
+                updateCapacity(Math.min(100, nexusState.wave + 2)); // Small wave boost
+            }
+            
+            saveExecutiveState();
+            renderHabits();
+            updateSyncScore();
+        }
+
+        function resetHabits() {
+            if(confirm("Confirm: New Day Reset?")) {
+                executiveState.habits.forEach(h => h.done = false);
+                saveExecutiveState();
+                renderHabits();
+                updateSyncScore();
+                logToTerminal("System Reset: New integrity cycle started.", "WARN");
+            }
+        }
+
+        // 38. SYNC SCORE LOGIC
+        function updateSyncScore() {
+            const total = executiveState.habits.reduce((acc, h) => acc + h.impact, 0);
+            const current = executiveState.habits.filter(h => h.done).reduce((acc, h) => acc + h.impact, 0);
+            
+            // Factor in the Wave (A low wave caps your sync score)
+            const waveModifier = nexusState.wave / 100;
+            const score = Math.round((current / total) * 100 * waveModifier);
+            
+            executiveState.syncScore = score;
+            
+            // Update UI
+            const bar = document.getElementById('sync-progress-bar');
+            const label = document.getElementById('sync-percent');
+            
+            bar.style.width = `${score}%`;
+            label.innerText = `${score}%`;
+            
+            if(score > 80) {
+                label.className = "text-4xl font-mono font-bold text-emerald-400 animate-pulse";
+                bar.className = "absolute top-0 left-0 h-full bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.8)] transition-all duration-1000";
+            } else {
+                label.className = "text-4xl font-mono font-bold text-emerald-500";
+                bar.className = "absolute top-0 left-0 h-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-1000";
+            }
+        }
+
+        // 39. PRIORITY STACK (Pulls from Vault)
+        function renderPriorityStack() {
+            const container = document.getElementById('priority-stack');
+            container.innerHTML = '';
+            
+            // Show only first 4 Vault logs as "Priorities"
+            const priorities = vaultState.logs.slice(-4).reverse();
+            
+            if(priorities.length === 0) {
+                container.innerHTML = `<div class="p-10 text-center border border-dashed border-white/10 rounded-2xl opacity-20 text-[10px] font-black uppercase tracking-widest col-span-2">No items in priority stack. Update the Vault.</div>`;
+                return;
+            }
+
+            priorities.forEach(p => {
+                const div = document.createElement('div');
+                div.className = "glass p-6 border-white/5 hover:border-emerald-500/30 transition-all group";
+                div.innerHTML = `
+                    <div class="text-[9px] font-black uppercase tracking-widest text-emerald-500 mb-2">${p.category}</div>
+                    <p class="text-sm font-bold text-white/70 line-clamp-2 mb-4">${p.text}</p>
+                    <button class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white transition-colors">Mark Resolved →</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 40. FOCUS TIMER (POMODORO)
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer-toggle');
+            const glow = document.getElementById('focus-bg-glow');
+
+            if (executiveState.timer.isActive) {
+                clearInterval(executiveState.timer.interval);
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                glow.classList.replace('bg-emerald-500/10', 'bg-emerald-500/0');
+            } else {
+                executiveState.timer.isActive = true;
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                glow.classList.replace('bg-emerald-500/0', 'bg-emerald-500/10');
+                
+                executiveState.timer.interval = setInterval(() => {
+                    executiveState.timer.seconds--;
+                    updateTimerDisplay();
+                    
+                    if (executiveState.timer.seconds <= 0) {
+                        clearInterval(executiveState.timer.interval);
+                        executiveState.timer.isActive = false;
+                        triggerHaptic('heartbeat');
+                        alert("Focus Session Complete. Deploy 90s Flush Protocol.");
+                    }
+                }, 1000);
+            }
+            executiveState.timer.isActive = !executiveState.timer.isActive;
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(executiveState.timer.seconds / 60);
+            const secs = executiveState.timer.seconds % 60;
+            document.getElementById('timer-display').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function resetTimer() {
+            clearInterval(executiveState.timer.interval);
+            executiveState.timer.isActive = false;
+            executiveState.timer.seconds = 1500;
+            updateTimerDisplay();
+            document.getElementById('btn-timer-toggle').innerHTML = '<i class="fa-solid fa-play"></i>';
+        }
+
+        // 41. PERSISTENCE
+        function saveExecutiveState() {
+            localStorage.setItem('nexus_os_executive', JSON.stringify(executiveState.habits));
+        }
+
+        function loadExecutiveState() {
+            const saved = localStorage.getItem('nexus_os_executive');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Map saved done states back to objects
+                executiveState.habits.forEach((h, i) => {
+                    if(parsed[i]) h.done = parsed[i].done;
+                });
+            }
+        }
+
+        // Hook into initialization
+        const execOnload = window.onload;
+        window.onload = () => {
+            if(execOnload) execOnload();
+            initExecutive();
+        };
+        /* ==========================================================================
+           🌌 NEURAL OVERLAY & SYNAPTIC MAPPING (Phase 08)
+           ========================================================================== */
+
+        // 42. PARTICLE ENGINE (The Neural Overlay)
+        const canvas = document.getElementById('neural-overlay');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2
+                });
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = nexusState.activeColor || '#6366f1';
+            ctx.strokeStyle = nexusState.activeColor || '#6366f1';
+            ctx.globalAlpha = 0.2;
+
+            particles.forEach((p, i) => {
+                p.x += p.vx * (nexusState.wave / 50); // Speed tied to Resiliency Wave
+                p.y += p.vy * (nexusState.wave / 50);
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw lines between nearby particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        // 43. SYNAPTIC MAP GENERATOR
+        function renderSynapticMap() {
+            const container = document.getElementById('map-container');
+            const connectionLabel = document.getElementById('connection-count');
+            container.innerHTML = '';
+            
+            // Combine data from Vault and Executive Hub
+            const nodes = [
+                ...vaultState.anchors.map(a => ({ text: a.text, type: 'truth', color: 'bg-blue-500' })),
+                ...vaultState.logs.slice(-3).map(l => ({ text: l.text, type: 'event', color: 'bg-orange-500' })),
+                ...executiveState.habits.filter(h => h.done).map(h => ({ text: h.label, type: 'habit', color: 'bg-emerald-500' }))
+            ];
+
+            connectionLabel.innerText = nodes.length;
+
+            nodes.forEach((node, i) => {
+                const div = document.createElement('div');
+                // Randomized floating position within container
+                const top = 10 + Math.random() * 70;
+                const left = 10 + Math.random() * 70;
+                
+                div.className = `absolute glass p-4 rounded-2xl max-w-[150px] animate-float synapse-card`;
+                div.style.top = `${top}%`;
+                div.style.left = `${left}%`;
+                div.style.animationDelay = `${i * 0.5}s`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 rounded-full ${node.color} node-pulse"></div>
+                        <span class="text-[7px] font-black uppercase tracking-widest text-white/30">${node.type}</span>
+                    </div>
+                    <p class="text-[10px] font-bold text-white/70 leading-tight">${node.text}</p>
+                `;
+                container.appendChild(div);
+            });
+
+            // Update state summaries
+            document.getElementById('synapse-load-label').innerText = triageData[activeStateId || 'white'].name;
+            document.getElementById('synapse-load-bar').style.width = `${nexusState.wave}%`;
+            document.getElementById('synapse-load-bar').style.backgroundColor = triageData[activeStateId || 'white'].color;
+            document.getElementById('synapse-sync-label').innerText = `${executiveState.syncScore}%`;
+        }
+
+        // 44. CLUSTER LOGIC
+        function renderClusters() {
+            const container = document.getElementById('cluster-container');
+            container.innerHTML = '';
+            
+            // Create a pseudo-cluster based on log categories
+            const categories = ['Event', 'Feeling', 'Fact'];
+            categories.forEach(cat => {
+                const count = vaultState.logs.filter(l => l.category === cat).length;
+                if (count === 0) return;
+
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5";
+                div.innerHTML = `
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/60">${cat} Cluster</span>
+                    <span class="px-2 py-1 rounded bg-violet-500/20 text-violet-400 font-mono text-[9px]">${count} Nodes</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 45. INITIALIZATION HOOKS
+        window.addEventListener('resize', initParticles);
+        
+        const synapseOnload = window.onload;
+        window.onload = () => {
+            if(synapseOnload) synapseOnload();
+            initParticles();
+            animateParticles();
+            
+            // Hook into view switching to refresh the map
+            const originalSwitch = switchView;
+            switchView = (viewId) => {
+                originalSwitch(viewId);
+                if(viewId === 'synapse') {
+                    renderSynapticMap();
+                    renderClusters();
+                    logToTerminal("Synaptic Map: Cognitive layout recalculated.", "CMD");
+                }
+            }
+        };
+        /* ==========================================================================
+           💾 DATA CORE & PERSONA ENGINE (Phase 07)
+           ========================================================================== */
+
+        // 46. EXPORT LOGIC
+        function exportSystemData() {
+            const fullData = {
+                nexus_state: nexusState,
+                vault: vaultState,
+                engine: engineState,
+                analytics: analyticsState.history,
+                executive: executiveState.habits,
+                export_date: new Date().toISOString(),
+                version: "Architect_OS_21.0"
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullData));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `architect_backup_${new Date().getTime()}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            
+            logToTerminal("System backup successfully generated.", "INFO");
+        }
+
+        // 47. IMPORT LOGIC
+        function importSystemData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    // Confirm and Load
+                    if(confirm("Confirm: This will overwrite your current local data. Proceed?")) {
+                        localStorage.setItem('nexus_os_vault', JSON.stringify(imported.vault));
+                        localStorage.setItem('nexus_os_engine', JSON.stringify(imported.engine));
+                        localStorage.setItem('nexus_os_analytics', JSON.stringify(imported.analytics));
+                        localStorage.setItem('nexus_os_executive', JSON.stringify(imported.executive));
+                        
+                        logToTerminal("System Restore Complete. Re-booting...", "WARN");
+                        setTimeout(() => window.location.reload(), 1500);
+                    }
+                } catch (err) {
+                    logToTerminal("Import failed: Corrupt JSON structure.", "ERROR");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 48. ARCHITECT PERSONA LOGIC
+        const architectQuotes = [
+            "Patterns suggest your Resiliency Wave drops significantly on Tuesdays. Investigate external environmental triggers.",
+            "You have 4 Truth Anchors but haven't interacted with the Vault in 48 hours. The Pilot is flying blind.",
+            "Integrity levels are at 80%. The system is stable. Proceed with high-cognitive tasks.",
+            "Caution: Your 'Pressure' state is correlating with a lack of 'Morning Hydration'. Biology is the bottleneck.",
+            "The Synaptic Map shows a cluster of 'Fear' logs. Counter these with Truth Anchors immediately."
+        ];
+
+        function runArchitectAnalysis() {
+            const display = document.getElementById('architect-thought');
+            display.innerHTML = '<span class="animate-pulse">Analyzing neural telemetry...</span>';
+            
+            triggerHaptic('pulse');
+
+            setTimeout(() => {
+                // Select quote based on state
+                let quote = architectQuotes[Math.floor(Math.random() * architectQuotes.length)];
+                
+                // Real-time custom logic
+                if(nexusState.wave < 30) quote = "CRITICAL: Wave levels are dangerously low. Disengage from all Executive tasks. Enter Sanctuary immediately.";
+                if(executiveState.syncScore > 90) quote = "EXCELLENT: Neural Sync is optimal. You are operating as the Architect today.";
+
+                display.innerText = `"${quote}"`;
+                logToTerminal("Architect Neural Audit complete.", "INFO");
+            }, 2000);
+        }
+
+        // 49. UPDATE META STATS
+        function updateMetaStats() {
+            document.getElementById('meta-logs').innerText = vaultState.logs.length;
+            document.getElementById('meta-anchors').innerText = vaultState.anchors.length;
+            
+            const health = document.getElementById('meta-health');
+            if(nexusState.wave > 70) {
+                health.innerText = "NOMINAL";
+                health.className = "text-2xl font-mono font-bold text-emerald-500";
+            } else if (nexusState.wave > 40) {
+                health.innerText = "STRESS";
+                health.className = "text-2xl font-mono font-bold text-amber-500";
+            } else {
+                health.innerText = "CRITICAL";
+                health.className = "text-2xl font-mono font-bold text-red-500 animate-pulse";
+            }
+        }
+
+        // 50. FINAL BOOT SEQUENCE
+        const finalOnload = window.onload;
+        window.onload = () => {
+            if(finalOnload) finalOnload();
+            updateMetaStats();
+            
+            // Re-render Data Core stats whenever switching views
+            const originalSwitch = switchView;
+            switchView = (viewId) => {
+                originalSwitch(viewId);
+                if(viewId === 'datacore') updateMetaStats();
+            };
+
+            console.log("%c ARCHITECT OS ONLINE ", "background: #000; color: #00ff88; font-size: 20px; font-weight: bold;");
+            logToTerminal("System Boot Sequence 100% Complete. Welcome back, Architect.", "INFO");
+        };
+    </script>
 </body>
 </html>
