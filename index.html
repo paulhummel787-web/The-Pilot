@@ -1,733 +1,1874 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0a0a0a">
-    <title>Architect OS - Bee Well</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<title>Architect OS</title>
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-        /* =========================
-           🌈 CORE VARIABLES & SYSTEM COLORS
-           ========================= */
-        :root {
-            --yellow: #facc15;  /* ADHD / Static */
-            --red: #ef4444;     /* Heat */
-            --blue: #3b82f6;    /* Depression Gravity */
-            --purple: #8b5cf6;  /* Anxiety Pulse */
-            --green: #10b981;   /* Regulated Flow */
-            --orange: #fb923c;  /* Urgency */
-            --bg-base: #0a0a0a;
-        }
+<style>
+body{
+    background:#050508;
+    color:white;
+    font-family:system-ui;
+    overflow:hidden;
+}
 
-        body {
-            background: var(--bg-base);
-            color: white;
-            font-family: system-ui, -apple-system, sans-serif;
-            transition: background-color 0.4s, filter 0.4s;
-            overflow-x: hidden;
-        }
+/* ROOT LAYERS */
+#app{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+}
 
-        /* =========================
-           🌊 BACKGROUND ENERGY BLOBS
-           ========================= */
-        .bg-blob {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.15;
-            z-index: -1;
-            animation: floatBlob 20s infinite ease-in-out;
-            transition: background 1s ease;
-        }
-        .bg-blob:nth-child(1) { top: -100px; left: -100px; }
-        .bg-blob:nth-child(2) { bottom: -120px; right: -120px; animation-delay: 5s; }
-        .bg-blob:nth-child(3) { top: 40%; left: 30%; animation-delay: 10s; }
+/* CORE PANELS */
+#topbar{
+    height:40px;
+    display:flex;
+    align-items:center;
+    padding:0 10px;
+    font-size:12px;
+    opacity:.5;
+}
 
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(60px, -40px) scale(1.1); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
+#main{
+    flex:1;
+    display:flex;
+    overflow:hidden;
+}
 
-        /* =========================
-           ✨ GLASS & UI POLISH
-           ========================= */
-        .glass {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            transition: all 0.3s ease;
-            border-radius: 16px;
-        }
-        .glass:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+#left{
+    width:220px;
+    border-right:1px solid rgba(255,255,255,.1);
+    overflow:auto;
+}
 
-        /* Buttons & Nav */
-        .btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
-        }
-        .btn:hover {
-            transform: scale(1.03);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        .nav-btn {
-            opacity: 0.4;
-            transition: 0.2s;
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-btn.active {
-            opacity: 1;
-            color: var(--purple);
-        }
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--purple);
-        }
+#center{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+}
 
-        /* Terminal */
-        .terminal {
-            background: black;
-            color: #00ff88;
-            font-family: monospace;
-            text-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
-        }
+#right{
+    width:260px;
+    border-left:1px solid rgba(255,255,255,.1);
+    overflow:auto;
+}
 
-        /* Overlays & Animations */
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* OVERLAYS */
+.overlay{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,.95);
+}
 
-        /* Scrollbars */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+/* ANCHOR */
+.anchor{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    background:black;
+    padding:12px;
+    border:1px solid #333;
+    font-size:12px;
+    max-width:240px;
+}
 
-        /* HUDs */
-        .hud-panel {
-            position: fixed;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            z-index: 999;
-            padding: 10px 14px;
-            font-size: 11px;
-        }
-    </style>
+/* TERMINAL */
+#terminal{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    background:black;
+    border-top:1px solid #222;
+    font-size:12px;
+}
+
+#terminal input{
+    width:100%;
+    background:black;
+    border:none;
+    color:#0f0;
+    padding:6px;
+    outline:none;
+}
+</style>
 </head>
 
-<body class="p-6">
-    <div class="bg-blob" id="blob1"></div>
-    <div class="bg-blob" id="blob2"></div>
-    <div class="bg-blob" id="blob3"></div>
+<body>
 
-    <div class="max-w-5xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6 tracking-wide">Architect OS <span class="text-xs opacity-50 ml-2">v2.0 Bee Well</span></h1>
+<div id="app">
+    <div id="topbar">ARCHITECT SYSTEM</div>
 
-        <div class="flex flex-wrap gap-4 mb-6 text-xs uppercase font-bold tracking-wider" id="main-nav">
-            <button class="nav-btn active" onclick="switchTab('base')">Cockpit</button>
-            <button class="nav-btn" onclick="switchTab('book')">Book</button>
-            <button class="nav-btn" onclick="switchTab('anchor')">Anchors</button>
-            <button class="nav-btn" onclick="switchTab('mvs')">MVS Engine</button>
-            <button class="nav-btn" onclick="switchTab('terminal')">Terminal</button>
-            <button class="nav-btn" onclick="openAnalytics()">Data</button>
-            <button class="nav-btn" onclick="openJournal()">Journal</button>
-            <button class="nav-btn" onclick="openDaily()">Fox</button>
-            <button class="nav-btn text-purple-400" onclick="openIdentity()">Identity</button>
-        </div>
-
-        <div id="view" class="fade-in min-h-[60vh]"></div>
+    <div id="main">
+        <div id="left"></div>
+        <div id="center"></div>
+        <div id="right"></div>
     </div>
+</div>
 
-    <div id="guidance-hud" class="hud-panel top-4 right-4 text-right">System Online</div>
-    <div id="score-hud" class="hud-panel bottom-4 left-4">Level 1 | XP: 0</div>
-    
-    <button onclick="panicMode()" class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-[0_0_15px_rgba(239,68,68,0.5)] z-50 transition hover:scale-105">⚠ PANIC</button>
+<div id="terminal">
+    <input id="cmd" placeholder="command..." onkeydown="cmdHandler(event)">
+</div>
 
 <script>
-/* ==========================================================================
-   🧠 STATE MANAGEMENT
-   ========================================================================== */
-const state = {
-    tab: 'base',
-    wave: 70,
-    integrity: 50,
-    color: 'green',
-    mode: 'steady', // low, steady, sharp, overloaded
-    personality: 'architect',
-    score: 0,
-    level: 1,
-    xp: 0,
-    mvsList: [],
-    metricsHistory: [],
-    journal: [],
-    achievements: [],
-    fox: null,
-    daily: { fox: null, completed: false, date: new Date().toDateString() },
-    focusMode: false,
-    sanctuary: false
-};
 
-// Auto-load state
-const savedState = localStorage.getItem("architect_os_state");
-if (savedState) Object.assign(state, JSON.parse(savedState));
+/* ================= GLOBAL ENGINE ================= */
 
-function saveState() {
-    localStorage.setItem("architect_os_state", JSON.stringify(state));
-}
-setInterval(saveState, 5000);
+const Engine = {
+    state:{
+        wave:65,
+        integrity:50,
+        color:"green",
+        locked:false,
+        mode:"idle",
+        history:[]
+    },
 
-/* ==========================================================================
-   📚 DATABASES
-   ========================================================================== */
-const FULL_BOOK = [
-    { title: "Chapter 1 — The Landscape of the Storm", content: "The complex mind lives inside what can only be described as a Symptom Soup — a constantly shifting blend of emotional, neurological, and physiological states.\n\nThere is no clean separation.\nAnxiety bleeds into restlessness.\nRestlessness mutates into avoidance.\nAvoidance hardens into depression.\nDepression dissolves into dissociation.\n\nThe mistake most systems make is trying to isolate a single 'problem.'\nThere is no single problem. There is only weather.\n\nAnd weather cannot be controlled — only navigated.\nThe shift happens when you stop asking: 'What’s wrong with me?'\nAnd start asking: 'What system am I currently in?'\n\nThis is the moment you stop being a victim of the storm… and become a navigator of it." },
-    { title: "Chapter 2 — The Anatomy of Shutdown", content: "Shutdown is not laziness.\nIt is not failure.\nIt is not weakness.\n\nIt is evacuation.\nWhen the nervous system exceeds capacity, the brain pulls power from higher functions to preserve life.\nLanguage goes offline.\nDecision-making collapses.\nTime disappears.\n\nThis is the White Fog.\nYou are not broken in this state.\nYou are protected.\n\nUnderstanding this changes everything.\nBecause you stop trying to push… and start learning how to reboot." },
-    { title: "Chapter 3 — The Architect vs The Pilot", content: "There are two versions of you:\n\nThe Pilot — reactive, emotional, in-the-moment.\nThe Architect — calm, strategic, future-focused.\n\nMost people try to strengthen the Pilot.\nThis fails because the Pilot disappears in storms.\n\nThe Architect does not.\nThe Architect builds systems that function when the Pilot cannot.\n\nYou don’t need more willpower.\nYou need better architecture." },
-    { title: "Chapter 4 — The Colour Frequencies", content: "When overwhelmed, the brain cannot process complexity.\nSo we remove complexity.\nWe replace it with color.\n\nYellow — Static (ADHD scatter)\nRed — Heat (emotional flooding)\nBlue — Gravity (depression)\nPurple — Pulse (anxiety)\nWhite — Fog (dissociation)\nGreen — Flow (regulated state)\n\nYou do not analyze.\nYou identify.\n\n'What color am I?'\nThat question alone restores control." },
-    { title: "Chapter 5 — The Prime Directive", content: "Fix the state.\nThen take the step.\n\nNever reverse this order.\nYou cannot think your way out of a dysregulated nervous system.\nYou must regulate first.\nThen act.\n\nThis is the law everything else follows." },
-    { title: "Chapter 6 — The 90 Second Rule", content: "Every emotional spike is chemical.\nIt lasts 90 seconds.\nAfter that, the story continues it.\n\nSo the rule is simple:\nDo nothing for 90 seconds.\nObserve.\nLet the wave pass.\nThen act." },
-    { title: "Chapter 7 — Time Blindness", content: "Time is not linear in a complex mind.\nIt is Now or Not Now.\n\nSo we externalize it.\nTimers.\nAnchors.\nVisual clocks.\n\nTime must be seen to be trusted." },
-    { title: "Chapter 8 — Habit Stacking", content: "You do not build habits from nothing.\nYou attach them.\n\nCoffee → check system\nShower → reset mind\nWake → anchor intention\n\nThis creates automatic flight paths.\nNo thinking required." },
-    { title: "Chapter 9 — Fueling Logic", content: "Your brain is a machine.\nLow fuel = low control.\n\nHydration.\nFood.\nSleep.\n\nThese are not optional.\nThey are system requirements." },
-    { title: "Chapter 10 — Fire Kit", content: "When overwhelmed, you cannot think.\nSo you prepare tools in advance.\n\nCold water.\nHeadphones.\nWeighted objects.\n\nNo decisions.\nJust action." },
-    { title: "Chapter 11 — Anxiety Pulse", content: "Anxiety simulates danger.\nIt is prediction — not reality.\n\nThe goal is not to eliminate it…\n…but to stop believing it." },
-    { title: "Chapter 12 — ADHD Scatter", content: "The mind cannot land.\nSo we force landing.\n\nOne task.\nOne movement.\nOne step.\n\nThis restores control." },
-    { title: "Chapter 13 — Emotional Heat", content: "Emotions hit instantly.\nYou must delay reaction.\n90 seconds.\nAlways." },
-    { title: "Chapter 14 — CPTSD Shadow", content: "The past projects onto the present.\nNot everything is danger.\nBut your system believes it is.\n\nAwareness breaks this loop." },
-    { title: "Chapter 15 — Depression Gravity", content: "Everything feels heavy.\nSo we reduce effort.\n\nTiny steps.\nMovement creates energy." },
-    { title: "Chapter 16 — Dissociation Fog", content: "Disconnection is protection.\nReturn through the body.\n\nTouch.\nSound.\nMovement.\n\nNot thought." },
-    { title: "Chapter 17 — MVS Protocol", content: "Minimum Viable Step.\nNot the whole task.\nJust one pebble.\n\nThis breaks inertia." },
-    { title: "Chapter 18 — 10/20 Brakes", content: "10 minutes stuck thinking → change body.\n20 minutes stuck physically → change location.\n\nInterrupt loops physically.\nAlways." },
-    { title: "Chapter 19 — Memory Shield", content: "Your brain is not storage.\nWrite everything down.\nClear the RAM.\nThen act." },
-    { title: "Chapter 20 — Sanctuary Design", content: "Less noise = more clarity.\nClean space.\nSoft light.\nMinimal input.\n\nCalm environment = calm mind." },
-    { title: "Chapter 21 — Social Governor", content: "Boundaries protect energy.\nYou do not owe constant access.\nScripts help.\nUse them." },
-    { title: "Chapter 22 — Sensory Override", content: "Cold water resets the system.\nPressure calms the body.\nBreathing restores control.\nUse biology." },
-    { title: "Chapter 23 — Reporting Visibility", content: "Say the color.\n'I’m Red.'\nThat is enough.\nNo explanation needed." },
-    { title: "Chapter 24 — Sleep Docking", content: "Sleep is repair.\nWithout it, everything fails.\nProtect it." },
-    { title: "Chapter 25 — Medication Ledger", content: "Track patterns.\nFind signals.\nAdjust accordingly." },
-    { title: "Chapter 26 — Metabolic Reset", content: "Move the body.\nReset the system.\nAlways works." },
-    { title: "Chapter 27 — Daily Ledger", content: "Track wins.\nEven small ones.\nThis rewires identity." },
-    { title: "Chapter 28 — The Filter", content: "Drop what doesn’t matter.\nFocus only on signal.\nEnergy is limited." },
-    { title: "Chapter 29 — Chase the Fox", content: "One high-impact task.\nNot ten small ones.\nFind it.\nChase it." },
-    { title: "Chapter 30 — Bodyguards", content: "Your resistance is protection.\nAcknowledge it.\nThen lead anyway." },
-    { title: "Chapter 31 — Identity Anchors", content: "Feelings lie.\nTruth stays.\nAnchor to truth." },
-    { title: "Chapter 32 — Support Grid", content: "You are not meant to do this alone.\nBuild support.\nUse it." },
-    { title: "Chapter 33 — The Architect’s Creed", content: "I do not fight my nature.\nI design for it.\n\nOne step.\nOne breath.\nOne system.\n\nI am the Architect." }
-];
+    systems:{},
 
-const SCRIPTURE_ENGINE = [
-    { category: "Identity", color: "blue", lie: "I am a mistake", verse: "Psalm 139:14", truth: "I am fearfully and wonderfully made; God does not make mistakes." },
-    { category: "Identity", color: "blue", lie: "I am unwanted", verse: "Ephesians 1:4", truth: "I am chosen by God before the world began; I am wanted." },
-    { category: "Identity", color: "blue", lie: "I am a burden", verse: "Psalm 55:22", truth: "I am sustained by God; He carries what I cannot." },
-    { category: "Identity", color: "blue", lie: "I am broken", verse: "2 Corinthians 5:17", truth: "I am a new creation; the old is gone, the new is here." },
-    { category: "Identity", color: "blue", lie: "I am unloved", verse: "Romans 8:38-39", truth: "Nothing can separate me from the love of God." },
-    { category: "Safety", color: "purple", lie: "I am alone", verse: "Deuteronomy 31:8", truth: "God goes before me; I am never alone." },
-    { category: "Safety", color: "purple", lie: "I am abandoned", verse: "Psalm 27:10", truth: "Even if people leave, God holds me close." },
-    { category: "Safety", color: "purple", lie: "I am too broken to be helped", verse: "Psalm 34:18", truth: "God is closest when I am most broken." },
-    { category: "Safety", color: "purple", lie: "I don't belong", verse: "Isaiah 43:1", truth: "I am called by name; I belong to God." },
-    { category: "Peace", color: "yellow", lie: "My mind is out of control", verse: "2 Timothy 1:7", truth: "I have power, love, and a sound mind." },
-    { category: "Peace", color: "yellow", lie: "I will always feel this way", verse: "Isaiah 26:3", truth: "God keeps my mind in perfect peace when I focus on Him." },
-    { category: "Peace", color: "yellow", lie: "I am overwhelmed", verse: "Philippians 4:7", truth: "God’s peace guards my heart and mind." },
-    { category: "Peace", color: "yellow", lie: "Everything is chaos", verse: "1 Corinthians 14:33", truth: "God is not the author of confusion but of peace." },
-    { category: "Strength", color: "red", lie: "I can't do this", verse: "Philippians 4:13", truth: "I can do all things through Christ who strengthens me." },
-    { category: "Strength", color: "red", lie: "I am too weak", verse: "2 Corinthians 12:9", truth: "God’s power is made perfect in my weakness." },
-    { category: "Strength", color: "red", lie: "I have no energy", verse: "Isaiah 40:31", truth: "God renews my strength; I will not faint." },
-    { category: "Strength", color: "red", lie: "I don’t know what to do", verse: "Psalm 142:3", truth: "Even when I don’t see the path, God does." }
-];
+    loopInterval:null,
 
-const AUDITS = {
-    biological: { title: "Biological Reset", steps: ["Drink water now.", "Stand and stretch.", "Take 5 slow breaths.", "Check body tension.", "Reset posture."] },
-    mental: { title: "Mental Reset", steps: ["Name your color state.", "Drop the story.", "Focus on the body.", "Wait 90 seconds.", "Return to one step."] },
-    execution: { title: "Execution Reset", steps: ["Close distractions.", "Identify ONE task.", "Break into 1 step.", "Start for 60 seconds.", "Ignore outcome."] }
-};
+    start(){
+        this.loopInterval = setInterval(()=>{
+            this.update();
+        },1000);
 
-const PERSONALITIES = {
-    architect: ["Stabilize the system. Then execute.", "You are not behind. You are recalibrating.", "One clean move is enough."],
-    coach: ["Let’s go — small step right now.", "Momentum beats perfection.", "You’ve done harder things."],
-    calm: ["Slow down. You’re safe.", "Breathe. Nothing urgent.", "Stay here. That’s enough."]
-};
+        Renderer.init();
+    },
 
-/* ==========================================================================
-   ⚙️ CORE SYSTEM LOGIC
-   ========================================================================== */
-function updateSystemState() {
-    const w = state.wave;
-    const i = state.integrity;
-    
-    if (w < 30) state.mode = "low";
-    else if (w > 80 && i < 40) state.mode = "overloaded";
-    else if (w > 70 && i > 60) state.mode = "sharp";
-    else state.mode = "steady";
+    update(){
+        // core wave drift
+        this.state.wave += (Math.random()*2-1);
 
-    // Update Color based on wave
-    if(w < 30) state.color = 'blue';
-    else if(w < 50) state.color = 'purple';
-    else if(w < 70) state.color = 'yellow';
-    else if(w < 85) state.color = 'red';
-    else state.color = 'green';
+        // clamp
+        this.state.wave = Math.max(0,Math.min(100,this.state.wave));
 
-    // Apply background colors dynamically
-    const colorHex = { yellow: '#facc15', red: '#ef4444', blue: '#3b82f6', purple: '#8b5cf6', green: '#10b981', orange: '#fb923c' }[state.color];
-    document.getElementById('blob1').style.background = colorHex;
-    document.getElementById('blob2').style.background = state.color === 'yellow' ? '#ef4444' : '#facc15';
-    document.getElementById('blob3').style.background = state.color === 'blue' ? '#8b5cf6' : '#3b82f6';
-    
-    document.body.style.boxShadow = `inset 0 0 120px rgba(${hexToRgb(colorHex)}, 0.15)`;
+        // update systems
+        for(let key in this.systems){
+            this.systems[key].update?.();
+        }
 
-    // Update HUDs
-    const guidance = {
-        low: "Reduce everything. Drink water. One small movement.",
-        overloaded: "Too much input. Remove stimulation. Breathe.",
-        sharp: "High clarity detected. Chase the Fox.",
-        steady: "Maintain rhythm. Stay with the current step."
-    }[state.mode];
-    
-    document.getElementById('guidance-hud').innerText = `State: ${state.color.toUpperCase()} | ${guidance}`;
-    document.getElementById('score-hud').innerText = `Level ${state.level} | XP: ${state.xp} | Score: ${state.score}`;
-}
+        Renderer.render();
+    },
 
-function hexToRgb(hex) {
-    let bigint = parseInt(hex.replace('#',''), 16);
-    return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
-}
-
-// Global loop
-setInterval(() => {
-    // Wave decay/recovery
-    if(state.wave > 50) state.wave -= 0.5; else state.wave += 0.2;
-    if(state.wave < 0) state.wave = 0;
-    if(state.wave > 100) state.wave = 100;
-    
-    updateSystemState();
-    
-    // Auto record metrics
-    if (Math.random() > 0.5) {
-        state.metricsHistory.push({ time: new Date().toLocaleTimeString(), wave: state.wave, integrity: state.integrity });
-        if(state.metricsHistory.length > 30) state.metricsHistory.shift();
+    register(name,system){
+        this.systems[name]=system;
+        system.init?.();
     }
-}, 5000);
+};
 
-/* ==========================================================================
-   🖥️ UI RENDERERS
-   ========================================================================== */
-function switchTab(tab) {
-    state.tab = tab;
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    render();
-}
+/* ================= RENDERER ================= */
 
-function render() {
-    updateSystemState();
-    const v = document.getElementById('view');
-    v.innerHTML = '';
-    
-    if (state.tab === 'base') v.innerHTML = renderCockpit();
-    if (state.tab === 'book') renderBook(); // Self managing DOM
-    if (state.tab === 'anchor') renderAnchor();
-    if (state.tab === 'mvs') renderMVS();
-    if (state.tab === 'terminal') v.innerHTML = renderTerminal();
-}
+const Renderer = {
 
-function renderCockpit() {
-    return `
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
-        <div class="glass p-6 text-center glow-${state.color}">
-            <p class="text-xs opacity-50 mb-1 uppercase tracking-widest">System Wave</p>
-            <p class="text-5xl font-light mb-2">${Math.round(state.wave)}<span class="text-xl opacity-50">%</span></p>
-            <div class="w-full bg-white/10 h-1 rounded overflow-hidden mt-4">
-                <div class="bg-${state.color}-500 h-full" style="width: ${state.wave}%"></div>
-            </div>
+    init(){
+        this.left = document.getElementById("left");
+        this.center = document.getElementById("center");
+        this.right = document.getElementById("right");
+    },
+
+    render(){
+        this.renderLeft();
+        this.renderCenter();
+        this.renderRight();
+    },
+
+    renderLeft(){
+        this.left.innerHTML = `
+        <div class="p-2 text-xs opacity-60">
+            <div>Wave: ${Engine.state.wave.toFixed(0)}</div>
+            <div>Integrity: ${Engine.state.integrity}</div>
+            <div>State: ${Engine.state.color}</div>
         </div>
-        <div class="glass p-6 text-center">
-            <p class="text-xs opacity-50 mb-1 uppercase tracking-widest">Integrity</p>
-            <p class="text-5xl font-light mb-2">${Math.round(state.integrity)}<span class="text-xl opacity-50">%</span></p>
-            <div class="w-full bg-white/10 h-1 rounded overflow-hidden mt-4">
-                <div class="bg-indigo-400 h-full" style="width: ${state.integrity}%"></div>
-            </div>
-        </div>
-        
-        <div class="glass p-6 col-span-1 md:col-span-2">
-            <p class="text-xs opacity-50 mb-4 uppercase tracking-widest text-center">System Audit Protocols</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onclick="startAudit('biological')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">BIO RESET</button>
-                <button onclick="startAudit('mental')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">MENTAL RESET</button>
-                <button onclick="startAudit('execution')" class="btn py-4 rounded-xl text-sm font-bold tracking-wide">EXEC RESET</button>
-            </div>
-        </div>
-    </div>`;
-}
+        `;
+    },
 
-/* --- MVS Engine --- */
-function renderMVS() {
-    const v = document.getElementById('view');
-    v.innerHTML = `
-    <div class="glass p-6 max-w-2xl mx-auto fade-in">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-bold">Minimum Viable Steps</h2>
-            <button onclick="addMVS(prompt('Enter a tiny step:'))" class="btn px-4 py-2 text-xs rounded-lg">+ Add Step</button>
+    renderCenter(){
+        this.center.innerHTML = `
+        <div class="p-4 text-sm">
+            SYSTEM ACTIVE
         </div>
-        <div class="space-y-3">
-            ${state.mvsList.length === 0 ? '<p class="text-center opacity-40 text-sm">No active steps. System suggests: Drink water.</p>' : ''}
-            ${state.mvsList.map(m => `
-                <div class="flex justify-between items-center glass p-4 ${m.completed ? 'opacity-40' : ''}">
-                    <span class="${m.completed ? 'line-through' : ''} cursor-pointer select-none" onclick="toggleMVS(${m.id})">${m.task}</span>
-                    <button onclick="deleteMVS(${m.id})" class="text-red-400 hover:text-red-300 px-2">&times;</button>
-                </div>
-            `).join('')}
+        `;
+    },
+
+    renderRight(){
+        this.right.innerHTML = `
+        <div class="p-2 text-xs opacity-50">
+            modules loading...
         </div>
-    </div>`;
-}
-
-function addMVS(task) {
-    if (!task) return;
-    state.mvsList.push({ id: Date.now(), task, completed: false });
-    if(state.tab === 'mvs') renderMVS();
-}
-function toggleMVS(id) {
-    const m = state.mvsList.find(x => x.id === id);
-    if (!m) return;
-    m.completed = !m.completed;
-    if (m.completed) { state.integrity += 3; updateScore('mvs_complete'); }
-    if(state.tab === 'mvs') renderMVS();
-}
-function deleteMVS(id) {
-    state.mvsList = state.mvsList.filter(x => x.id !== id);
-    if(state.tab === 'mvs') renderMVS();
-}
-
-/* --- Terminal --- */
-function renderTerminal() {
-    return `
-    <div class="terminal p-6 rounded-xl h-[60vh] flex flex-col fade-in">
-        <div id="output" class="flex-1 overflow-y-auto mb-4 text-sm opacity-90 space-y-1">
-            <div>> System Terminal Online. Type /help for commands.</div>
-        </div>
-        <input id="cmd" class="w-full bg-transparent border-t border-green-900 pt-4 outline-none text-green-400" placeholder="> Enter command..." onkeydown="handleCmd(event)">
-    </div>`;
-}
-
-function handleCmd(e) {
-    if (e.key !== "Enter") return;
-    const val = e.target.value.trim();
-    if (!val) return;
-    
-    log("> " + val);
-    const args = val.split(" ");
-    const cmd = args[0];
-
-    switch(cmd) {
-        case "/help":
-            log("Commands: /wave [0-100], /audit, /mvs, /fox [task], /anchor, /truth, /clear"); break;
-        case "/wave":
-            const w = parseInt(args[1]);
-            if (!isNaN(w)) { state.wave = Math.max(0, Math.min(100, w)); log("Wave set to " + state.wave); render(); }
-            break;
-        case "/audit": switchTab('base'); break;
-        case "/mvs": switchTab('mvs'); break;
-        case "/fox": state.fox = args.slice(1).join(" "); log("Fox locked: " + state.fox); break;
-        case "/anchor":
-        case "/truth": switchTab('anchor'); break;
-        case "/clear": document.getElementById('output').innerHTML = ''; break;
-        default: log("Unknown command.");
+        `;
     }
-    e.target.value = "";
+};
+
+/* ================= TERMINAL ================= */
+
+function cmdHandler(e){
+    if(e.key==="Enter"){
+        const val = e.target.value;
+
+        if(val.startsWith("/wave")){
+            Engine.state.wave = parseInt(val.split(" ")[1])||Engine.state.wave;
+        }
+
+        if(val.startsWith("/mode")){
+            Engine.state.mode = val.split(" ")[1]||"idle";
+        }
+
+        for(let key in Engine.systems){
+            Engine.systems[key].command?.(val);
+        }
+
+        e.target.value="";
+    }
 }
 
-function log(msg) {
-    const out = document.getElementById('output');
-    if (out) { out.innerHTML += `<div>${msg}</div>`; out.scrollTop = out.scrollHeight; }
-}
+/* ================= START ================= */
 
-/* --- Book Engine --- */
-let chapterIndex = 0;
-function renderBook() {
-    const v = document.getElementById('view');
-    v.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 fade-in h-[60vh]">
-        <div class="glass p-4 overflow-y-auto hidden md:block">
-            <h3 class="text-xs uppercase tracking-widest opacity-50 mb-4">Index</h3>
-            ${FULL_BOOK.map((c, i) => `<button class="block w-full text-left text-xs py-2 opacity-60 hover:opacity-100 ${i === chapterIndex ? 'text-indigo-400 opacity-100 font-bold' : ''}" onclick="loadChapter(${i})">${c.title}</button>`).join('')}
-        </div>
-        <div class="glass p-8 md:col-span-3 overflow-y-auto relative">
-            <h2 class="text-2xl font-bold mb-6">${FULL_BOOK[chapterIndex].title}</h2>
-            <p class="opacity-80 leading-relaxed whitespace-pre-line text-sm md:text-base">${FULL_BOOK[chapterIndex].content}</p>
-            <div class="flex justify-between mt-10">
-                <button onclick="loadChapter(${chapterIndex - 1})" class="btn px-4 py-2 text-xs rounded">&larr; Prev</button>
-                <button onclick="openReaderMode()" class="btn px-4 py-2 text-xs rounded border-indigo-500">Immersive Mode</button>
-                <button onclick="loadChapter(${chapterIndex + 1})" class="btn px-4 py-2 text-xs rounded">Next &rarr;</button>
-            </div>
-        </div>
-    </div>`;
-}
+Engine.start();
+```javascript
+/* =========================================================
+   PART 2 — COCKPIT PANELS + LIVE UI SYSTEM
+   ========================================================= */
 
-function loadChapter(i) {
-    if (i < 0) i = FULL_BOOK.length - 1;
-    if (i >= FULL_BOOK.length) i = 0;
-    chapterIndex = i;
-    if(state.tab === 'book') renderBook();
-}
+/* ================= PANEL SYSTEM ================= */
 
-function openReaderMode() {
-    const ch = FULL_BOOK[chapterIndex];
-    const overlay = document.createElement('div');
-    overlay.className = "fixed inset-0 bg-[#050508] z-[9999] p-10 overflow-y-auto fade-in flex justify-center";
-    overlay.innerHTML = `
-        <div class="max-w-2xl w-full">
-            <button onclick="this.parentElement.parentElement.remove()" class="mb-10 opacity-50 hover:opacity-100 tracking-widest text-xs uppercase">&larr; Exit Reader</button>
-            <h2 class="text-3xl font-light mb-8">${ch.title}</h2>
-            <p class="opacity-80 leading-loose text-lg whitespace-pre-line">${ch.content}</p>
-        </div>`;
-    document.body.appendChild(overlay);
-}
+const Panels = {
 
-/* --- Anchor & Identity Engine --- */
-function renderAnchor() {
-    const v = document.getElementById('view');
-    // Filter anchors by current system state color, fallback to blue
-    const activeAnchors = SCRIPTURE_ENGINE.filter(a => a.color === state.color) || SCRIPTURE_ENGINE.filter(a => a.color === 'blue');
-    const a = activeAnchors[Math.floor(Math.random() * activeAnchors.length)];
-    
-    v.innerHTML = `
-    <div class="glass p-10 text-center fade-in max-w-2xl mx-auto mt-10 glow-${state.color}">
-        <p class="text-xs uppercase opacity-40 mb-2 tracking-widest">${a.category} Anchor</p>
-        <p class="text-red-400 mb-6 italic text-sm">Lie: "${a.lie}"</p>
-        <p class="text-2xl font-light text-indigo-300 mb-6 leading-relaxed">"${a.truth}"</p>
-        <p class="text-xs opacity-50 mb-10">${a.verse}</p>
-        
-        <div class="flex justify-center gap-4">
-            <button onclick="renderAnchor()" class="btn px-6 py-3 rounded-xl text-xs font-bold tracking-widest">NEXT TRUTH</button>
-            <button onclick="truthOverride()" class="btn px-6 py-3 rounded-xl text-xs font-bold tracking-widest bg-white/5 border-red-500/50 hover:bg-red-900/20">FORCE OVERRIDE</button>
-        </div>
-    </div>`;
-}
+    left:[],
+    center:[],
+    right:[],
 
-function truthOverride() {
-    const overlay = document.createElement('div');
-    overlay.className = "fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center p-10 text-center fade-in overflow-y-auto";
-    const identityTruths = SCRIPTURE_ENGINE.filter(a => a.category === "Identity");
-    overlay.innerHTML = `
-        <h2 class="text-xs uppercase tracking-widest opacity-50 mb-10 text-red-500">System Override Initiated</h2>
-        <div class="max-w-xl space-y-6">
-            ${identityTruths.map(a => `<p class="text-lg opacity-90">${a.truth}</p>`).join('')}
-        </div>
-        <button onclick="this.parentElement.remove()" class="mt-12 btn px-8 py-3 rounded-full text-xs">Acknowledge</button>
+    register(side,renderFn){
+        this[side].push(renderFn);
+    },
+
+    render(side){
+        return this[side].map(fn=>fn()).join("");
+    }
+};
+
+/* ================= BASE PANELS ================= */
+
+/* LEFT: STATE PANEL */
+Panels.register("left",()=>{
+
+    const s = Engine.state;
+
+    return `
+    <div class="p-2 border-b border-white/10 text-xs">
+        <div class="opacity-50 mb-1">STATE</div>
+        <div>Wave: ${s.wave.toFixed(0)}</div>
+        <div>Integrity: ${s.integrity}</div>
+        <div class="mt-1">Color: ${s.color}</div>
+    </div>
     `;
-    document.body.appendChild(overlay);
-    updateScore('anchor_used');
+});
+
+/* LEFT: QUICK ACTIONS */
+Panels.register("left",()=>{
+
+    return `
+    <div class="p-2 border-b border-white/10 text-xs">
+        <div class="opacity-50 mb-1">ACTIONS</div>
+
+        <button onclick="Engine.state.wave+=5">+ wave</button><br>
+        <button onclick="Engine.state.wave-=5">- wave</button><br>
+
+        <button onclick="Engine.state.mode='focus'">focus</button><br>
+        <button onclick="Engine.state.mode='reset'">reset</button>
+    </div>
+    `;
+});
+
+/* CENTER: MAIN FEED */
+Panels.register("center",()=>{
+
+    const s = Engine.state;
+
+    return `
+    <div class="p-4">
+        <div class="text-xs opacity-40 mb-2">SYSTEM FEED</div>
+
+        <div class="text-lg">
+            ${s.mode.toUpperCase()}
+        </div>
+
+        <div class="mt-2 text-sm opacity-70">
+            Wave level: ${s.wave.toFixed(0)}
+        </div>
+    </div>
+    `;
+});
+
+/* CENTER: ALERT LAYER */
+Panels.register("center",()=>{
+
+    const s = Engine.state;
+
+    let msg = "";
+
+    if(s.wave > 80) msg = "OVERLOAD";
+    else if(s.wave > 65) msg = "UNSTABLE";
+    else if(s.wave < 30) msg = "LOW STATE";
+
+    if(!msg) return "";
+
+    return `
+    <div class="p-4 text-red-400 text-lg">
+        ${msg}
+    </div>
+    `;
+});
+
+/* RIGHT: SYSTEM STATUS */
+Panels.register("right",()=>{
+
+    return `
+    <div class="p-2 border-b border-white/10 text-xs">
+        <div class="opacity-50 mb-1">SYSTEMS</div>
+
+        ${Object.keys(Engine.systems).map(s=>`
+            <div>${s}</div>
+        `).join("")}
+    </div>
+    `;
+});
+
+/* RIGHT: HISTORY */
+Panels.register("right",()=>{
+
+    const h = Engine.state.history.slice(-5).reverse();
+
+    return `
+    <div class="p-2 text-xs">
+        <div class="opacity-50 mb-1">HISTORY</div>
+
+        ${h.map(e=>`
+            <div>${e.color} (${Math.round(e.wave)})</div>
+        `).join("")}
+    </div>
+    `;
+});
+
+/* ================= OVERRIDE RENDERER ================= */
+
+Renderer.renderLeft = function(){
+    this.left.innerHTML = Panels.render("left");
+};
+
+Renderer.renderCenter = function(){
+    this.center.innerHTML = Panels.render("center");
+};
+
+Renderer.renderRight = function(){
+    this.right.innerHTML = Panels.render("right");
+};
+
+/* ================= STATE TRACKING ================= */
+
+Engine.register("historyTracker",{
+    update(){
+
+        if(Math.random() < 0.2){
+            Engine.state.history.push({
+                wave:Engine.state.wave,
+                color:Engine.state.color,
+                t:Date.now()
+            });
+
+            if(Engine.state.history.length > 50){
+                Engine.state.history.shift();
+            }
+        }
+    }
+});
+
+/* ================= BASIC COLOR SYSTEM (TEMP) ================= */
+
+Engine.register("colorCore",{
+
+    update(){
+
+        const w = Engine.state.wave;
+
+        let c = "green";
+
+        if(w > 85) c = "red";
+        else if(w > 70) c = "yellow";
+        else if(w > 50) c = "purple";
+        else if(w < 30) c = "blue";
+
+        Engine.state.color = c;
+
+        document.body.className = c;
+    }
+});
+```
+```javascript
+/* =========================================================
+   PART 3 — COLOR ENGINE + VISUAL SYSTEM
+   ========================================================= */
+
+/* ================= COLOR ENGINE ================= */
+
+Engine.register("colorEngine",{
+
+    intensity:0,
+
+    update(){
+
+        const w = Engine.state.wave;
+
+        let color = "green";
+        let intensity = 0;
+
+        if(w >= 85){
+            color = "red";
+            intensity = (w-85)/15;
+        }
+        else if(w >= 70){
+            color = "yellow";
+            intensity = (w-70)/15;
+        }
+        else if(w >= 50){
+            color = "purple";
+            intensity = (w-50)/20;
+        }
+        else if(w < 30){
+            color = "blue";
+            intensity = (30-w)/30;
+        }
+
+        Engine.state.color = color;
+        this.intensity = Math.max(0,Math.min(1,intensity));
+
+        Visuals.apply(color,this.intensity);
+    }
+});
+
+/* ================= VISUAL SYSTEM ================= */
+
+const Visuals = {
+
+    pulse:0,
+
+    apply(color,intensity){
+
+        // base color glow
+        const colors = {
+            red: "255,0,0",
+            yellow: "255,200,0",
+            blue: "0,120,255",
+            purple: "180,0,255",
+            green: "0,255,120"
+        };
+
+        const c = colors[color] || "255,255,255";
+
+        // pulse effect
+        this.pulse += 0.05;
+        const pulseVal = (Math.sin(this.pulse)+1)/2;
+
+        const glow = intensity * 0.6 + pulseVal * 0.2;
+
+        document.body.style.boxShadow = `
+            inset 0 0 ${200 + glow*200}px rgba(${c},${0.2 + glow*0.4})
+        `;
+
+        // subtle background shift
+        document.body.style.background = `
+            radial-gradient(circle at center, rgba(${c},${0.05 + glow*0.1}), #050508)
+        `;
+    }
+};
+
+/* ================= COLOR PANEL (UPGRADE UI) ================= */
+
+Panels.register("left",()=>{
+
+    const c = Engine.state.color;
+
+    return `
+    <div class="p-2 border-b border-white/10 text-xs">
+        <div class="opacity-50 mb-1">COLOR SYSTEM</div>
+
+        <div class="flex gap-2 mt-1">
+            ${["green","blue","purple","yellow","red"].map(col=>`
+                <button onclick="Engine.state.wave=${colorToWave(col)}"
+                style="background:${col};width:16px;height:16px;">
+                </button>
+            `).join("")}
+        </div>
+    </div>
+    `;
+});
+
+/* helper */
+function colorToWave(c){
+    return {
+        blue:20,
+        purple:55,
+        yellow:75,
+        red:90,
+        green:65
+    }[c];
 }
 
-/* ==========================================================================
-   🛠️ MODULES & OVERLAYS
-   ========================================================================== */
+/* ================= CENTER VISUAL FEEDBACK ================= */
 
-/* --- Audit Engine --- */
-let auditState = { active: false, type: null, step: 0 };
-function startAudit(type) {
-    auditState = { active: true, type, step: 0 };
-    renderAuditOverlay();
-}
-function nextAudit() { auditState.step++; renderAuditOverlay(); }
-function endAudit() {
-    document.getElementById('audit-overlay').remove();
-    auditState.active = false;
-    state.integrity += 10;
-    updateScore('mvs_complete');
-    render();
-}
-function renderAuditOverlay() {
-    let overlay = document.getElementById('audit-overlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = "audit-overlay";
-        overlay.className = "fixed inset-0 bg-black/95 z-[10000] flex flex-col items-center justify-center p-10 text-center fade-in";
+Panels.register("center",()=>{
+
+    const c = Engine.state.color;
+
+    return `
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+
+        <div style="
+            width:200px;
+            height:200px;
+            border-radius:50%;
+            background:${c};
+            opacity:0.05;
+            filter:blur(40px);
+        "></div>
+
+    </div>
+    `;
+});
+
+/* ================= STATE TEXT FEEDBACK ================= */
+
+Panels.register("center",()=>{
+
+    const s = Engine.state;
+
+    let msg = "";
+
+    if(s.color==="red") msg = "OVERLOAD — STOP";
+    else if(s.color==="yellow") msg = "TOO MANY INPUTS";
+    else if(s.color==="purple") msg = "ANXIETY WAVE";
+    else if(s.color==="blue") msg = "LOW ENERGY";
+    else msg = "STABLE";
+
+    return `
+    <div class="p-4 text-sm opacity-70">
+        ${msg}
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 4 — ANCHOR ENGINE (STATE-DRIVEN INTERVENTION)
+   ========================================================= */
+
+/* ================= ANCHOR DATA ================= */
+
+const AnchorData = {
+
+    red:[
+        {lie:"I need to react",truth:"Pause. 90 seconds."},
+        {lie:"This is too much",truth:"It will pass."},
+        {lie:"I must fix this now",truth:"Wait first."}
+    ],
+
+    yellow:[
+        {lie:"Everything matters",truth:"Pick one thing."},
+        {lie:"Too much to do",truth:"Reduce scope."},
+        {lie:"I need to handle all of this",truth:"Just one step."}
+    ],
+
+    purple:[
+        {lie:"Something is wrong",truth:"This is anxiety."},
+        {lie:"I can't handle this",truth:"You can handle this moment."},
+        {lie:"This will get worse",truth:"Waves pass."}
+    ],
+
+    blue:[
+        {lie:"Nothing matters",truth:"Small steps still matter."},
+        {lie:"I can't move",truth:"Move slightly."},
+        {lie:"What's the point",truth:"Do one thing anyway."}
+    ],
+
+    green:[
+        {lie:"Stay passive",truth:"Maintain flow."},
+        {lie:"You're fine",truth:"Stay aware."}
+    ]
+};
+
+/* ================= ANCHOR ENGINE ================= */
+
+Engine.register("anchorEngine",{
+
+    lastTime:0,
+    interval:12000,
+
+    update(){
+
+        const now = Date.now();
+
+        // adjust frequency based on state
+        if(Engine.state.color==="red") this.interval = 8000;
+        else if(Engine.state.color==="yellow") this.interval = 10000;
+        else this.interval = 14000;
+
+        if(now - this.lastTime > this.interval){
+
+            this.lastTime = now;
+
+            this.inject();
+        }
+    },
+
+    inject(){
+
+        const color = Engine.state.color;
+        const list = AnchorData[color] || AnchorData.green;
+
+        const a = list[Math.floor(Math.random()*list.length)];
+
+        AnchorUI.show(a);
+    }
+});
+
+/* ================= ANCHOR UI ================= */
+
+const AnchorUI = {
+
+    show(anchor){
+
+        const el = document.createElement("div");
+        el.className = "anchor";
+
+        el.innerHTML = `
+            <div style="color:#ff4d4d;font-size:11px;margin-bottom:4px;">
+                ${anchor.lie}
+            </div>
+            <div style="color:#818cf8;font-size:12px;">
+                ${anchor.truth}
+            </div>
+        `;
+
+        document.getElementById("center").appendChild(el);
+
+        setTimeout(()=>{
+            el.remove();
+        },6000);
+    },
+
+    strong(anchor){
+
+        const overlay = document.createElement("div");
+        overlay.className = "overlay";
+
+        overlay.innerHTML = `
+            <div>
+                <div style="color:#ff4d4d;margin-bottom:10px;">
+                    ${anchor.lie}
+                </div>
+
+                <div style="color:#818cf8;font-size:20px;">
+                    ${anchor.truth}
+                </div>
+
+                <button onclick="this.parentElement.parentElement.remove()"
+                style="margin-top:20px;">
+                Continue
+                </button>
+            </div>
+        `;
+
         document.body.appendChild(overlay);
     }
-    const data = AUDITS[auditState.type];
-    const stepTxt = data.steps[auditState.step];
-    const isLast = auditState.step === data.steps.length - 1;
-
-    overlay.innerHTML = `
-        <div class="text-xs tracking-[3px] opacity-40 mb-8 uppercase">${data.title} • Step ${auditState.step + 1}/${data.steps.length}</div>
-        <div class="text-3xl font-light mb-12 max-w-2xl leading-relaxed">${stepTxt}</div>
-        <button onclick="${isLast ? 'endAudit()' : 'nextAudit()'}" class="btn px-10 py-4 rounded-full text-xs tracking-widest">${isLast ? 'COMPLETE' : 'NEXT'}</button>
-        <div class="flex gap-2 mt-12">
-            ${data.steps.map((_, i) => `<div class="w-2 h-2 rounded-full ${i === auditState.step ? 'bg-indigo-500 shadow-[0_0_10px_#818cf8]' : 'bg-white/10'}"></div>`).join('')}
-        </div>
-    `;
-}
-
-/* --- Gamification & Score --- */
-function updateScore(type) {
-    const map = { mvs_complete: 5, anchor_used: 3, fox_set: 4 };
-    state.score += map[type] || 1;
-    state.xp += 5;
-    if (state.xp > state.level * 50) {
-        state.level++;
-        state.xp = 0;
-        alert(`System Level Up: ${state.level}`);
-    }
-}
-function openIdentity() {
-    const overlay = document.createElement('div');
-    overlay.className = "fixed inset-0 bg-black/90 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
-    overlay.innerHTML = `
-        <div class="glass p-10 max-w-md w-full text-center">
-            <h2 class="text-xl font-bold mb-6">System Identity</h2>
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white/5 p-4 rounded"><p class="text-xs opacity-50 uppercase">Level</p><p class="text-2xl">${state.level}</p></div>
-                <div class="bg-white/5 p-4 rounded"><p class="text-xs opacity-50 uppercase">XP</p><p class="text-2xl">${state.xp}</p></div>
-            </div>
-            <p class="text-xs opacity-50 uppercase mb-2">Voice Personality</p>
-            <select class="w-full bg-black border border-white/20 p-3 rounded mb-8 text-sm outline-none" onchange="state.personality = this.value">
-                <option value="architect" ${state.personality==='architect'?'selected':''}>Architect</option>
-                <option value="coach" ${state.personality==='coach'?'selected':''}>Coach</option>
-                <option value="calm" ${state.personality==='calm'?'selected':''}>Calm</option>
-            </select>
-            <button onclick="this.parentElement.parentElement.remove()" class="btn w-full py-3 rounded">Close</button>
-        </div>`;
-    document.body.appendChild(overlay);
-}
-
-/* --- Analytics (Chart.js) --- */
-let chartInstance = null;
-function openAnalytics() {
-    const overlay = document.createElement("div");
-    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
-    overlay.innerHTML = `
-        <div class="glass p-6 w-full max-w-4xl relative">
-            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
-            <h2 class="mb-6 font-bold tracking-widest uppercase text-xs opacity-50">System Analytics</h2>
-            <canvas id="metricsChart" class="w-full h-64"></canvas>
-        </div>`;
-    document.body.appendChild(overlay);
-
-    setTimeout(() => {
-        const ctx = document.getElementById("metricsChart");
-        if(chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: state.metricsHistory.map(x => x.time),
-                datasets: [
-                    { label: 'Wave', data: state.metricsHistory.map(x => x.wave), borderColor: '#ef4444', tension: 0.3 },
-                    { label: 'Integrity', data: state.metricsHistory.map(x => x.integrity), borderColor: '#818cf8', tension: 0.3 }
-                ]
-            },
-            options: { responsive: true, color: 'rgba(255,255,255,0.5)', scales: { y: { beginAtZero: true, max: 100 } } }
-        });
-    }, 50);
-}
-
-/* --- Journal & Daily Fox --- */
-function openJournal() {
-    const overlay = document.createElement("div");
-    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
-    overlay.innerHTML = `
-        <div class="glass p-8 w-full max-w-2xl relative">
-            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
-            <h2 class="mb-4 font-bold tracking-widest uppercase text-xs opacity-50">System Journal</h2>
-            <textarea id="journalInput" class="w-full bg-black/50 border border-white/10 p-4 rounded h-32 outline-none resize-none mb-4 text-sm" placeholder="Dump mental cache here..."></textarea>
-            <button onclick="saveJournalEntry()" class="btn px-6 py-2 rounded text-xs">Commit Memory</button>
-            <div class="mt-8 space-y-3 max-h-60 overflow-y-auto" id="journalList">
-                ${renderJournalEntries()}
-            </div>
-        </div>`;
-    document.body.appendChild(overlay);
-}
-function renderJournalEntries() {
-    return state.journal.map(j => `<div class="bg-white/5 p-4 rounded text-sm"><p class="text-xs opacity-40 mb-2">${j.time}</p><p>${j.text}</p></div>`).reverse().join('');
-}
-function saveJournalEntry() {
-    const input = document.getElementById('journalInput');
-    if(!input.value.trim()) return;
-    state.journal.push({ time: new Date().toLocaleString(), text: input.value });
-    document.getElementById('journalList').innerHTML = renderJournalEntries();
-    input.value = '';
-}
-
-function openDaily() {
-    const overlay = document.createElement("div");
-    overlay.className = "fixed inset-0 bg-black/95 z-[9999] p-10 flex flex-col items-center justify-center fade-in";
-    overlay.innerHTML = `
-        <div class="glass p-8 w-full max-w-md text-center relative">
-            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-6 text-xs opacity-50 hover:opacity-100">Close</button>
-            <h2 class="mb-6 font-bold tracking-widest uppercase text-xs opacity-50">Chase the Fox</h2>
-            <p class="text-sm opacity-80 mb-4">Set ONE high-impact target for today.</p>
-            <input id="foxInput" class="w-full bg-black/50 border border-white/10 p-3 rounded text-center outline-none mb-6" value="${state.daily.fox || ""}" placeholder="Target...">
-            <div class="flex justify-center gap-2">
-                <button onclick="lockFox()" class="btn px-6 py-2 rounded text-xs bg-indigo-500/20 text-indigo-300">Lock Target</button>
-                <button onclick="completeFox()" class="btn px-6 py-2 rounded text-xs bg-green-500/20 text-green-300">Mark Complete</button>
-            </div>
-        </div>`;
-    document.body.appendChild(overlay);
-}
-function lockFox() {
-    const input = document.getElementById('foxInput').value;
-    state.daily.fox = input;
-    updateScore('fox_set');
-    alert("Fox Locked: " + input);
-}
-function completeFox() {
-    state.daily.completed = true;
-    state.integrity += 10;
-    updateScore('mvs_complete');
-    alert("Target Neutralized. Integrity Restored.");
-}
-
-/* --- Panic Mode --- */
-function panicMode() {
-    state.wave = 90;
-    switchTab('anchor');
-    const overlay = document.createElement('div');
-    overlay.className = "fixed inset-0 bg-red-900/90 z-[10000] flex flex-col items-center justify-center p-10 text-center";
-    overlay.innerHTML = `
-        <h1 class="text-5xl font-bold mb-4">STOP</h1>
-        <p class="text-xl mb-12">Do nothing. Breathe. You are safe.</p>
-        <button onclick="this.parentElement.remove(); startAudit('biological');" class="btn px-10 py-4 bg-white text-black rounded-full font-bold">INITIATE EMERGENCY RESET</button>
-    `;
-    document.body.appendChild(overlay);
-}
-
-/* ==========================================================================
-   🚀 SYSTEM INIT
-   ========================================================================== */
-window.onload = () => {
-    // Initial metric entry
-    state.metricsHistory.push({ time: new Date().toLocaleTimeString(), wave: state.wave, integrity: state.integrity });
-    render();
-    
-    // Ambient System Voice Check-in
-    setInterval(() => {
-        const lines = PERSONALITIES[state.personality];
-        const line = lines[Math.floor(Math.random()*lines.length)];
-        const hud = document.createElement('div');
-        hud.className = "fixed bottom-16 right-4 hud-panel fade-in text-indigo-300";
-        hud.innerText = "🧠 " + line;
-        document.body.appendChild(hud);
-        setTimeout(() => hud.remove(), 6000);
-    }, 45000);
 };
 
+/* ================= HARD ANCHOR TRIGGERS ================= */
+
+Engine.register("anchorTriggers",{
+
+    update(){
+
+        const s = Engine.state;
+
+        // overload = force anchor
+        if(s.wave > 90 && Math.random() < 0.1){
+
+            const list = AnchorData.red;
+            const a = list[Math.floor(Math.random()*list.length)];
+
+            AnchorUI.strong(a);
+        }
+
+        // anxiety spike
+        if(s.color==="purple" && Math.random() < 0.05){
+
+            const list = AnchorData.purple;
+            const a = list[Math.floor(Math.random()*list.length)];
+
+            AnchorUI.show(a);
+        }
+    }
+});
+
+/* ================= TERMINAL COMMAND ================= */
+
+Engine.register("anchorCommand",{
+
+    command(cmd){
+
+        if(cmd === "/anchor"){
+
+            const list = AnchorData[Engine.state.color] || AnchorData.green;
+            const a = list[Math.floor(Math.random()*list.length)];
+
+            AnchorUI.strong(a);
+        }
+    }
+});
+
+/* ================= RIGHT PANEL: ANCHOR LOG ================= */
+
+Engine.register("anchorLog",{
+
+    log:[],
+
+    update(){
+
+        // optional future logging
+    }
+});
+
+Panels.register("right",()=>{
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+        <div class="opacity-50 mb-1">ANCHOR ENGINE</div>
+        <div>auto injection active</div>
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 5 — AUDIT / FLOW SYSTEM (FULL TAKEOVER ENGINE)
+   ========================================================= */
+
+/* ================= FLOW DATA ================= */
+
+const FlowData = {
+
+    biological:[
+        "Stop",
+        "Stand up",
+        "Drink water",
+        "Cold water on face",
+        "Breathe in 4",
+        "Hold",
+        "Out 6",
+        "Again",
+        "You are safe"
+    ],
+
+    mental:[
+        "Stop thinking",
+        "Observe thoughts",
+        "Do nothing",
+        "Let wave pass",
+        "You are not your thoughts",
+        "Wait"
+    ],
+
+    execution:[
+        "Pick one task",
+        "Make it smaller",
+        "Start now",
+        "Move body",
+        "Continue",
+        "Done"
+    ]
+};
+
+/* ================= FLOW ENGINE ================= */
+
+Engine.register("flowEngine",{
+
+    active:false,
+    current:null,
+    step:0,
+
+    start(type){
+
+        this.active = true;
+        this.current = type;
+        this.step = 0;
+
+        FlowUI.open(type,this.step);
+    },
+
+    next(){
+
+        this.step++;
+
+        const steps = FlowData[this.current];
+
+        if(this.step >= steps.length){
+            this.end();
+            return;
+        }
+
+        FlowUI.update(this.step);
+    },
+
+    end(){
+
+        this.active = false;
+        this.current = null;
+        this.step = 0;
+
+        FlowUI.close();
+
+        // reset wave slightly after completion
+        Engine.state.wave -= 10;
+    },
+
+    update(){
+
+        const s = Engine.state;
+
+        // AUTO TAKEOVER
+        if(!this.active){
+
+            if(s.wave > 90 && Math.random() < 0.2){
+                this.start("biological");
+            }
+
+            else if(s.color==="purple" && Math.random() < 0.05){
+                this.start("mental");
+            }
+        }
+    },
+
+    command(cmd){
+
+        if(cmd === "/reset") this.start("biological");
+        if(cmd === "/body") this.start("biological");
+        if(cmd === "/mind") this.start("mental");
+        if(cmd === "/move") this.start("execution");
+    }
+});
+
+/* ================= FLOW UI ================= */
+
+const FlowUI = {
+
+    el:null,
+
+    open(type,step){
+
+        const steps = FlowData[type];
+
+        this.el = document.createElement("div");
+        this.el.className = "overlay";
+
+        this.el.innerHTML = `
+            <div style="text-align:center;max-width:400px;">
+
+                <div style="font-size:12px;opacity:.4;margin-bottom:10px;">
+                    ${type.toUpperCase()} RESET
+                </div>
+
+                <div id="flowStep" style="font-size:22px;margin-bottom:20px;">
+                    ${steps[step]}
+                </div>
+
+                <button onclick="Engine.systems.flowEngine.next()">
+                    Next
+                </button>
+
+                <div style="margin-top:10px;font-size:10px;opacity:.3;">
+                    follow steps — do not think
+                </div>
+
+            </div>
+        `;
+
+        document.body.appendChild(this.el);
+    },
+
+    update(step){
+
+        const steps = FlowData[Engine.systems.flowEngine.current];
+
+        this.el.querySelector("#flowStep").innerText = steps[step];
+    },
+
+    close(){
+
+        if(this.el){
+            this.el.remove();
+            this.el = null;
+        }
+    }
+};
+
+/* ================= RIGHT PANEL: FLOW STATUS ================= */
+
+Panels.register("right",()=>{
+
+    const flow = Engine.systems.flowEngine;
+
+    if(!flow.active){
+        return `
+        <div class="p-2 border-t border-white/10 text-xs">
+            <div class="opacity-50">FLOW</div>
+            idle
+        </div>
+        `;
+    }
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+        <div class="opacity-50">FLOW ACTIVE</div>
+        ${flow.current} (${flow.step})
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 6 — TERMINAL SYSTEM (COMMAND + LOG ENGINE)
+   ========================================================= */
+
+/* ================= TERMINAL ENGINE ================= */
+
+Engine.register("terminalEngine",{
+
+    log:[],
+
+    max:40,
+
+    write(msg){
+
+        this.log.push(msg);
+
+        if(this.log.length > this.max){
+            this.log.shift();
+        }
+
+        this.render();
+    },
+
+    clear(){
+        this.log = [];
+        this.render();
+    },
+
+    render(){
+
+        let el = document.getElementById("terminalLog");
+
+        if(!el){
+            el = document.createElement("div");
+            el.id = "terminalLog";
+            el.style = `
+                position:absolute;
+                bottom:30px;
+                left:0;
+                right:0;
+                max-height:150px;
+                overflow:auto;
+                font-size:11px;
+                padding:6px;
+                background:rgba(0,0,0,.8);
+                border-top:1px solid #222;
+            `;
+            document.body.appendChild(el);
+        }
+
+        el.innerHTML = this.log.map(l=>`<div>> ${l}</div>`).join("");
+    },
+
+    command(cmd){
+
+        if(!cmd) return;
+
+        this.write(cmd);
+
+        const parts = cmd.split(" ");
+        const base = parts[0];
+
+        switch(base){
+
+            case "/help":
+                this.write("Commands:");
+                this.write("/wave X");
+                this.write("/color X");
+                this.write("/reset /body /mind /move");
+                this.write("/anchor");
+                this.write("/state");
+                this.write("/systems");
+                this.write("/clear");
+                break;
+
+            case "/wave":
+                Engine.state.wave = parseInt(parts[1]) || Engine.state.wave;
+                this.write("wave set");
+                break;
+
+            case "/color":
+                Engine.state.color = parts[1] || Engine.state.color;
+                this.write("color override");
+                break;
+
+            case "/reset":
+            case "/body":
+                Engine.systems.flowEngine.start("biological");
+                break;
+
+            case "/mind":
+                Engine.systems.flowEngine.start("mental");
+                break;
+
+            case "/move":
+                Engine.systems.flowEngine.start("execution");
+                break;
+
+            case "/anchor":
+                const list = AnchorData[Engine.state.color] || AnchorData.green;
+                const a = list[Math.floor(Math.random()*list.length)];
+                AnchorUI.strong(a);
+                break;
+
+            case "/state":
+                this.write(JSON.stringify(Engine.state));
+                break;
+
+            case "/systems":
+                this.write(Object.keys(Engine.systems).join(", "));
+                break;
+
+            case "/clear":
+                this.clear();
+                return;
+
+            default:
+                this.write("unknown command");
+        }
+    }
+});
+
+/* ================= HOOK INTO INPUT ================= */
+
+function cmdHandler(e){
+
+    if(e.key==="Enter"){
+
+        const val = e.target.value;
+
+        // send to terminal system
+        Engine.systems.terminalEngine.command(val);
+
+        // broadcast to all systems
+        for(let key in Engine.systems){
+            Engine.systems[key].command?.(val);
+        }
+
+        e.target.value="";
+    }
+}
+
+/* ================= RIGHT PANEL: TERMINAL STATUS ================= */
+
+Panels.register("right",()=>{
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+        <div class="opacity-50">TERMINAL</div>
+        active
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 7 — BOOK SYSTEM (33 CHAPTER ENGINE)
+   ========================================================= */
+
+/* ================= BOOK DATA ================= */
+
+const Book = Array.from({length:33},(_,i)=>{
+
+    const chapters = [
+
+`You are not broken.
+
+You are operating under conditions your brain cannot handle in its current state.
+
+This system exists to reduce load, not increase pressure.`,
+
+`When overwhelmed, your brain loses access to executive function.
+
+This is not laziness.
+
+This is shutdown.`,
+
+`You do not fix overload by thinking harder.
+
+You fix it by reducing input.`,
+
+`Action restores control.
+
+Thinking delays it.`,
+
+`Anxiety is a false alarm system.
+
+It feels real, but it is not accurate.`,
+
+`Depression removes motivation.
+
+Do not wait for motivation.
+
+Move first.`,
+
+`You only ever need one step.
+
+Not the whole plan.`,
+
+`Your job is not to solve everything.
+
+Your job is to stabilize first.`,
+
+`When your body is unstable, your thoughts are unreliable.`,
+
+`You cannot trust your thinking in high wave states.`,
+
+`Pause before reaction.
+
+Always.`,
+
+`Time reduces intensity.
+
+Wait.`,
+
+`Small actions rebuild momentum.`,
+
+`Momentum builds clarity.`,
+
+`Clarity is not required to begin.`,
+
+`Remove pressure.
+
+Pressure increases resistance.`,
+
+`Lower expectations.
+
+Raise consistency.`,
+
+`You are allowed to go slowly.`,
+
+`Slower is often faster.`,
+
+`Interrupt the loop early.`,
+
+`Do not argue with your mind.
+
+Redirect it.`,
+
+`Your brain seeks safety, not logic.`,
+
+`Give it signals of safety.`,
+
+`Movement creates change.`,
+
+`Stillness can trap you.`,
+
+`Your system is adaptable.`,
+
+`You can retrain responses.`,
+
+`Awareness is the first step.`,
+
+`Action is the second.`,
+
+`Repetition is the path.`,
+
+`Consistency beats intensity.`,
+
+`You are building a system, not chasing motivation.`,
+
+`Return to the system when lost.`
+
+    ];
+
+    return {
+        title:`Chapter ${i+1}`,
+        content: chapters[i] || "Continue."
+    };
+});
+
+/* ================= BOOK ENGINE ================= */
+
+Engine.register("bookEngine",{
+
+    chapter:0,
+    open:false,
+
+    next(){
+        this.chapter = (this.chapter+1) % Book.length;
+    },
+
+    prev(){
+        this.chapter = (this.chapter-1 + Book.length) % Book.length;
+    },
+
+    go(i){
+        this.chapter = i;
+    },
+
+    toggle(){
+        this.open = !this.open;
+    },
+
+    command(cmd){
+
+        if(cmd === "/book") this.open = true;
+        if(cmd.startsWith("/chapter")){
+            const n = parseInt(cmd.split(" ")[1]);
+            if(!isNaN(n)) this.chapter = n-1;
+        }
+    }
+});
+
+/* ================= LEFT PANEL: BOOK NAV ================= */
+
+Panels.register("left",()=>{
+
+    const b = Engine.systems.bookEngine;
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50 mb-1">BOOK</div>
+
+        <button onclick="Engine.systems.bookEngine.toggle()">
+            ${b.open ? "close" : "open"}
+        </button>
+
+        ${b.open ? `
+            <div style="max-height:200px;overflow:auto;margin-top:5px;">
+                ${Book.map((c,i)=>`
+                    <div onclick="Engine.systems.bookEngine.go(${i})"
+                    style="cursor:pointer;
+                    ${i===b.chapter?'color:#818cf8':''}">
+                        ${i+1}
+                    </div>
+                `).join("")}
+            </div>
+        `:""}
+
+    </div>
+    `;
+});
+
+/* ================= CENTER PANEL: BOOK VIEW ================= */
+
+Panels.register("center",()=>{
+
+    const b = Engine.systems.bookEngine;
+
+    if(!b.open) return "";
+
+    const ch = Book[b.chapter];
+
+    return `
+    <div class="p-6 max-w-xl">
+
+        <div class="text-xs opacity-40 mb-2">
+            ${ch.title}
+        </div>
+
+        <div class="text-sm leading-relaxed whitespace-pre-line">
+            ${ch.content}
+        </div>
+
+        <div class="mt-4 flex gap-2">
+            <button onclick="Engine.systems.bookEngine.prev()">Back</button>
+            <button onclick="Engine.systems.bookEngine.next()">Next</button>
+        </div>
+
+    </div>
+    `;
+});
+
+/* ================= RIGHT PANEL: BOOK STATUS ================= */
+
+Panels.register("right",()=>{
+
+    const b = Engine.systems.bookEngine;
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50">BOOK</div>
+
+        ${b.open ? `
+            Chapter ${b.chapter+1} / ${Book.length}
+        `:"closed"}
+
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 8 — IMMERSIVE + OVERLAY SYSTEM
+   ========================================================= */
+
+/* ================= OVERLAY MANAGER ================= */
+
+const OverlayManager = {
+
+    stack:[],
+
+    open(el){
+
+        document.body.appendChild(el);
+        this.stack.push(el);
+    },
+
+    closeTop(){
+
+        const el = this.stack.pop();
+        if(el) el.remove();
+    },
+
+    closeAll(){
+
+        while(this.stack.length){
+            this.stack.pop().remove();
+        }
+    }
+};
+
+/* ================= IMMERSIVE READER ================= */
+
+Engine.register("readerEngine",{
+
+    active:false,
+
+    open(){
+
+        const b = Engine.systems.bookEngine;
+        const ch = Book[b.chapter];
+
+        this.active = true;
+
+        const el = document.createElement("div");
+        el.className = "overlay";
+
+        el.innerHTML = `
+            <div style="
+                max-width:700px;
+                padding:30px;
+                line-height:1.8;
+                font-size:16px;
+            ">
+
+                <div style="opacity:.4;margin-bottom:20px;">
+                    ${ch.title}
+                </div>
+
+                <div style="white-space:pre-line;">
+                    ${ch.content}
+                </div>
+
+                <div style="margin-top:30px;display:flex;gap:10px;">
+
+                    <button onclick="Engine.systems.bookEngine.prev(); OverlayManager.closeTop(); Engine.systems.readerEngine.open();">
+                        Back
+                    </button>
+
+                    <button onclick="Engine.systems.bookEngine.next(); OverlayManager.closeTop(); Engine.systems.readerEngine.open();">
+                        Next
+                    </button>
+
+                    <button onclick="OverlayManager.closeTop()">
+                        Exit
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        OverlayManager.open(el);
+    },
+
+    command(cmd){
+
+        if(cmd === "/read"){
+            this.open();
+        }
+    }
+});
+
+/* ================= LEFT PANEL: IMMERSIVE BUTTON ================= */
+
+Panels.register("left",()=>{
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50 mb-1">IMMERSION</div>
+
+        <button onclick="Engine.systems.readerEngine.open()">
+            fullscreen reader
+        </button>
+
+    </div>
+    `;
+});
+
+/* ================= OVERLAY SHORTCUT (ESC KEY) ================= */
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key === "Escape"){
+        OverlayManager.closeTop();
+    }
+});
+
+/* ================= LAYERED ANCHOR UPGRADE ================= */
+
+/* override anchor to use overlay manager when intense */
+AnchorUI.strong = function(anchor){
+
+    const el = document.createElement("div");
+    el.className = "overlay";
+
+    el.innerHTML = `
+        <div style="text-align:center;">
+
+            <div style="color:#ff4d4d;margin-bottom:10px;">
+                ${anchor.lie}
+            </div>
+
+            <div style="color:#818cf8;font-size:22px;">
+                ${anchor.truth}
+            </div>
+
+            <button onclick="OverlayManager.closeTop()" style="margin-top:20px;">
+                Continue
+            </button>
+
+        </div>
+    `;
+
+    OverlayManager.open(el);
+};
+
+/* ================= FLOW SYSTEM UPGRADE ================= */
+
+/* make flow use overlay manager */
+FlowUI.open = function(type,step){
+
+    const steps = FlowData[type];
+
+    const el = document.createElement("div");
+    el.className = "overlay";
+
+    el.innerHTML = `
+        <div style="text-align:center;max-width:400px;">
+
+            <div style="font-size:12px;opacity:.4;margin-bottom:10px;">
+                ${type.toUpperCase()} RESET
+            </div>
+
+            <div id="flowStep" style="font-size:24px;margin-bottom:20px;">
+                ${steps[step]}
+            </div>
+
+            <button onclick="Engine.systems.flowEngine.next()">
+                Next
+            </button>
+
+            <div style="margin-top:10px;font-size:10px;opacity:.3;">
+                follow steps — do not think
+            </div>
+
+        </div>
+    `;
+
+    el.dataset.flowType = type;
+
+    OverlayManager.open(el);
+
+    this.el = el;
+};
+
+FlowUI.close = function(){
+    OverlayManager.closeTop();
+};
+
+/* ================= RIGHT PANEL: OVERLAY STATUS ================= */
+
+Panels.register("right",()=>{
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50">OVERLAYS</div>
+        active: ${OverlayManager.stack.length}
+
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 9 — INTELLIGENCE LAYER (PATTERN + ADAPTIVE SYSTEM)
+   ========================================================= */
+
+/* ================= INTELLIGENCE ENGINE ================= */
+
+Engine.register("intelligenceEngine",{
+
+    memory:[],
+    maxMemory:30,
+
+    pattern:null,
+
+    update(){
+
+        const s = Engine.state;
+
+        /* ===== TRACK HISTORY ===== */
+        this.memory.push({
+            wave:s.wave,
+            color:s.color,
+            t:Date.now()
+        });
+
+        if(this.memory.length > this.maxMemory){
+            this.memory.shift();
+        }
+
+        /* ===== DETECT PATTERNS ===== */
+        this.pattern = this.detectPattern();
+
+        /* ===== RESPOND ===== */
+        this.respond();
+    },
+
+    detectPattern(){
+
+        if(this.memory.length < 10) return null;
+
+        const last = this.memory.slice(-10);
+
+        const avgWave = last.reduce((a,b)=>a+b.wave,0)/last.length;
+
+        const colors = last.map(x=>x.color);
+
+        /* rising trend */
+        const rising = last[0].wave < last[last.length-1].wave;
+
+        /* repeated anxiety */
+        const purpleCount = colors.filter(c=>c==="purple").length;
+
+        /* low stagnation */
+        const blueCount = colors.filter(c=>c==="blue").length;
+
+        if(avgWave > 80 && rising) return "overload_rising";
+        if(purpleCount > 6) return "anxiety_loop";
+        if(blueCount > 6) return "low_stuck";
+        if(avgWave < 60 && avgWave > 40) return "unstable_mid";
+
+        return "stable";
+    },
+
+    respond(){
+
+        const p = this.pattern;
+
+        if(!p) return;
+
+        /* ===== EARLY INTERVENTION ===== */
+
+        if(p === "overload_rising"){
+
+            // inject early anchor
+            if(Math.random() < 0.2){
+                Engine.systems.anchorEngine.inject();
+            }
+
+            // possible early flow
+            if(Math.random() < 0.05 && !Engine.systems.flowEngine.active){
+                Engine.systems.flowEngine.start("biological");
+            }
+        }
+
+        if(p === "anxiety_loop"){
+
+            if(Math.random() < 0.1){
+                Engine.systems.anchorEngine.inject();
+            }
+
+            if(Math.random() < 0.05 && !Engine.systems.flowEngine.active){
+                Engine.systems.flowEngine.start("mental");
+            }
+        }
+
+        if(p === "low_stuck"){
+
+            if(Math.random() < 0.1){
+                Engine.systems.flowEngine.start("execution");
+            }
+        }
+
+        if(p === "stable"){
+            // reduce noise (future expansion)
+        }
+    },
+
+    command(cmd){
+
+        if(cmd === "/pattern"){
+            Engine.systems.terminalEngine.write(this.pattern || "none");
+        }
+    }
+});
+
+/* ================= SYSTEM VOICE ================= */
+
+const SystemVoice = {
+
+    get(){
+
+        const p = Engine.systems.intelligenceEngine.pattern;
+
+        if(!p) return "";
+
+        return {
+
+            overload_rising:"System detecting overload. Reduce input now.",
+            anxiety_loop:"Loop detected. Thoughts are unreliable.",
+            low_stuck:"Low energy pattern. Move body.",
+            unstable_mid:"Unstable state. Simplify actions.",
+            stable:"System stable. Maintain."
+
+        }[p] || "";
+    }
+};
+
+/* ================= CENTER PANEL: SYSTEM VOICE ================= */
+
+Panels.register("center",()=>{
+
+    const msg = SystemVoice.get();
+
+    if(!msg) return "";
+
+    return `
+    <div class="p-4 text-xs opacity-50">
+        ${msg}
+    </div>
+    `;
+});
+
+/* ================= RIGHT PANEL: INTELLIGENCE ================= */
+
+Panels.register("right",()=>{
+
+    const intel = Engine.systems.intelligenceEngine;
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50">INTELLIGENCE</div>
+
+        pattern: ${intel.pattern || "..."}
+
+    </div>
+    `;
+});
+```
+```javascript
+/* =========================================================
+   PART 10 — STORAGE + PERSISTENCE + FINAL POLISH
+   ========================================================= */
+
+/* ================= STORAGE SYSTEM ================= */
+
+Engine.register("storageEngine",{
+
+    key:"architect_system_v3",
+
+    save(){
+
+        const data = {
+            state:Engine.state,
+            book:{
+                chapter:Engine.systems.bookEngine.chapter
+            }
+        };
+
+        localStorage.setItem(this.key,JSON.stringify(data));
+    },
+
+    load(){
+
+        const raw = localStorage.getItem(this.key);
+        if(!raw) return;
+
+        try{
+            const data = JSON.parse(raw);
+
+            if(data.state){
+                Object.assign(Engine.state,data.state);
+            }
+
+            if(data.book){
+                Engine.systems.bookEngine.chapter = data.book.chapter || 0;
+            }
+
+        }catch(e){
+            console.log("load failed");
+        }
+    },
+
+    init(){
+
+        this.load();
+
+        // auto save loop
+        setInterval(()=>{
+            this.save();
+        },3000);
+    },
+
+    command(cmd){
+
+        if(cmd === "/save"){
+            this.save();
+            Engine.systems.terminalEngine.write("saved");
+        }
+
+        if(cmd === "/load"){
+            this.load();
+            Engine.systems.terminalEngine.write("loaded");
+        }
+    }
+});
+
+/* ================= SAFETY SYSTEM ================= */
+
+Engine.register("safetyEngine",{
+
+    update(){
+
+        const s = Engine.state;
+
+        /* clamp wave hard */
+        if(s.wave > 100) s.wave = 100;
+        if(s.wave < 0) s.wave = 0;
+
+        /* prevent infinite overlay stacking */
+        if(OverlayManager.stack.length > 5){
+            OverlayManager.closeTop();
+        }
+
+        /* auto recover lock */
+        if(s.wave < 70){
+            s.locked = false;
+        }
+    }
+});
+
+/* ================= MOBILE + UX POLISH ================= */
+
+function applyUX(){
+
+    // prevent scroll issues
+    document.body.style.overflow = "hidden";
+
+    // smooth transitions
+    document.body.style.transition = "background 0.4s, box-shadow 0.4s";
+
+    // font smoothing
+    document.body.style.webkitFontSmoothing = "antialiased";
+}
+
+applyUX();
+
+/* ================= SYSTEM HEARTBEAT ================= */
+
+Engine.register("heartbeat",{
+
+    tick:0,
+
+    update(){
+
+        this.tick++;
+
+        /* slow drift toward baseline */
+        if(this.tick % 5 === 0){
+
+            if(Engine.state.wave > 65) Engine.state.wave -= 1;
+            if(Engine.state.wave < 55) Engine.state.wave += 1;
+        }
+    }
+});
+
+/* ================= AUTO CLEANUP ================= */
+
+Engine.register("cleanupEngine",{
+
+    update(){
+
+        // remove orphan anchors
+        document.querySelectorAll(".anchor").forEach(el=>{
+            if(!el.parentElement){
+                el.remove();
+            }
+        });
+    }
+});
+
+/* ================= FINAL RIGHT PANEL ================= */
+
+Panels.register("right",()=>{
+
+    return `
+    <div class="p-2 border-t border-white/10 text-xs">
+
+        <div class="opacity-50">SYSTEM</div>
+
+        status: running<br>
+        overlays: ${OverlayManager.stack.length}<br>
+        wave: ${Engine.state.wave.toFixed(0)}
+
+    </div>
+    `;
+});
+
+/* ================= FINAL INIT FIX ================= */
+
+/* ensure load happens AFTER all systems exist */
+setTimeout(()=>{
+    Engine.systems.storageEngine.load();
+},500);
+
+```
 </script>
+
 </body>
 </html>
+```
