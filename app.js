@@ -4,46 +4,63 @@ const Core = {
     },
 
     init() {
+        this.renderMatrix();
         this.applyState(this.state.currentMode);
         this.render();
-        this.log("System Synced: Architect & Spirit Volumes Loaded.");
+        if(window.Telemetry) Telemetry.init();
     },
 
-    applyState(mode) {
-        this.state.currentMode = mode;
-        const relief = KnowledgeBase.getRelief(mode);
-        
-        // INTERWEAVING THE VOLUMES
-        const display = document.getElementById('guidance-display');
-        display.innerHTML = `
-            <div class="mb-4">
-                <span class="text-[8px] text-amber-500 font-black uppercase tracking-widest">[VOL I: TECHNICAL]</span>
-                <h4 class="text-white text-sm font-bold">${relief.tech.title}</h4>
-                <p class="text-[11px] italic opacity-70">${relief.tech.content}</p>
-            </div>
-            <div class="pt-4 border-t border-white/5">
-                <span class="text-[8px] text-purple-400 font-black uppercase tracking-widest">[VOL II: SPIRIT]</span>
-                <h4 class="text-white text-sm font-bold">${relief.spirit.title}</h4>
-                <p class="text-[11px] italic opacity-70">${relief.spirit.content}</p>
-                <div class="mt-2 text-[9px] text-amber-500/50 font-mono">${relief.spirit.scripture}</div>
+    renderMatrix() {
+        const matrix = document.getElementById('state-matrix');
+        matrix.innerHTML = KnowledgeBase.states.map(s => `
+            <button onclick="Core.applyState('${s.id}')" class="w-full p-4 border border-white/5 text-left hover:bg-white/5 transition-all group" id="btn-${s.id}">
+                <div class="text-[10px] font-black group-hover:text-white uppercase">${s.label}</div>
+                <div class="text-[7px] opacity-30 uppercase italic">${s.sub}</div>
+            </button>
+        `).join('');
+    },
+
+    applyState(modeId) {
+        const state = KnowledgeBase.states.find(s => s.id === modeId);
+        this.state.currentMode = modeId;
+
+        // Visual Shift
+        const color = getComputedStyle(document.documentElement).getPropertyValue('--' + modeId).trim();
+        document.documentElement.style.setProperty('--pacer-color', color);
+        document.getElementById('pacer-container').className = `glass-pane flex-1 flex flex-col p-6 relative overflow-hidden ${['red', 'orange', 'purple'].includes(modeId) ? 'pacer-active' : ''}`;
+
+        // INTERWEAVE THE VOLUMES
+        document.getElementById('tech-display').innerHTML = `
+            <h2 class="text-2xl font-black text-white uppercase">${state.tech.title}</h2>
+            <p class="text-sm italic opacity-60 mt-4 leading-relaxed">${state.tech.content}</p>
+        `;
+        document.getElementById('spirit-display').innerHTML = `
+            <h2 class="text-xl font-black text-white uppercase tracking-tighter">${state.spirit.title}</h2>
+            <p class="text-[13px] italic opacity-80 mt-4 leading-relaxed">${state.spirit.content}</p>
+            <div class="mt-6 p-3 bg-amber-500/5 border-l-2 border-amber-500/40 text-[10px] text-amber-500 italic">
+                ${state.spirit.scripture}
             </div>
         `;
-        
+
         this.save();
     },
 
     executeDeposit() {
-        // ... (previous MVS logic)
+        if(this.state.integrity >= 70) return alert("GOVERNOR LOCK: Fix the state, then take the step.");
         this.state.integrity += 10;
-        if(this.state.integrity >= 70) this.log("GOVERNOR: Forced Calibration Required.");
-        this.save();
+        this.state.fuel += 100;
+        this.state.logs.unshift({ msg: "Nectar Deposited", time: new Date().toLocaleTimeString() });
         this.render();
+        this.save();
+        if(window.Telemetry) Telemetry.update();
     },
 
-    save() { localStorage.setItem('apex_db', JSON.stringify(this.state)); },
-    
     render() {
         document.getElementById('integrity-label').innerText = `${this.state.integrity}%`;
         document.getElementById('integrity-bar').style.width = `${this.state.integrity}%`;
-    }
+        document.getElementById('fuel-display').innerText = this.state.fuel.toString().padStart(3, '0');
+    },
+
+    save() { localStorage.setItem('apex_db', JSON.stringify(this.state)); }
 };
+window.onload = () => Core.init();
