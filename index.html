@@ -469,41 +469,255 @@ appState.integrity = Number(appState.integrity) || 0;
             const container = document.getElementById('mini-habits-preview');
             // Logic to be expanded in Part 3
         }
-        /* ==========================================================================
-           📖 THE ARCHITECT'S LIBRARY (CONTENT DATA)
+       /* ==========================================================================
+           📖 THE ARCHITECT'S LIBRARY (FULL BOOK DATA)
            ========================================================================== */
         const HANDBOOK = [
+            // VOLUME I: THE OPERATING SYSTEM
             {
                 id: "ch1",
                 title: "The Landscape of the Storm",
-                module: "Biology",
-                content: "The complex mind does not experience challenges in isolation; it lives within a 'Symptom Soup' where neurological and emotional currents overlap. Restlessness may be the precursor to anxiety, or emotional flooding might lead to a dissociative freeze.",
+                module: "Vol I: The Operating System",
+                content: "The complex mind does not experience challenges in isolation; it lives within a 'Symptom Soup' where various neurological and emotional currents overlap. Understanding this landscape requires moving away from seeking a single 'cause' and instead recognising that the internal atmosphere is a dynamic, shifting ecosystem.",
                 mvs: "Identify one 'Symptom' currently active in your soup."
             },
             {
                 id: "ch2",
                 title: "The Anatomy of Shutdown",
-                module: "Biology",
-                content: "Shutdown is not a failure of will; it is a biological 'Evacuation' protocol. When sensory load exceeds capacity, the 'Pilot' (Prefrontal Cortex) goes offline to preserve resources, resulting in the 'White Fog'.",
-                mvs: "Check your physical temperature. Are you overheating?"
+                module: "Vol I: The Operating System",
+                content: "Shutdown is not a failure of will; it is a sophisticated biological 'Evacuation' protocol. When the nervous system is subjected to a sensory or emotional load that exceeds its processing capacity, the brain's 'Pilot' effectively goes offline to preserve resources, resulting in the 'White Fog'.",
+                mvs: "Recognise your current brain fog as a protective mechanism, not a character flaw."
             },
             {
                 id: "ch3",
-                title: "The 90-Second Chemical Flush",
-                module: "Biology",
-                content: "A neurochemical spike lasts only 90 seconds. Anything felt afterward is a 'story' you are telling yourself. Observe the sensation without narrating the pain to maintain sovereignty.",
-                mvs: "Set a timer for 90 seconds. Breathe. Do not label the feeling."
+                title: "The Architect vs. The Pilot",
+                module: "Vol I: The Operating System",
+                content: "The internal system is managed by two distinct roles. The Pilot is the sun-filled self that executes tasks when the weather is calm but is reactive to turbulence. The Architect is the cold-state planner who builds the ship's hull and designs safety protocols during moments of clarity.",
+                mvs: "Acknowledge whether the Pilot or the Architect is currently in the driver's seat."
+            },
+            {
+                id: "ch4",
+                title: "The Colour Frequencies",
+                module: "Vol I: The Operating System",
+                content: "To manage chaos, the mind requires a high-resolution 'Recognition Grid'. When overloaded, the brain cannot process 'Why am I feeling this way?' It can only process 'What colour is this?' Assigning colours creates a shorthand language for immediate self-regulation.",
+                mvs: "Assign a colour (Red, Yellow, Blue, Purple) to your current mental state."
+            },
+            {
+                id: "ch5",
+                title: "The Prime Directive",
+                module: "Vol I: The Operating System",
+                content: "Fix the State, then take the Step. Most systems fail because they demand productivity while the individual is biologically dysregulated. If the engine is overheating, no amount of discipline will move the ship. You must apply a sensory or physical 'Fix' first.",
+                mvs: "Stop trying to work. Perform one sensory grounding action right now."
+            },
+            
+            // VOLUME II: THE MECHANICS OF REGULATION
+            {
+                id: "ch6",
+                title: "The 90-Second Rule",
+                module: "Vol II: Regulation",
+                content: "Every intense emotional surge is powered by a physical flush of chemicals that lasts approximately 90 seconds. After this window, any remaining intensity is generated by the 'story' the mind is telling itself. The 90-Second Rule is a tactical pause to let the chemical tide recede.",
+                mvs: "Set a timer for 90 seconds. Breathe and do not narrate the feeling."
             },
             {
                 id: "ch7",
-                title: "The Pilot and the Architect",
-                module: "Execution",
-                content: "The Architect builds the systems when the weather is clear. The Pilot flies the ship when the storm hits. The Pilot's job is not to fix the ship mid-flight, but to follow the Architect's manual.",
-                mvs: "Execute one pre-planned habit without questioning the 'Why'."
-            }
-            // Additional 26 chapters will be mapped into the dynamic renderer
-        ];
+                title: "Time Blindness & The Living Clock",
+                module: "Vol II: Regulation",
+                content: "For complex minds, time is either 'Now' or 'Not Now', leading to chronic anxiety and procrastination. The Living Clock externalises time from an abstract concept into a physical reality using visual timers and anchors to navigate without falling into panic.",
+                mvs: "Set a visual 5-minute timer for your current task."
+            },
+            {
+                id: "ch8",
+                title: "The Habit Stacking Scaffold",
+                module: "Vol II: Regulation",
+                content: "Willpower is a finite resource. The Habit Stacking Scaffold automates behaviour by anchoring new routines to existing automatic ones (like checking your system after pouring coffee). This scaffolding ensures essential systems function even when the Pilot is exhausted.",
+                mvs: "Link one tiny necessary task to your next cup of water or coffee."
+            },
+            {
+                id: "ch9",
+                title: "The Fueling Logic",
+                module: "Vol II: Regulation",
+                content: "The mind is a biological machine. Neglecting sleep, hydration, and nutrition is the fastest way to trigger a collapse. The Architect treats these not as 'self-care' luxuries, but as mandatory mechanical maintenance to stabilise blood sugar and emotional regulation.",
+                mvs: "Drink 8oz of water or eat 10g of protein immediately."
+            },
+            {
+                id: "ch10",
+                title: "The In-Case-Of-Fire Kit",
+                module: "Vol II: Regulation",
+                content: "When a storm hits, the Pilot forgets which tools to use. This kit is a physical, pre-assembled collection of sensory overrides and Truth Anchors that require zero thought to use—like a cold pack or noise-cancelling headphones.",
+                mvs: "Locate one physical item (like headphones or a cold pack) to use as an override."
+            },
 
+            // VOLUME III: THE ARCHETYPES OF THE STORM
+            {
+                id: "ch11",
+                title: "The Pulse Simulation",
+                module: "Vol III: Archetypes",
+                content: "Generalised Anxiety is a 'Pulse Simulation'—a constant bracing for a future that hasn't arrived. The brain simulates disasters to ensure survival. Management requires identifying which worries are actionable 'Signals' and which are just 'Noise' from a hyperactive alarm.",
+                mvs: "Write down your worry. Label it as 'Signal' (actionable) or 'Noise' (glitch)."
+            },
+            {
+                id: "ch12",
+                title: "The Scattered Current",
+                module: "Vol III: Archetypes",
+                content: "The ADHD brain is a signal-seeking frequency that cannot land, leading to 'Static Overload' where focus is impossible. The solution is the 'Surgical Strike'—using physical brakes to force the brain to land on one tiny task, restoring the Pilot's control.",
+                mvs: "Pick one physical object on your desk and put it away."
+            },
+            {
+                id: "ch13",
+                title: "The Emotional Heat",
+                module: "Vol III: Archetypes",
+                content: "Rejection Sensitivity (RSD) and BPD create 'Heat' that hits with 100% intensity in seconds. Social interactions feel like a minefield. The Architect manages this by recognising the Heat as a biological event rather than a social fact, using communication scripts to protect relationships.",
+                mvs: "Do not send that text. Wait 15 minutes for the Heat to dissipate."
+            },
+            {
+                id: "ch14",
+                title: "The Shadow Imprints",
+                module: "Vol III: Archetypes",
+                content: "CPTSD creates 'Shadow Imprints' where the brain mistakes a current sensation for a past trauma. This hypervigilance keeps the system on high alert. The Architect uses Sanctuary Design and Identity Anchors to provide proof of current safety.",
+                mvs: "Say out loud: 'I am safe in this room. That threat is a memory, not reality.'"
+            },
+            {
+                id: "ch15",
+                title: "The Gravity Drop",
+                module: "Vol III: Archetypes",
+                content: "A sudden sink into numbness where all Signal is lost to 'Blue Gravity' (Depression). The body shuts down to save the last 1% of the Battery. Productivity is impossible. The only goal is 'Maintenance Mode' to gently signal to the brain that it is safe.",
+                mvs: "Assume 'Maintenance Mode'. Do nothing but rest and hydrate for the next hour."
+            },
+
+            // LAWS OF THE COCKPIT
+            {
+                id: "ch16",
+                title: "The 70% Governor",
+                module: "Laws of the Cockpit",
+                content: "The nervous system has a finite budget. Operating at 100% capacity redlines the engine, leading to Executive Burnout. By intentionally spending only 70% of your energy on a good day, you preserve a 30% 'System Overhead' for unexpected spikes.",
+                mvs: "Look at your to-do list and cross out 30% of it."
+            },
+            {
+                id: "ch17",
+                title: "The Minimum Viable Shift (MVS)",
+                module: "Laws of the Cockpit",
+                content: "Task paralysis is a medical reality caused by a dopamine deficit. The MVS shrinks a task until it bypasses the threat-detection system (e.g., instead of 'clean the house', it's 'pick up one sock'). It generates a micro-burst of dopamine to break inertia.",
+                mvs: "Shrink your current task until it takes less than 2 minutes. Do it now."
+            },
+            {
+                id: "ch18",
+                title: "The 10/20 Brakes",
+                module: "Laws of the Cockpit",
+                content: "Mental spirals are physiological loops. If you ruminate for 10 minutes, change your Body (splash cold water). If you are stuck for 20 minutes, change your Location. Moving resets sensory input and provides a software reboot for executive dysfunction.",
+                mvs: "If you are stuck, stand up and walk to a different room right now."
+            },
+            {
+                id: "ch19",
+                title: "The Externalised Mind",
+                module: "Laws of the Cockpit",
+                content: "Working memory fails under stress. Trying to hold tasks in your head creates 'Cognitive Load'. The Memory Shield requires moving all data to an external physical system, clearing the static from the cockpit so you have space to be present.",
+                mvs: "Do a 'Brain Dump'. Write down everything screaming for your attention."
+            },
+
+            // THE EXTERNAL HULL
+            {
+                id: "ch20",
+                title: "Sanctuary Design",
+                module: "The External Hull",
+                content: "Clutter and bright lights are unorganised data points that drain the battery. Sanctuary Design is the intentional reduction of visual noise in your primary cockpit. A clean, quiet space lowers the baseline heart rate of the mind.",
+                mvs: "Clear exactly one square foot of space directly in front of you."
+            },
+            {
+                id: "ch21",
+                title: "The Social Governor",
+                module: "The External Hull",
+                content: "Social interaction triggers People Pleasing and RSD. The Social Governor uses pre-designed 'Communication Scripts' written during calm states to be used during storms (e.g., 'I am in a Heat moment, I need 10 minutes'). This protects the Pilot from social exhaustion.",
+                mvs: "Use a script: Text someone that you are 'recalibrating' and will reply later."
+            },
+            {
+                id: "ch22",
+                title: "The Sensory Override",
+                module: "The External Hull",
+                content: "When the Limbic system panics, logic is useless. You must use a bottom-up approach to signal safety through the senses. Techniques like the Mammalian Dive Reflex (ice water on the face) are mechanical overrides that force the brain into regulation.",
+                mvs: "Splash freezing cold water on your face to trigger the Dive Reflex."
+            },
+            {
+                id: "ch23",
+                title: "Reporting Visibility",
+                module: "The External Hull",
+                content: "During a storm, language centers shut down. Reporting Visibility uses the Colour Grid to communicate your internal state with zero friction. Saying 'I am feeling Purple' instantly communicates high-pulse anxiety without needing to explain the trauma.",
+                mvs: "Report your current 'Colour' to a co-pilot or write it on a post-it."
+            },
+
+            // SYSTEM MAINTENANCE
+            {
+                id: "ch24",
+                title: "The Docking Manoeuvre",
+                module: "System Maintenance",
+                content: "Sleep is the critical docking period for metabolic maintenance, but transitioning to it often ramps up the Pulse Simulation. The Docking Manoeuvre uses Atmospheric Calibration (lowering temperature/light) and externalising thoughts to automate rest.",
+                mvs: "Dim the screens and write down tomorrow's tasks to clear your RAM."
+            },
+            {
+                id: "ch25",
+                title: "Atmospheric Calibration",
+                module: "System Maintenance",
+                content: "Medication is not a magic pill; it adjusts the atmospheric pressure in the cockpit. The Medication Ledger tracks energy levels and emotional spikes alongside medication to provide data for precision chemical calibration.",
+                mvs: "Log your medication and current Wave capacity in the Bio Hub."
+            },
+            {
+                id: "ch26",
+                title: "The Metabolic Reset",
+                module: "System Maintenance",
+                content: "The mind and body are an integrated system. A Metabolic Reset uses brief, intense physical activity (like 10 seconds of jumping jacks) to break a psychological state, burning off cortisol and redirecting energy from the Alarm back to the Battery.",
+                mvs: "Do 10 jumping jacks or push against a wall with all your strength for 15s."
+            },
+            {
+                id: "ch27",
+                title: "Turning Drama into Data",
+                module: "System Maintenance",
+                content: "The brain's negativity bias creates a narrative of failure. The Daily Ledger intentionally records 'Wins'—which are simply moments you used a tool (e.g., 'I felt Red and used the 90-second rule'). This builds a proven map of your resilience.",
+                mvs: "Log one moment today where you successfully managed a glitch."
+            },
+
+            // THE STRATEGIC ENGINE
+            {
+                id: "ch28",
+                title: "The Filter",
+                module: "The Strategic Engine",
+                content: "Decision fatigue causes system collapse. The Filter is a weekly strategy of 'Strategic Dropping'—giving yourself permission to drop tasks done out of guilt or perfectionism. Choosing what not to do protects energy for what actually matters.",
+                mvs: "Identify one task you are doing out of guilt, and officially drop it."
+            },
+            {
+                id: "ch29",
+                title: "Chasing the Fox",
+                module: "The Strategic Engine",
+                content: "Most people fail by chasing ten rabbits at once. The Architect succeeds by chasing one Fox—the single high-leverage task that makes everything else easier. Break the Fox into MVS steps to create a ladder of ascent.",
+                mvs: "Identify your 'Fox' for today. Ignore the rabbits."
+            },
+            {
+                id: "ch30",
+                title: "Naming the Bodyguards",
+                module: "The Strategic Engine",
+                content: "Procrastination and perfectionism are internal 'Bodyguards' developed to protect you from pain. Acknowledge them without letting them steer the ship: 'Thank you for your service, but the Pilot is in the cockpit now.'",
+                mvs: "Notice which Bodyguard is active right now and thank it for trying to help."
+            },
+            {
+                id: "ch31",
+                title: "Identity Anchors",
+                module: "The Strategic Engine",
+                content: "In a storm, feelings lie. Identity Anchors are pre-loaded truths that do not change based on the weather. When the storm says you are a burden, the Anchor reminds you of your inherent value and resilience.",
+                mvs: "Read your core Identity Anchor out loud."
+            },
+            {
+                id: "ch32",
+                title: "The Collaborative Pilot",
+                module: "The Strategic Engine",
+                content: "Navigating a complex mind is not a solo journey. A Support Grid of therapists, doctors, and friends acts as external scaffolding. Recognising you need help is not a failure; it is a designed feature of the craft.",
+                mvs: "Identify one person on your Support Grid you can reach out to today."
+            },
+            {
+                id: "ch33",
+                title: "The Architect's Creed",
+                module: "The Strategic Engine",
+                content: "The Storm is not something to be cured, but navigated. You are the Pilot of a sophisticated craft. 'I do not fight my nature—I design for it. One pebble, one breath, one step. I am the Architect of my own stability.'",
+                mvs: "Say the Creed: 'I am the Architect of my own stability.'"
+            }
+        ];
         /* ==========================================================================
            🧭 PILOT PORTAL RENDERER
            ========================================================================== */
