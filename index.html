@@ -371,12 +371,12 @@
            ========================================================================== */
        function setWave(value) {
     // Force number conversion
-    let num = Number(value);
+    function setWave(value) {
+    appState.wave = Number(appState.wave) || 0;
 
-    // Prevent NaN
+    let num = Number(value);
     if (isNaN(num)) num = 0;
 
-    // Clamp between 0–100
     appState.wave = Math.max(0, Math.min(100, num));
 
     // Update UI
