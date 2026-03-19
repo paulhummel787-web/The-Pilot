@@ -2,97 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Architect OS | Apex Hive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Hive OS</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-black text-amber-500 overflow-hidden">
-
+<body class="bg-[#050502] text-amber-500 font-mono overflow-hidden">
     <div class="crt-overlay"></div>
-    <div class="hex-grid"></div>
-
-    <div class="relative z-10 h-screen flex flex-col p-4 md:p-8">
-        
-        <header class="flex justify-between items-start border-b border-amber-500/20 pb-4 mb-6">
-            <div class="flex gap-4">
-                <div class="h-12 w-12 border border-amber-500/50 flex items-center justify-center rounded-lg bg-amber-500/5">
-                    <i class="fas fa-microchip animate-pulse"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-black uppercase tracking-tighter leading-none">Architect <span class="text-white">OS</span></h1>
-                    <p class="text-[9px] font-mono opacity-50 uppercase mt-1">Status: <span id="sys-status" class="text-green-400">Nominal</span></p>
-                </div>
+    
+    <div class="h-screen flex flex-col p-6 relative z-10">
+        <header class="flex justify-between items-center border-b border-amber-500/20 pb-4">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-microchip text-2xl animate-pulse"></i>
+                <h1 class="text-xl font-black tracking-tighter text-white">APEX_HIVE <span class="text-amber-500 opacity-50">v30.0.1</span></h1>
             </div>
-            
-            <div class="flex gap-8 text-right font-mono">
-                <div>
-                    <div class="text-[8px] opacity-40 uppercase">System Integrity</div>
-                    <div id="integrity-num" class="text-xl font-bold">0%</div>
-                </div>
-                <div>
-                    <div class="text-[8px] opacity-40 uppercase">Honey Yield</div>
-                    <div id="fuel-display" class="text-xl font-bold text-white">000</div>
-                </div>
-                <button onclick="Telemetry.toggleVoice()" id="mic-node" class="h-10 w-10 border border-amber-500/20 rounded-full flex items-center justify-center hover:bg-amber-500/10 transition-all">
-                    <i class="fas fa-microphone-slash"></i>
-                </button>
-            </div>
+            <div id="connection-node" class="text-[10px] px-3 py-1 border border-green-500/30 text-green-400 rounded-full">SYSTEM_READY</div>
         </header>
 
-        <nav class="flex gap-4 mb-6">
-            <button onclick="App.switchView('command')" id="tab-command" class="nav-node active">01_COMMAND</button>
-            <button onclick="App.switchView('memory')" id="tab-memory" class="nav-node">02_MEMORY</button>
-            <button onclick="App.switchView('vault')" id="tab-vault" class="nav-node">03_VAULT</button>
-        </nav>
-
-        <main class="flex-1 relative overflow-hidden">
-            
-            <section id="view-command" class="view-pane active grid md:grid-cols-12 gap-6 h-full">
-                <div class="md:col-span-3 space-y-3" id="state-matrix">
+        <main class="flex-1 grid grid-cols-12 gap-6 mt-6 overflow-hidden">
+            <div class="col-span-4 flex flex-col gap-4">
+                <div class="glass-pane p-4 flex-1">
+                    <h3 class="text-[10px] uppercase opacity-40 mb-4 tracking-[0.2em]">Yield Telemetry</h3>
+                    <div class="h-48"><canvas id="yieldChart"></canvas></div>
+                </div>
+                <div class="glass-pane p-4 border-l-4 border-amber-500">
+                    <h3 class="text-[10px] uppercase opacity-40 mb-2">Cognitive Governor</h3>
+                    <div class="flex justify-between items-end">
+                        <span id="integrity-label" class="text-4xl font-black text-white">0%</span>
+                        <span class="text-[9px] mb-1 opacity-50">70% LIMIT</span>
                     </div>
+                    <div class="w-full bg-white/5 h-2 mt-2"><div id="integrity-bar" class="h-full bg-amber-500 w-0 transition-all duration-700"></div></div>
+                </div>
+            </div>
 
-                <div class="md:col-span-6 flex flex-col gap-6">
-                    <div class="glass-pane flex-1 relative flex flex-col items-center justify-center p-8 overflow-hidden" id="pacer-container">
-                        <div class="pacer-orb"></div>
-                        <div class="relative z-10 w-full text-center">
-                            <h2 class="text-[10px] font-bold uppercase tracking-[0.5em] mb-4 opacity-50">Target Objective</h2>
-                            <input id="fox-input" type="text" placeholder="Specify Flight Path..." class="w-full bg-transparent text-center text-3xl font-black uppercase tracking-tight focus:outline-none placeholder:opacity-20">
+            <div class="col-span-5 flex flex-col gap-4">
+                <div class="glass-pane flex-1 flex flex-col items-center justify-center relative overflow-hidden" id="pacer-zone">
+                    <div class="pacer-ring"></div>
+                    <div class="relative z-20 text-center">
+                        <input id="target-input" type="text" placeholder="SET TARGET PATH..." class="bg-transparent text-center text-2xl font-black text-white outline-none w-full uppercase placeholder:opacity-20">
+                    </div>
+                </div>
+                <div class="glass-pane h-40 p-4 overflow-y-auto text-[10px] opacity-60 custom-scroll" id="system-log">
+                    <div>> Initializing Apex kernel...</div>
+                </div>
+            </div>
+
+            <div class="col-span-3 flex flex-col gap-4">
+                <div class="glass-pane flex-1 p-4 overflow-hidden flex flex-col">
+                    <h3 class="text-[10px] uppercase opacity-40 mb-4 tracking-[0.2em]">Vault_Cells</h3>
+                    <div id="vault-grid" class="flex-1 overflow-y-auto space-y-2 custom-scroll">
                         </div>
-                    </div>
-                    
-                    <div class="glass-pane p-4 h-32 font-mono text-[10px] overflow-y-auto custom-scroll" id="terminal-output">
-                        > Booting Hive OS... <br> > Biometrics Linked...
-                    </div>
                 </div>
-
-                <div class="md:col-span-3 flex flex-col gap-4">
-                    <div class="glass-pane p-6 border-l-4 border-amber-500" id="guidance-box">
-                        <h3 class="text-[10px] font-bold uppercase mb-2 opacity-50">Protocol</h3>
-                        <p id="protocol-text" class="text-sm italic leading-relaxed">Standing by...</p>
-                    </div>
-                    <button onclick="App.executeMVS()" id="execute-btn" class="flex-1 bg-amber-500 text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-white transition-all rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                        Deposit Nectar
-                    </button>
-                </div>
-            </section>
-
-            <section id="view-memory" class="view-pane h-full">
-                <div class="glass-pane p-8 h-full flex flex-col">
-                    <textarea id="memo-input" class="flex-1 bg-transparent border-none text-xl focus:outline-none resize-none font-light italic" placeholder="Externalize the noise..."></textarea>
-                    <button onclick="App.saveMemo()" class="mt-4 py-4 border border-amber-500/30 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-500/10">Archive Data</button>
-                    <div id="memo-list" class="mt-8 space-y-4 overflow-y-auto flex-1 custom-scroll"></div>
-                </div>
-            </section>
-
-            <section id="view-vault" class="view-pane h-full overflow-y-auto custom-scroll">
-                <div id="win-ledger" class="grid gap-4"></div>
-            </section>
+                <button onclick="Core.executeDeposit()" class="h-20 bg-amber-500 text-black font-black uppercase tracking-[0.5em] text-xs hover:bg-white transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)]">Deposit_Nectar</button>
+            </div>
         </main>
     </div>
 
-    <script src="engine.js"></script>
+    <script src="app.js"></script>
     <script src="telemetry.js"></script>
 </body>
 </html>
