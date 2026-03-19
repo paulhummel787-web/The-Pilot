@@ -7,6 +7,53 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    // --- CORE STATE DEFINITIONS ---
+let nexusState = {
+    wave: 70,
+    activeColor: '#6366f1',
+    isMuted: false
+};
+
+let vaultState = {
+    anchors: JSON.parse(localStorage.getItem('nexus_anchors')) || [],
+    logs: JSON.parse(localStorage.getItem('nexus_logs')) || []
+};
+
+// --- NAVIGATION LOGIC ---
+function switchView(viewId) {
+    // Hide all sections
+    document.querySelectorAll('section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    // Show target section
+    const target = document.getElementById('view-' + viewId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+    
+    // Update Nav UI
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('text-indigo-500', 'opacity-100');
+        link.classList.add('opacity-40');
+    });
+    
+    const activeNav = document.getElementById('nav-' + viewId);
+    if (activeNav) {
+        activeNav.classList.add('text-indigo-500', 'opacity-100');
+    }
+}
+
+// --- TERMINAL LOGIC ---
+function logToTerminal(msg, type = "INFO") {
+    const term = document.getElementById('terminal-body');
+    if (!term) return;
+    const line = document.createElement('div');
+    line.className = "mb-1";
+    const colors = { "INFO": "text-emerald-500", "WARN": "text-amber-500", "ERROR": "text-red-500", "CMD": "text-indigo-400" };
+    line.innerHTML = `<span class="${colors[type]}">[${type}]</span> ${msg}`;
+    term.appendChild(line);
+    term.scrollTop = term.scrollHeight;
+}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
