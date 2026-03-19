@@ -376,9 +376,8 @@ appState.integrity = Number(appState.integrity) || 0;
            🛠 CORE FUNCTIONALITY
            ========================================================================== */
        function setWave(value) {
-    // Force number conversion
-    function setWave(value) {
-    appState.wave = Number(appState.wave) || 0;
+            // Force number conversion
+            appState.wave = Number(appState.wave) || 0;
 
     let num = Number(value);
     if (isNaN(num)) num = 0;
