@@ -780,60 +780,126 @@ appState.integrity = Number(appState.integrity) || 0;
             setTimeout(() => alertBox.remove(), 3000);
         }
         /* ==========================================================================
-           ⌨️ THE COMMAND KERNEL (TERMINAL LOGIC)
-           ========================================================================== */
-        const COMMANDS = {
-            '/wave': (val) => {
-                setWave(parseInt(val));
-                return `System Wave recalibrated to ${val}%`;
-            },
-            '/state': (mode) => {
-                if (CONFIG.states[mode]) {
-                    updateSystemAtmosphere(mode);
-                    return `Atmospheric shift: ${mode.toUpperCase()} engaged.`;
-                }
-                return `Error: State [${mode}] not recognized in kernel.`;
-            },
-            '/panic': () => {
-                updateSystemAtmosphere('sanctuary');
-                switchTab('vault');
-                return `EMERGENCY PROTOCOL: Sanctuary initiated. Breathe.`;
-            },
-            '/clear': () => {
-                appState.logs = [];
-                renderTerminal();
-                return `System logs purged.`;
-            },
-            '/audit': () => {
-                switchTab('vault');
-                return `Redirecting to Biological Audit...`;
-            },
-            '/help': () => {
-                return `Available: /wave [n], /state [name], /panic, /audit, /clear, /mvs [task]`;
-            },
-            '/mvs': (task) => {
-                addMVS(task);
-                return `MVS Registered: ${task}`;
-            }
-        };
-
-        function handleTerminalInput(e) {
-            if (e.key === 'Enter') {
-                const input = e.target.value.trim();
-                const [cmd, ...args] = input.split(' ');
-                
-                let response = "";
-                if (COMMANDS[cmd]) {
-                    response = COMMANDS[cmd](args.join(' '));
-                } else {
-                    response = `Unknown command: ${cmd}. Type /help for uplink.`;
-                }
-
-                logSystemEvent(`TERM: ${input}`);
-                e.target.value = '';
-                renderTerminal(response);
-            }
+   ⌨️ THE COMMAND KERNEL (TERMINAL LOGIC)
+   ========================================================================== */
+const COMMANDS = {
+    '/wave': (val) => {
+        setWave(Number(val));
+        return `System Wave recalibrated to ${val}%`;
+    },
+    '/state': (mode) => {
+        if (CONFIG.states[mode]) {
+            updateSystemAtmosphere(mode);
+            return `Atmospheric shift: ${mode.toUpperCase()} engaged.`;
         }
+        return `Error: State [${mode}] not recognized in kernel.`;
+    },
+    '/panic': () => {
+        updateSystemAtmosphere('sanctuary');
+        switchTab('vault');
+        return `EMERGENCY PROTOCOL: Sanctuary initiated. Breathe.`;
+    },
+    '/clear': () => {
+        appState.logs = [];
+        renderTerminal();
+        return `System logs purged.`;
+    },
+    '/audit': () => {
+        switchTab('vault');
+        return `Redirecting to Biological Audit...`;
+    },
+    '/help': () => {
+        return `Available: /wave [n], /state [name], /panic, /audit, /clear, /mvs [task]`;
+    },
+    '/mvs': (task) => {
+        addMVS(task);
+        return `MVS Registered: ${task}`;
+    }
+};
+
+/* ==========================================================================
+   🚨 BLACKOUT HUB (EMERGENCY INTERFACE)
+   ========================================================================== */
+function triggerBlackout() {
+    const blackoutOverlay = document.createElement('div');
+    blackoutOverlay.id = 'blackout-screen';
+    blackoutOverlay.style.position = 'fixed';
+    blackoutOverlay.style.top = 0;
+    blackoutOverlay.style.left = 0;
+    blackoutOverlay.style.width = '100vw';
+    blackoutOverlay.style.height = '100vh';
+    blackoutOverlay.style.backgroundColor = 'rgba(0,0,0,0.95)';
+    blackoutOverlay.style.zIndex = 9999;
+    blackoutOverlay.style.display = 'flex';
+    blackoutOverlay.style.flexDirection = 'column';
+    blackoutOverlay.style.alignItems = 'center';
+    blackoutOverlay.style.justifyContent = 'center';
+    blackoutOverlay.style.padding = '2rem';
+    blackoutOverlay.style.overflowY = 'auto';
+    blackoutOverlay.innerHTML = `
+        <div class="space-y-6 text-left w-full max-w-lg">
+            <div class="flex gap-4 items-start">
+                <span class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                <p class="text-white/80 text-sm italic">Put your phone in another room or turn it off completely.</p>
+            </div>
+            <div class="flex gap-4 items-start">
+                <span class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                <p class="text-white/80 text-sm italic">Drink 16oz of ice-cold water immediately (Temperature Shock).</p>
+            </div>
+            <div class="flex gap-4 items-start">
+                <span class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                <p class="text-white/80 text-sm italic">Lie on the floor or a flat surface for 10 minutes. No music. No light.</p>
+            </div>
+
+            <button onclick="document.getElementById('blackout-screen').remove(); logSystemEvent('BLACKOUT: Manual override engaged.');" 
+                    class="mt-12 text-[10px] text-white/10 uppercase tracking-[0.4em] hover:text-white/40 transition-colors">
+                Manual Override (Pilot Return)
+            </button>
+        </div>
+    `;
+    document.body.appendChild(blackoutOverlay);
+
+    // State reset
+    appState.wave = 0;
+    updateSystemAtmosphere('neutral');
+}
+
+/* ==========================================================================
+   🚀 SYSTEM INITIALIZATION (THE ENGINE START)
+   ========================================================================== */
+window.onload = function() {
+    // 1. Sync State with LocalStorage
+    const savedState = localStorage.getItem('architect_state');
+    if (savedState) {
+        const parsed = JSON.parse(savedState);
+        appState.wave = Number(parsed.wave) || 50;
+        appState.activeProtocol = parsed.activeProtocol || 'yellow';
+    }
+
+    // 2. Initial Atmosphere Calibration
+    updateSystemAtmosphere(appState.activeProtocol);
+
+    // 3. Launch the Cockpit
+    renderView('dash');
+
+    // 4. Final System Log
+    logSystemEvent("SYSTEM ONLINE: Architect OS v1.0 Fully Integrated.");
+    triggerAlert("WELCOME HOME, PILOT. ALL SYSTEMS NOMINAL.");
+
+    console.log("Architect OS: Flight Readiness 100%. Persistence Active.");
+};
+
+/* ==========================================================================
+   💾 PERSISTENCE LOOP (AUTO-SAVE)
+   ========================================================================== */
+setInterval(() => {
+    const stateToSave = {
+        wave: appState.wave,
+        activeProtocol: appState.activeProtocol,
+        lastSync: Date.now()
+    };
+    localStorage.setItem('architect_state', JSON.stringify(stateToSave));
+}, 5000);
 
         /* ==========================================================================
            📑 MVS TASK ENGINE (MINIMUM VIABLE STEPS)
