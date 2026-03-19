@@ -1,34 +1,40 @@
 const Telemetry = {
-    isListening: false,
-    recognition: null,
+    chart: null,
 
     init() {
-        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(window.SpeechRecognition) {
-            this.recognition = new SpeechRecognition();
-            this.recognition.continuous = true;
-            this.recognition.onresult = (e) => {
-                const cmd = e.results[e.results.length - 1][0].transcript.toLowerCase();
-                if(cmd.includes("deposit") || cmd.includes("log")) App.executeMVS();
-                if(cmd.includes("clear")) { App.data.memos = []; App.updateUI(); }
-            };
-        }
+        const ctx = document.getElementById('yieldChart').getContext('2d');
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Populated from DB
+                datasets: [{
+                    label: 'Nectar Yield',
+                    data: [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { display: false },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#f59e0b', font: { size: 8 } } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+        this.update();
     },
 
-    toggleVoice() {
-        if(!this.recognition) return;
-        this.isListening = !this.isListening;
-        const mic = document.getElementById('mic-node');
-        if(this.isListening) {
-            this.recognition.start();
-            mic.innerHTML = '<i class="fas fa-microphone text-green-400"></i>';
-            App.log("Voice Link: Established.");
-        } else {
-            this.recognition.stop();
-            mic.innerHTML = '<i class="fas fa-microphone-slash"></i>';
-            App.log("Voice Link: Severed.");
-        }
+    update() {
+        // Sync chart with Core data
+        const history = Core.state.logs.slice(0, 10).reverse();
+        this.chart.data.labels = history.map(h => h.time);
+        this.chart.data.datasets[0].data = history.map((_, i) => (i + 1) * 10); // Mock data for trend
+        this.chart.update();
     }
 };
-
-window.addEventListener('DOMContentLoaded', () => Telemetry.init());
