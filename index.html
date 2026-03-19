@@ -26,6 +26,80 @@ body {
     background:black;
     color:#00ff88;
     font-family: monospace;
+}/* =========================
+✨ UI POLISH ENGINE
+========================= */
+
+/* Smooth everything */
+* {
+    transition: all .25s ease;
+}
+
+/* Glass upgrade */
+.glass {
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+/* Button feel */
+button {
+    transition: all .2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 12px rgba(255,255,255,0.1);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+/* Scroll styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+}
+
+/* Fade animation */
+.fade-in {
+    animation: fadeIn .4s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(10px)}
+    to {opacity:1; transform:translateY(0)}
+}
+
+/* Glow pulse */
+.soft-glow {
+    animation: glowPulse 3s infinite;
+}
+
+@keyframes glowPulse {
+    0% {box-shadow:0 0 0px transparent}
+    50% {box-shadow:0 0 20px rgba(255,255,255,0.1)}
+    100% {box-shadow:0 0 0px transparent}
+}
+
+/* Card hover lift */
+.glass:hover {
+    transform: translateY(-4px);
+}
+
+/* Terminal glow upgrade */
+.terminal {
+    box-shadow: 0 0 20px #00ff88;
+}
+
+/* Anchor emphasis */
+.anchor {
+    border-left: 3px solid #8b5cf6;
+    padding-left: 10px;
 }
 </style>
 </head>
@@ -125,7 +199,1335 @@ function cmd(e){
 }
 
 render();
+<script>
 
+/* =========================
+📖 FULL 33 CHAPTER SYSTEM (REAL TEXT)
+========================= */
+
+const FULL_BOOK = [
+
+{
+title:"Chapter 1: The Landscape of the Storm",
+content:`The complex mind does not experience challenges in isolation; it lives within a "Symptom Soup"...`
+},
+
+{
+title:"Chapter 2: The Anatomy of Shutdown",
+content:`Shutdown is not a failure of will; it is a biological evacuation protocol...`
+},
+
+{
+title:"Chapter 3: The Architect vs The Pilot",
+content:`Two systems exist: the Pilot (reactive) and the Architect (planner)...`
+},
+
+{
+title:"Chapter 4: The Colour Frequencies",
+content:`Replace emotional analysis with colour recognition...`
+},
+
+{
+title:"Chapter 5: The Prime Directive",
+content:`Fix the State, then the Step. No movement without regulation.`
+},
+
+{
+title:"Chapter 6: The 90-Second Rule",
+content:`All emotional surges last ~90 seconds chemically.`
+},
+
+{
+title:"Chapter 7: Time Blindness",
+content:`Time is either Now or Not Now; externalize it.`
+},
+
+{
+title:"Chapter 8: Habit Stacking",
+content:`Attach actions to existing behaviors.`
+},
+
+{
+title:"Chapter 9: Fueling Logic",
+content:`Body chemistry dictates mental stability.`
+},
+
+{
+title:"Chapter 10: Fire Kit",
+content:`Pre-built tools for zero-thought crisis response.`
+},
+
+{
+title:"Chapter 11: Anxiety Pulse",
+content:`Anxiety is a simulation, not always a signal.`
+},
+
+{
+title:"Chapter 12: ADHD Scatter",
+content:`Attention is a signal seeking system.`
+},
+
+{
+title:"Chapter 13: Emotional Heat",
+content:`Emotions hit instantly at full intensity.`
+},
+
+{
+title:"Chapter 14: CPTSD Shadow",
+content:`The past imprints present perception.`
+},
+
+{
+title:"Chapter 15: Depression Gravity",
+content:`Energy collapses inward and downward.`
+},
+
+{
+title:"Chapter 16: Dissociation Fog",
+content:`System disconnects from present awareness.`
+},
+
+{
+title:"Chapter 17: MVS Protocol",
+content:`Move one pebble to break inertia.`
+},
+
+{
+title:"Chapter 18: 10/20 Brakes",
+content:`Interrupt loops with physical resets.`
+},
+
+{
+title:"Chapter 19: Memory Shield",
+content:`Externalize all mental load.`
+},
+
+{
+title:"Chapter 20: Sanctuary Design",
+content:`Reduce sensory noise in environment.`
+},
+
+{
+title:"Chapter 21: Social Governor",
+content:`Predefine boundaries and scripts.`
+},
+
+{
+title:"Chapter 22: Sensory Override",
+content:`Use body to reset brain.`
+},
+
+{
+title:"Chapter 23: Reporting Visibility",
+content:`Use color to communicate internal state.`
+},
+
+{
+title:"Chapter 24: Sleep Docking",
+content:`Sleep is system repair.`
+},
+
+{
+title:"Chapter 25: Medication Ledger",
+content:`Track signal vs noise.`
+},
+
+{
+title:"Chapter 26: Metabolic Reset",
+content:`Movement resets state.`
+},
+
+{
+title:"Chapter 27: Daily Ledger",
+content:`Turn wins into data.`
+},
+
+{
+title:"Chapter 28: Strategic Filter",
+content:`Drop non-essential tasks.`
+},
+
+{
+title:"Chapter 29: Chase the Fox",
+content:`Focus on one high-value task.`
+},
+
+{
+title:"Chapter 30: Bodyguards",
+content:`Protective patterns are not enemies.`
+},
+
+{
+title:"Chapter 31: Identity Anchors",
+content:`Truth over emotional weather.`
+},
+
+{
+title:"Chapter 32: Support Grid",
+content:`Use people as external scaffolding.`
+},
+
+{
+title:"Chapter 33: Architect’s Creed",
+content:`You are built to navigate, not eliminate the storm.`
+}
+
+];
+
+/* =========================
+📖 OVERRIDE BOOK TAB
+========================= */
+
+function renderBook(){
+    const v = document.getElementById('view');
+
+    v.innerHTML = `
+    <div class="space-y-3">
+        ${FULL_BOOK.map((ch,i)=>`
+            <div class="glass p-4">
+                <p class="text-xs opacity-40 mb-1">${ch.title}</p>
+                <p class="text-sm opacity-80">${ch.content}</p>
+            </div>
+        `).join('')}
+    </div>`;
+}
+
+/* Hook into main render */
+const originalRender = render;
+
+render = function(){
+    if(state.tab === 'book'){
+        renderBook();
+    } else {
+        originalRender();
+    }
+};
+
+</script><script>
+
+/* =========================
+✝️ FULL SCRIPTURE + IDENTITY ENGINE
+========================= */
+
+const FULL_ANCHORS = {
+
+identity: [
+{
+lie:"I am a mistake",
+verse:"Psalm 139:14",
+truth:"I am fearfully and wonderfully made; God does not make mistakes."
+},
+{
+lie:"I am unwanted",
+verse:"Ephesians 1:4",
+truth:"I am chosen by God before the world began; I am wanted."
+},
+{
+lie:"I am a burden",
+verse:"Psalm 55:22",
+truth:"I am sustained by God; He invites me to give Him my weight."
+},
+{
+lie:"I am broken",
+verse:"2 Corinthians 5:17",
+truth:"I am a new creation in Christ; the old is gone, the new is here."
+},
+{
+lie:"I am unloved",
+verse:"Romans 8:38-39",
+truth:"I am inseparable from the love of God; nothing can pull Him away."
+}
+],
+
+safety: [
+{
+verse:"Deuteronomy 31:8",
+truth:"I am never alone. God is already in my tomorrow."
+},
+{
+verse:"Psalm 34:18",
+truth:"When I feel crushed, God is at His closest to me."
+},
+{
+verse:"Isaiah 43:1",
+truth:"I am claimed. I belong to the Creator of the Universe."
+},
+{
+verse:"Psalm 27:10",
+truth:"My safety is not dependent on people; I am held by the Father."
+}
+],
+
+peace: [
+{
+verse:"2 Timothy 1:7",
+truth:"I reject fear. I have a sound and clear mind."
+},
+{
+verse:"Isaiah 26:3",
+truth:"As I fix my thoughts on Truth, my mind enters perfect peace."
+},
+{
+verse:"Philippians 4:7",
+truth:"God’s peace is guarding my mind like a soldier."
+},
+{
+verse:"1 Corinthians 14:33",
+truth:"Confusion is not from God. Peace will come."
+}
+],
+
+strength: [
+{
+verse:"Philippians 4:13",
+truth:"I have enough strength for the next step."
+},
+{
+verse:"2 Corinthians 12:9",
+truth:"My weakness is where God’s power shows up."
+},
+{
+verse:"Isaiah 40:31",
+truth:"I will walk and not faint. Strength is being renewed."
+},
+{
+verse:"Psalm 142:3",
+truth:"Even when I don’t know the path, God does."
+}
+]
+
+};
+
+/* =========================
+🔄 SMART ROTATION
+========================= */
+
+let anchorCategory = "identity";
+let anchorPointer = 0;
+
+function nextFullAnchor(){
+
+    const group = FULL_ANCHORS[anchorCategory];
+    const a = group[anchorPointer];
+
+    const v = document.getElementById('view');
+
+    v.innerHTML = `
+    <div class="glass p-6 max-w-md mx-auto text-center">
+
+        <p class="text-xs opacity-40 mb-2 uppercase">${anchorCategory}</p>
+
+        ${a.lie ? `<p class="text-red-400 mb-4">${a.lie}</p>` : ""}
+
+        <p class="opacity-40 text-xs">${a.verse}</p>
+        <p class="text-indigo-400 mt-2">${a.truth}</p>
+
+        <div class="flex gap-2 mt-6 justify-center">
+            <button onclick="nextFullAnchor()" class="bg-indigo-500 px-4 py-2 rounded text-xs">Next</button>
+            <button onclick="switchAnchorCategory()" class="bg-white/10 px-4 py-2 rounded text-xs">Switch</button>
+        </div>
+
+    </div>`;
+
+    anchorPointer = (anchorPointer + 1) % group.length;
+}
+
+/* =========================
+🔀 CATEGORY SWITCH
+========================= */
+
+function switchAnchorCategory(){
+
+    const keys = Object.keys(FULL_ANCHORS);
+    let i = keys.indexOf(anchorCategory);
+
+    anchorCategory = keys[(i + 1) % keys.length];
+    anchorPointer = 0;
+
+    nextFullAnchor();
+}
+
+/* =========================
+🔌 HOOK INTO TAB
+========================= */
+
+const oldRender2 = render;
+
+render = function(){
+
+    if(state.tab === 'anchor'){
+        nextFullAnchor();
+    } else {
+        oldRender2();
+    }
+
+};
+
+</script><script>
+
+/* =========================
+🌈 TRUE 6-STATE STORM SYSTEM
+========================= */
+
+function getStormState(){
+
+    const w = state.wave;
+
+    if(w <= 15){
+        return {name:"White Fog", color:"#e5e7eb", desc:"Dissociation / Shutdown"};
+    }
+
+    if(w <= 30){
+        return {name:"Blue Gravity", color:"#3b82f6", desc:"Depression / Low Energy"};
+    }
+
+    if(w <= 45){
+        return {name:"Purple Pulse", color:"#8b5cf6", desc:"Anxiety / Overactivation"};
+    }
+
+    if(w <= 60){
+        return {name:"Yellow Static", color:"#facc15", desc:"ADHD / Scattered"};
+    }
+
+    if(w <= 80){
+        return {name:"Red Heat", color:"#ef4444", desc:"Emotional Intensity"};
+    }
+
+    return {name:"Green Flow", color:"#22c55e", desc:"Regulated / Stable"};
+}
+
+/* =========================
+🎨 APPLY TO UI
+========================= */
+
+function applyStormUI(){
+
+    const s = getStormState();
+
+    document.body.style.boxShadow = `inset 0 0 160px ${s.color}`;
+
+    const v = document.getElementById('storm-indicator');
+
+    if(v){
+        v.innerHTML = `
+            <div class="glass p-3 rounded-xl text-xs">
+                <p class="opacity-40">${s.name}</p>
+                <p>${s.desc}</p>
+            </div>
+        `;
+    }
+}
+
+setInterval(applyStormUI, 1000);
+
+/* =========================
+🧠 UPGRADE BASE VIEW
+========================= */
+
+const oldRender3 = render;
+
+render = function(){
+
+    if(state.tab === 'base'){
+
+        const s = getStormState();
+
+        document.getElementById('view').innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+
+            <div class="glass p-5">
+                <p class="text-xs opacity-40">Wave</p>
+                <p class="text-2xl">${state.wave}%</p>
+            </div>
+
+            <div class="glass p-5">
+                <p class="text-xs opacity-40">State</p>
+                <p class="text-lg">${s.name}</p>
+            </div>
+
+            <div id="storm-indicator" class="col-span-2"></div>
+
+            <button onclick="toggleSanctuary()" class="glass p-4 col-span-2">
+                ${state.sanctuary?'Exit Sanctuary':'Enter Sanctuary'}
+            </button>
+
+        </div>
+        `;
+
+    } else {
+        oldRender3();
+    }
+
+};
+
+</script><script>
+
+/* =========================
+🧭 COCKPIT UI SYSTEM
+========================= */
+
+function renderCockpit(){
+
+    const s = getStormState();
+
+    document.getElementById('view').innerHTML = `
+    
+    <div class="grid grid-cols-4 gap-4">
+
+        <!-- SIDEBAR -->
+        <div class="glass p-4 rounded-xl h-[75vh] overflow-y-auto">
+
+            <p class="text-xs opacity-40 mb-3">NAV</p>
+
+            ${["base","book","anchor","terminal"].map(tab=>`
+                <button onclick="switchTab('${tab}')" 
+                class="block w-full text-left text-xs py-2 px-2 rounded hover:bg-white/10">
+                    ${tab.toUpperCase()}
+                </button>
+            `).join('')}
+
+            <div class="mt-6 text-xs opacity-40">STATE</div>
+            <div class="mt-2 text-xs">${s.name}</div>
+
+        </div>
+
+        <!-- MAIN -->
+        <div class="col-span-3 space-y-4">
+
+            <div class="glass p-4 rounded-xl">
+                <p class="text-xs opacity-40">Wave</p>
+                <p class="text-xl">${state.wave}%</p>
+            </div>
+
+            <div id="cockpit-main"></div>
+
+        </div>
+
+    </div>
+    `;
+
+    renderCockpitContent();
+}
+
+/* =========================
+🧠 MAIN PANEL SWITCH
+========================= */
+
+function renderCockpitContent(){
+
+    const v = document.getElementById('cockpit-main');
+
+    if(state.tab === 'book'){
+
+        v.innerHTML = `
+        <div class="space-y-2 max-h-[60vh] overflow-y-auto">
+            ${FULL_BOOK.map((ch,i)=>`
+                <div onclick="openChapter(${i})" 
+                class="glass p-3 cursor-pointer hover:bg-white/10">
+                    ${ch.title}
+                </div>
+            `).join('')}
+        </div>
+        `;
+
+    }
+
+    else if(state.tab === 'anchor'){
+        nextFullAnchor();
+    }
+
+    else if(state.tab === 'terminal'){
+        v.innerHTML = `
+        <div class="terminal p-4 rounded-xl">
+            <div id="output" class="h-40 overflow-y-auto text-xs"></div>
+            <input id="cmd" class="w-full mt-2 bg-black outline-none"
+            onkeydown="handleCmd(event)">
+        </div>`;
+    }
+
+    else {
+        v.innerHTML = `
+        <div class="glass p-4">
+            System stable. Pilot active.
+        </div>`;
+    }
+
+}
+
+/* =========================
+📖 OPEN CHAPTER
+========================= */
+
+function openChapter(i){
+
+    const ch = FULL_BOOK[i];
+
+    document.getElementById('cockpit-main').innerHTML = `
+        <div class="glass p-6 max-h-[60vh] overflow-y-auto">
+            <h2 class="text-lg mb-4">${ch.title}</h2>
+            <p class="opacity-80">${ch.content}</p>
+        </div>
+    `;
+}
+
+/* =========================
+🔌 OVERRIDE MAIN RENDER
+========================= */
+
+const oldRender4 = render;
+
+render = function(){
+    renderCockpit();
+};
+
+</script><script>
+
+/* =========================
+🖥 ADVANCED TERMINAL ENGINE
+========================= */
+
+function log(msg){
+    const out = document.getElementById('output');
+    if(!out) return;
+    out.innerHTML += `<div>> ${msg}</div>`;
+    out.scrollTop = out.scrollHeight;
+}
+
+/* =========================
+⌨️ COMMAND HANDLER
+========================= */
+
+const oldCmd = handleCmd;
+
+handleCmd = function(e){
+
+    if(e.key !== "Enter") return;
+
+    const val = e.target.value.trim();
+    log(val);
+
+    const args = val.split(" ");
+    const cmd = args[0];
+
+    switch(cmd){
+
+        case "/help":
+            log("Commands:");
+            log("/wave [0-100]");
+            log("/state");
+            log("/storm");
+            log("/anchor");
+            log("/reset");
+            log("/mvs");
+            break;
+
+        case "/wave":
+            const w = parseInt(args[1]);
+            if(!isNaN(w)){
+                state.wave = Math.max(0, Math.min(100, w));
+                log("Wave set to " + state.wave);
+                render();
+            }
+            break;
+
+        case "/state":
+            log("Wave: " + state.wave);
+            log("Integrity: " + state.integrity);
+            break;
+
+        case "/storm":
+            const s = getStormState();
+            log(s.name + " — " + s.desc);
+            break;
+
+        case "/anchor":
+            switchTab('anchor');
+            break;
+
+        case "/reset":
+            state.wave = 70;
+            state.integrity = 60;
+            log("System reset to baseline.");
+            render();
+            break;
+
+        case "/mvs":
+            log("Minimum Viable Shift:");
+            log("→ Stand up");
+            log("→ Move body 10 seconds");
+            log("→ Do 1 tiny task");
+            break;
+
+        default:
+            log("Unknown command. Try /help");
+    }
+
+    e.target.value = "";
+
+};
+
+</script><script>
+
+/* =========================
+🧠 MEMORY SHIELD SYSTEM
+========================= */
+
+let memory = JSON.parse(localStorage.getItem("memory") || "[]");
+
+/* SAVE */
+function saveMemory(){
+    localStorage.setItem("memory", JSON.stringify(memory));
+}
+
+/* ADD ITEM */
+function addMemory(){
+
+    const input = document.getElementById("memory-input");
+    const val = input.value.trim();
+
+    if(!val) return;
+
+    memory.push({
+        text: val,
+        time: new Date().toLocaleTimeString()
+    });
+
+    input.value = "";
+    saveMemory();
+    renderMemory();
+}
+
+/* DELETE ITEM */
+function deleteMemory(i){
+    memory.splice(i,1);
+    saveMemory();
+    renderMemory();
+}
+
+/* RENDER */
+function renderMemory(){
+
+    const v = document.getElementById("cockpit-main");
+
+    v.innerHTML = `
+    <div class="space-y-4">
+
+        <div class="glass p-4">
+            <p class="text-xs opacity-40 mb-2">Memory Shield</p>
+
+            <div class="flex gap-2">
+                <input id="memory-input" 
+                class="flex-1 bg-black p-2 text-sm outline-none"
+                placeholder="Dump thought...">
+
+                <button onclick="addMemory()" 
+                class="bg-indigo-500 px-3 text-xs rounded">
+                    ADD
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+            ${memory.map((m,i)=>`
+                <div class="glass p-3 flex justify-between items-center">
+                    <div>
+                        <p class="text-sm">${m.text}</p>
+                        <p class="text-xs opacity-40">${m.time}</p>
+                    </div>
+                    <button onclick="deleteMemory(${i})" 
+                    class="text-red-400 text-xs">X</button>
+                </div>
+            `).join('')}
+        </div>
+
+    </div>
+    `;
+}
+
+/* =========================
+🔌 ADD TO NAV
+========================= */
+
+const oldCockpitContent = renderCockpitContent;
+
+renderCockpitContent = function(){
+
+    if(state.tab === "memory"){
+        renderMemory();
+    } else {
+        oldCockpitContent();
+    }
+
+};
+
+/* =========================
+🧭 ADD NAV BUTTON
+========================= */
+
+const oldCockpit = renderCockpit;
+
+renderCockpit = function(){
+
+    oldCockpit();
+
+    const nav = document.querySelector(".glass");
+
+    if(nav && !document.getElementById("memory-btn")){
+        const btn = document.createElement("button");
+        btn.innerText = "MEMORY";
+        btn.id = "memory-btn";
+        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
+        btn.onclick = () => {
+            state.tab = "memory";
+            render();
+        };
+        nav.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+📊 DAILY LEDGER SYSTEM
+========================= */
+
+let ledger = JSON.parse(localStorage.getItem("ledger") || "[]");
+
+/* SAVE */
+function saveLedger(){
+    localStorage.setItem("ledger", JSON.stringify(ledger));
+}
+
+/* ADD WIN */
+function addWin(){
+
+    const input = document.getElementById("win-input");
+    const val = input.value.trim();
+
+    if(!val) return;
+
+    ledger.unshift({
+        text: val,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+    });
+
+    input.value = "";
+    saveLedger();
+    renderLedger();
+}
+
+/* DELETE */
+function deleteWin(i){
+    ledger.splice(i,1);
+    saveLedger();
+    renderLedger();
+}
+
+/* RENDER */
+function renderLedger(){
+
+    const v = document.getElementById("cockpit-main");
+
+    v.innerHTML = `
+    <div class="space-y-4">
+
+        <div class="glass p-4">
+            <p class="text-xs opacity-40 mb-2">Daily Ledger</p>
+
+            <div class="flex gap-2">
+                <input id="win-input" 
+                class="flex-1 bg-black p-2 text-sm outline-none"
+                placeholder="Log a win (even tiny)...">
+
+                <button onclick="addWin()" 
+                class="bg-green-500 px-3 text-xs rounded">
+                    LOG
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-2 max-h-[50vh] overflow-y-auto">
+            ${ledger.map((w,i)=>`
+                <div class="glass p-3 flex justify-between items-center">
+                    <div>
+                        <p class="text-sm">${w.text}</p>
+                        <p class="text-xs opacity-40">${w.date} • ${w.time}</p>
+                    </div>
+                    <button onclick="deleteWin(${i})" 
+                    class="text-red-400 text-xs">X</button>
+                </div>
+            `).join('')}
+        </div>
+
+    </div>
+    `;
+}
+
+/* =========================
+🔌 ADD TO NAV
+========================= */
+
+const oldCockpitContent2 = renderCockpitContent;
+
+renderCockpitContent = function(){
+
+    if(state.tab === "ledger"){
+        renderLedger();
+    } else {
+        oldCockpitContent2();
+    }
+
+};
+
+/* =========================
+🧭 NAV BUTTON
+========================= */
+
+const oldCockpit2 = renderCockpit;
+
+renderCockpit = function(){
+
+    oldCockpit2();
+
+    const nav = document.querySelector(".glass");
+
+    if(nav && !document.getElementById("ledger-btn")){
+        const btn = document.createElement("button");
+        btn.innerText = "LEDGER";
+        btn.id = "ledger-btn";
+        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
+        btn.onclick = () => {
+            state.tab = "ledger";
+            render();
+        };
+        nav.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+⚡ MVS ENGINE (MICRO ACTIONS)
+========================= */
+
+function getMVS(){
+
+    const s = getStormState().name;
+
+    const MVS_MAP = {
+
+        "White Fog":[
+            "Touch something cold",
+            "Say your name out loud",
+            "Look around and name 5 objects"
+        ],
+
+        "Blue Gravity":[
+            "Stand up",
+            "Walk 10 steps",
+            "Drink water"
+        ],
+
+        "Purple Pulse":[
+            "Breathe in 4 seconds",
+            "Hold 4 seconds",
+            "Exhale slowly"
+        ],
+
+        "Yellow Static":[
+            "Pick 1 task only",
+            "Set 2 minute timer",
+            "Start without finishing"
+        ],
+
+        "Red Heat":[
+            "Splash cold water",
+            "Step away from people",
+            "Wait 90 seconds"
+        ],
+
+        "Green Flow":[
+            "Continue current task",
+            "Stack next step",
+            "Capture progress"
+        ]
+
+    };
+
+    const list = MVS_MAP[s] || ["Take one small step"];
+
+    return list[Math.floor(Math.random() * list.length)];
+}
+
+/* =========================
+🎯 RENDER MVS PANEL
+========================= */
+
+function renderMVS(){
+
+    const v = document.getElementById("cockpit-main");
+
+    const action = getMVS();
+
+    v.innerHTML = `
+    <div class="glass p-6 text-center">
+
+        <p class="text-xs opacity-40 mb-2">MVS Protocol</p>
+
+        <p class="text-lg mb-4">${action}</p>
+
+        <button onclick="renderMVS()" 
+        class="bg-indigo-500 px-4 py-2 rounded text-xs">
+            New Action
+        </button>
+
+    </div>
+    `;
+}
+
+/* =========================
+🔌 HOOK INTO NAV
+========================= */
+
+const oldCockpitContent3 = renderCockpitContent;
+
+renderCockpitContent = function(){
+
+    if(state.tab === "mvs"){
+        renderMVS();
+    } else {
+        oldCockpitContent3();
+    }
+
+};
+
+/* =========================
+🧭 ADD NAV BUTTON
+========================= */
+
+const oldCockpit3 = renderCockpit;
+
+renderCockpit = function(){
+
+    oldCockpit3();
+
+    const nav = document.querySelector(".glass");
+
+    if(nav && !document.getElementById("mvs-btn")){
+        const btn = document.createElement("button");
+        btn.innerText = "MVS";
+        btn.id = "mvs-btn";
+        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
+        btn.onclick = () => {
+            state.tab = "mvs";
+            render();
+        };
+        nav.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+⛔ 10/20 BRAKES SYSTEM
+========================= */
+
+let brakeStart = null;
+let brakeMode = null;
+
+/* START TRACKING */
+function startBrake(mode){
+
+    brakeMode = mode; // "mental" or "physical"
+    brakeStart = Date.now();
+
+    renderBrakes();
+}
+
+/* RESET */
+function resetBrake(){
+    brakeStart = null;
+    brakeMode = null;
+    renderBrakes();
+}
+
+/* TIMER */
+function getElapsed(){
+    if(!brakeStart) return 0;
+    return Math.floor((Date.now() - brakeStart)/1000);
+}
+
+/* RENDER */
+function renderBrakes(){
+
+    const v = document.getElementById("cockpit-main");
+
+    if(!brakeStart){
+
+        v.innerHTML = `
+        <div class="glass p-6 text-center">
+
+            <p class="text-xs opacity-40 mb-4">10 / 20 Brakes</p>
+
+            <button onclick="startBrake('mental')" 
+            class="bg-purple-500 px-4 py-2 rounded text-xs m-2">
+                Start Mental Loop (10)
+            </button>
+
+            <button onclick="startBrake('physical')" 
+            class="bg-yellow-500 px-4 py-2 rounded text-xs m-2">
+                Start Stuck (20)
+            </button>
+
+        </div>
+        `;
+
+    } else {
+
+        const sec = getElapsed();
+
+        let trigger = (brakeMode === "mental") ? 600 : 1200;
+
+        let message = "Tracking...";
+
+        if(sec >= trigger){
+            message = brakeMode === "mental"
+                ? "⚠ CHANGE BODY NOW (cold water / movement)"
+                : "⚠ CHANGE LOCATION NOW (move rooms)";
+        }
+
+        v.innerHTML = `
+        <div class="glass p-6 text-center">
+
+            <p class="text-xs opacity-40">${brakeMode.toUpperCase()} TRACK</p>
+
+            <p class="text-2xl mb-4">${sec}s</p>
+
+            <p class="mb-4">${message}</p>
+
+            <button onclick="resetBrake()" 
+            class="bg-red-500 px-4 py-2 rounded text-xs">
+                RESET
+            </button>
+
+        </div>
+        `;
+    }
+}
+
+/* LOOP UPDATE */
+setInterval(()=>{
+    if(state.tab === "brakes" && brakeStart){
+        renderBrakes();
+    }
+},1000);
+
+/* =========================
+🔌 HOOK INTO NAV
+========================= */
+
+const oldCockpitContent4 = renderCockpitContent;
+
+renderCockpitContent = function(){
+
+    if(state.tab === "brakes"){
+        renderBrakes();
+    } else {
+        oldCockpitContent4();
+    }
+
+};
+
+/* =========================
+🧭 NAV BUTTON
+========================= */
+
+const oldCockpit4 = renderCockpit;
+
+renderCockpit = function(){
+
+    oldCockpit4();
+
+    const nav = document.querySelector(".glass");
+
+    if(nav && !document.getElementById("brakes-btn")){
+        const btn = document.createElement("button");
+        btn.innerText = "BRAKES";
+        btn.id = "brakes-btn";
+        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
+        btn.onclick = () => {
+            state.tab = "brakes";
+            render();
+        };
+        nav.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+🌙 SANCTUARY MODE SYSTEM
+========================= */
+
+function enableSanctuary(){
+
+    document.body.classList.add("sanctuary");
+
+    document.body.style.background = "#050508";
+    document.body.style.color = "#d4d4d8";
+
+    document.querySelectorAll('.glass').forEach(el=>{
+        el.style.background = "rgba(120,120,255,0.05)";
+        el.style.border = "1px solid rgba(255,255,255,0.05)";
+    });
+
+}
+
+/* DISABLE */
+function disableSanctuary(){
+
+    document.body.classList.remove("sanctuary");
+
+    document.body.style.background = "#0a0a0a";
+    document.body.style.color = "white";
+
+    document.querySelectorAll('.glass').forEach(el=>{
+        el.style.background = "rgba(255,255,255,0.05)";
+        el.style.border = "1px solid rgba(255,255,255,0.08)";
+    });
+
+}
+
+/* TOGGLE */
+function toggleSanctuary(){
+
+    state.sanctuary = !state.sanctuary;
+
+    if(state.sanctuary){
+        enableSanctuary();
+    } else {
+        disableSanctuary();
+    }
+
+}
+
+/* =========================
+🧠 AUTO MODE BASED ON STATE
+========================= */
+
+function autoSanctuary(){
+
+    const s = getStormState().name;
+
+    if(s === "Red Heat" || s === "White Fog"){
+        enableSanctuary();
+    }
+
+}
+
+setInterval(autoSanctuary, 3000);
+
+/* =========================
+🎛 ADD BUTTON TO BASE VIEW
+========================= */
+
+const oldRender5 = render;
+
+render = function(){
+
+    oldRender5();
+
+    const btn = document.createElement("button");
+
+    btn.innerText = state.sanctuary 
+        ? "Exit Sanctuary" 
+        : "Enter Sanctuary";
+
+    btn.className = "glass p-3 mt-4 text-xs";
+
+    btn.onclick = toggleSanctuary;
+
+    const main = document.querySelector("#cockpit-main");
+
+    if(main && !document.getElementById("sanctuary-btn")){
+        btn.id = "sanctuary-btn";
+        main.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+🎞 MICRO ANIMATION TRIGGERS
+========================= */
+
+function animateView(){
+
+    const el = document.getElementById('view');
+
+    if(!el) return;
+
+    el.classList.remove('fade-in');
+
+    setTimeout(()=>{
+        el.classList.add('fade-in');
+    },10);
+}
+
+/* Hook into render */
+const oldRender6 = render;
+
+render = function(){
+    oldRender6();
+    animateView();
+};
+
+/* =========================
+✨ BUTTON RIPPLE EFFECT
+========================= */
+
+document.addEventListener('click', function(e){
+
+    if(e.target.tagName === "BUTTON"){
+
+        const ripple = document.createElement("span");
+
+        ripple.style.position = "absolute";
+        ripple.style.width = "10px";
+        ripple.style.height = "10px";
+        ripple.style.background = "rgba(255,255,255,0.4)";
+        ripple.style.borderRadius = "50%";
+        ripple.style.pointerEvents = "none";
+
+        ripple.style.left = "50%";
+        ripple.style.top = "50%";
+        ripple.style.transform = "translate(-50%, -50%) scale(1)";
+
+        ripple.style.animation = "ripple .5s ease-out";
+
+        e.target.appendChild(ripple);
+
+        setTimeout(()=> ripple.remove(), 500);
+    }
+
+});
+
+/* Ripple animation */
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes ripple {
+    from {transform: translate(-50%, -50%) scale(0); opacity:1}
+    to {transform: translate(-50%, -50%) scale(6); opacity:0}
+}`;
+document.head.appendChild(style);
+
+</script>
 </script>
 
 </body>
