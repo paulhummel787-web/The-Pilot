@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Architect OS | Modular V1</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Architect OS | Pilot v26</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -12,17 +11,25 @@
 <body class="p-4 md:p-8" id="app-body">
 
     <header class="max-w-4xl mx-auto flex justify-between items-end mb-8 border-b border-white/10 pb-6">
-        <h1 class="text-3xl font-black tracking-tighter uppercase italic">Architect <span class="text-green-500">OS</span></h1>
-        <div class="text-right">
-            <div class="text-[10px] text-white/40 uppercase font-bold">System Fuel</div>
-            <div id="fuel-display" class="text-2xl font-black text-yellow-400 font-mono">000</div>
+        <div>
+            <h1 class="text-3xl font-black tracking-tighter uppercase italic">Architect <span class="text-green-500">OS</span></h1>
+            <p class="text-[10px] opacity-40 font-mono tracking-widest mt-1">SYSTEM_STABLE // v26.0</p>
+        </div>
+        <div class="flex items-center gap-6">
+            <button onclick="Architect.toggleVoice()" id="voice-btn" class="text-white/20 hover:text-green-400 transition-all">
+                <i class="fas fa-microphone-slash text-xl"></i>
+            </button>
+            <div class="text-right">
+                <div class="text-[10px] text-white/40 uppercase font-bold mb-1">System Fuel</div>
+                <div id="fuel-display" class="text-2xl font-black text-yellow-400 font-mono">000</div>
+            </div>
         </div>
     </header>
 
     <nav class="max-w-4xl mx-auto flex gap-6 mb-8 text-[10px] font-black uppercase tracking-widest">
-        <button onclick="switchView('command')" class="nav-btn active" id="tab-command">Command</button>
-        <button onclick="switchView('memory')" class="nav-btn" id="tab-memory">Memory</button>
-        <button onclick="switchView('vault')" class="nav-btn" id="tab-vault">Vault</button>
+        <button onclick="Architect.switchView('command')" class="nav-btn active" id="tab-command">Command</button>
+        <button onclick="Architect.switchView('memory')" class="nav-btn" id="tab-memory">Memory</button>
+        <button onclick="Architect.switchView('vault')" class="nav-btn" id="tab-vault">Vault</button>
     </nav>
 
     <main id="view-command" class="view-section active max-w-4xl mx-auto space-y-6">
@@ -30,23 +37,54 @@
             </div>
 
         <div class="grid md:grid-cols-2 gap-6">
-            <div class="glass p-8 relative" id="fox-container">
+            <div class="glass p-8 relative overflow-hidden" id="fox-container">
                 <div class="pacer-ring"></div>
-                <input id="fox-input" type="text" placeholder="Current Fox..." class="w-full bg-transparent text-xl focus:outline-none border-b border-white/10 pb-2">
+                <h2 class="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-4">The Core Lever</h2>
+                <input id="fox-input" type="text" placeholder="Identify the target..." class="w-full bg-transparent text-xl font-medium focus:outline-none border-b border-white/10 pb-2 mb-4" onchange="Architect.save()">
+                
                 <div class="mt-8">
-                    <div id="integrity-bar-bg" class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                    <div class="flex justify-between text-[10px] mb-2 opacity-40 font-bold uppercase">
+                        <span>Integrity</span>
+                        <span id="integrity-text">0%</span>
+                    </div>
+                    <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
                         <div id="integrity-bar" class="h-full bg-green-500 transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
-            <div class="glass p-8 border-l-4 border-green-500" id="status-panel">
-                <p id="guidance-text" class="text-lg italic font-light">Calibrating...</p>
-                <button onclick="executeMVS()" class="execute-btn">Execute MVS</button>
+
+            <div class="glass p-8 border-l-4 border-green-500 flex flex-col justify-between" id="status-panel">
+                <p id="guidance-text" class="text-lg italic font-light opacity-90">Waiting for Pilot input...</p>
+                <button onclick="Architect.executeMVS()" class="w-full py-4 bg-white/5 hover:bg-white hover:text-black border border-white/10 rounded-xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all mt-6">
+                    Log Successful Shift
+                </button>
             </div>
         </div>
+
+        <div id="log-terminal" class="glass p-4 h-32 overflow-y-auto text-[10px] font-mono opacity-40 mt-6">
+            > System initialization sequence started...
+        </div>
     </main>
-<script src="plugins.js"></script>
-<script src="engine.js"></script>
+
+    <main id="view-memory" class="view-section max-w-4xl mx-auto space-y-6">
+        <div class="glass p-8">
+            <h2 class="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-4">Pressure Valve</h2>
+            <textarea id="memo-input" rows="4" placeholder="Externalize the noise..." class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm focus:outline-none focus:border-purple-500 mb-4"></textarea>
+            <button onclick="Architect.saveMemo()" class="px-8 py-2 bg-purple-500/20 border border-purple-500/40 rounded-lg text-[10px] font-black uppercase tracking-widest">Archive</button>
+        </div>
+        <div id="memo-list" class="space-y-3"></div>
+    </main>
+
+    <main id="view-vault" class="view-section max-w-4xl mx-auto space-y-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black uppercase italic">Evidence Vault</h2>
+            <button onclick="Architect.exportData()" class="text-[10px] font-bold uppercase bg-white/5 px-4 py-2 rounded border border-white/10 hover:bg-green-500/20 transition-all">Export JSON</button>
+        </div>
+        <div id="win-list" class="space-y-2"></div>
+    </main>
+
+    <div id="bg-glow" class="fixed inset-0 pointer-events-none opacity-20 transition-all duration-1000"></div>
+
     <script src="engine.js"></script>
 </body>
 </html>
