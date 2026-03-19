@@ -780,7 +780,7 @@ appState.integrity = Number(appState.integrity) || 0;
             setTimeout(() => alertBox.remove(), 3000);
         }
         /* ==========================================================================
-   ⌨️ THE COMMAND KERNEL (TERMINAL LOGIC)
+   ⌨️ TERMINAL COMMANDS (CLEANED)
    ========================================================================== */
 const COMMANDS = {
     '/wave': (val) => {
@@ -818,7 +818,7 @@ const COMMANDS = {
 };
 
 /* ==========================================================================
-   🚨 BLACKOUT HUB (EMERGENCY INTERFACE)
+   🚨 BLACKOUT HUB
    ========================================================================== */
 function triggerBlackout() {
     const blackoutOverlay = document.createElement('div');
@@ -850,8 +850,7 @@ function triggerBlackout() {
                 <span class="w-6 h-6 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-xs shrink-0">3</span>
                 <p class="text-white/80 text-sm italic">Lie on the floor or a flat surface for 10 minutes. No music. No light.</p>
             </div>
-
-            <button onclick="document.getElementById('blackout-screen').remove(); logSystemEvent('BLACKOUT: Manual override engaged.');" 
+            <button onclick="document.getElementById('blackout-screen').remove(); logSystemEvent('BLACKOUT: Manual override engaged.');"
                     class="mt-12 text-[10px] text-white/10 uppercase tracking-[0.4em] hover:text-white/40 transition-colors">
                 Manual Override (Pilot Return)
             </button>
@@ -859,11 +858,39 @@ function triggerBlackout() {
     `;
     document.body.appendChild(blackoutOverlay);
 
-    // State reset
     appState.wave = 0;
     updateSystemAtmosphere('neutral');
 }
 
+/* ==========================================================================
+   🚀 TEMPLATE-HEAVY RENDER FUNCTIONS
+   ========================================================================== */
+function renderVault() {
+    return `
+        <div class="glass p-6">
+            <h2 class="text-white font-bold text-xl">Vault</h2>
+            <p class="text-white/70 text-sm">Your stored reflections and protocols.</p>
+        </div>
+    `;
+}
+
+function renderPurpleProtocol() {
+    return `
+        <div class="glass p-6 bg-purple-900/20 border-purple-500/30">
+            <h2 class="text-white font-bold text-xl">Purple Protocol</h2>
+            <p class="text-white/70 text-sm">Anxiety pulse management routines.</p>
+        </div>
+    `;
+}
+
+function renderPilotPortal() {
+    return `
+        <div class="glass p-6 bg-blue-900/20 border-blue-500/30">
+            <h2 class="text-white font-bold text-xl">Pilot Portal</h2>
+            <p class="text-white/70 text-sm">Control panel for executing current tasks.</p>
+        </div>
+    `;
+}
 /* ==========================================================================
    🚀 SYSTEM INITIALIZATION (THE ENGINE START)
    ========================================================================== */
