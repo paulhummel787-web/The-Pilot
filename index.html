@@ -1732,6 +1732,395 @@ render = function(){
 
 };
 
+</script><script>
+
+/* =========================
+🧠 INTELLIGENCE ENGINE
+========================= */
+
+function getSystemSuggestion(){
+
+    const storm = getStormState().name;
+
+    /* MEMORY PRESSURE */
+    const memLoad = memory.length;
+
+    /* LOW WINS */
+    const lowWins = ledger.length < 3;
+
+    /* =========================
+    DECISION TREE
+    ========================= */
+
+    if(storm === "White Fog"){
+        return {
+            type:"ground",
+            text:"You are in White Fog. Use Sensory Override → cold water or 5-4-3-2-1."
+        };
+    }
+
+    if(storm === "Red Heat"){
+        return {
+            type:"cool",
+            text:"Red Heat detected. Do nothing. Wait 90 seconds. Step away."
+        };
+    }
+
+    if(storm === "Purple Pulse"){
+        return {
+            type:"calm",
+            text:"Anxiety spike. Breathe 4-4-6. Do not engage thoughts."
+        };
+    }
+
+    if(storm === "Yellow Static"){
+        return {
+            type:"focus",
+            text:"Too many signals. Pick ONE task. Start 2 minutes only."
+        };
+    }
+
+    if(storm === "Blue Gravity"){
+        return {
+            type:"move",
+            text:"Low energy. Stand up. Move body 10 seconds."
+        };
+    }
+
+    if(storm === "Green Flow" && lowWins){
+        return {
+            type:"build",
+            text:"You are stable. Log a win to build momentum."
+        };
+    }
+
+    if(memLoad > 10){
+        return {
+            type:"clear",
+            text:"Memory load high. Offload or delete one item."
+        };
+    }
+
+    return {
+        type:"maintain",
+        text:"Maintain current course. Continue forward."
+    };
+
+}
+
+/* =========================
+🧠 RENDER PANEL
+========================= */
+
+function renderIntel(){
+
+    const v = document.getElementById("cockpit-main");
+
+    const s = getSystemSuggestion();
+
+    v.innerHTML = `
+    <div class="glass p-6 text-center soft-glow">
+
+        <p class="text-xs opacity-40 mb-2">Architect Guidance</p>
+
+        <p class="text-lg">${s.text}</p>
+
+        <button onclick="renderIntel()" 
+        class="mt-4 bg-indigo-500 px-4 py-2 rounded text-xs">
+            Re-evaluate
+        </button>
+
+    </div>
+    `;
+}
+
+/* =========================
+🔌 HOOK INTO NAV
+========================= */
+
+const oldCockpitContent5 = renderCockpitContent;
+
+renderCockpitContent = function(){
+
+    if(state.tab === "intel"){
+        renderIntel();
+    } else {
+        oldCockpitContent5();
+    }
+
+};
+
+/* =========================
+🧭 NAV BUTTON
+========================= */
+
+const oldCockpit5 = renderCockpit;
+
+renderCockpit = function(){
+
+    oldCockpit5();
+
+    const nav = document.querySelector(".glass");
+
+    if(nav && !document.getElementById("intel-btn")){
+        const btn = document.createElement("button");
+        btn.innerText = "INTEL";
+        btn.id = "intel-btn";
+        btn.className = "block w-full text-left text-xs py-2 px-2 mt-2 rounded hover:bg-white/10";
+        btn.onclick = () => {
+            state.tab = "intel";
+            render();
+        };
+        nav.appendChild(btn);
+    }
+
+};
+
+/* =========================
+🤖 AUTO SUGGEST (PASSIVE)
+========================= */
+
+setInterval(()=>{
+
+    if(state.tab === "base"){
+
+        const suggestion = getSystemSuggestion();
+
+        const indicator = document.getElementById("storm-indicator");
+
+        if(indicator){
+            indicator.innerHTML += `
+            <div class="mt-2 text-xs opacity-60">
+                ${suggestion.text}
+            </div>`;
+        }
+
+    }
+
+},5000);
+
+</script><script>
+
+/* =========================
+🧠 GOD MODE ENGINE
+========================= */
+
+let godMode = true;
+
+/* =========================
+🌈 AUTO RESPONSE SYSTEM
+========================= */
+
+function godModeLoop(){
+
+    if(!godMode) return;
+
+    const storm = getStormState().name;
+
+    /* =========================
+    RED HEAT
+    ========================= */
+    if(storm === "Red Heat"){
+
+        enableSanctuary();
+
+        showOverlay("RED HEAT — STOP. BREATHE. DO NOTHING.");
+
+        playQuickAction(()=>{
+            sounds.alert.play();
+        });
+
+    }
+
+    /* =========================
+    WHITE FOG
+    ========================= */
+    if(storm === "White Fog"){
+
+        enableSanctuary();
+
+        showOverlay("WHITE FOG — GROUND YOUR BODY NOW");
+
+        triggerMVS("Touch something cold");
+
+    }
+
+    /* =========================
+    PURPLE PULSE
+    ========================= */
+    if(storm === "Purple Pulse"){
+
+        showOverlay("ANXIETY — 4-4-6 BREATH");
+
+    }
+
+    /* =========================
+    YELLOW STATIC
+    ========================= */
+    if(storm === "Yellow Static"){
+
+        triggerMVS("Pick ONE task. 2 minutes.");
+
+    }
+
+    /* =========================
+    BLUE GRAVITY
+    ========================= */
+    if(storm === "Blue Gravity"){
+
+        triggerMVS("Stand up. Move body.");
+
+    }
+
+    /* =========================
+    GREEN FLOW
+    ========================= */
+    if(storm === "Green Flow"){
+
+        autoLogWin();
+
+    }
+
+    /* =========================
+    MEMORY PRESSURE
+    ========================= */
+    if(memory.length > 12){
+
+        memory.pop();
+
+        showOverlay("Memory cleared to reduce load");
+
+        saveMemory();
+    }
+
+}
+
+/* =========================
+⚡ QUICK ACTION WRAPPER
+========================= */
+
+function playQuickAction(fn){
+    try { fn(); } catch(e){}
+}
+
+/* =========================
+🪟 OVERLAY SYSTEM
+========================= */
+
+function showOverlay(text){
+
+    let existing = document.getElementById("god-overlay");
+    if(existing) existing.remove();
+
+    const overlay = document.createElement("div");
+
+    overlay.id = "god-overlay";
+
+    overlay.style.position = "fixed";
+    overlay.style.bottom = "20px";
+    overlay.style.left = "50%";
+    overlay.style.transform = "translateX(-50%)";
+    overlay.style.background = "rgba(0,0,0,0.8)";
+    overlay.style.color = "white";
+    overlay.style.padding = "10px 20px";
+    overlay.style.borderRadius = "12px";
+    overlay.style.zIndex = "9999";
+    overlay.style.fontSize = "12px";
+
+    overlay.innerText = text;
+
+    document.body.appendChild(overlay);
+
+    setTimeout(()=>{
+        overlay.remove();
+    },3000);
+
+}
+
+/* =========================
+🧠 AUTO MVS TRIGGER
+========================= */
+
+function triggerMVS(text){
+
+    const v = document.getElementById("cockpit-main");
+
+    if(!v) return;
+
+    v.innerHTML = `
+    <div class="glass p-6 text-center pulse">
+
+        <p class="text-xs opacity-40 mb-2">AUTO ACTION</p>
+
+        <p>${text}</p>
+
+    </div>
+    `;
+
+}
+
+/* =========================
+📊 AUTO WIN LOG
+========================= */
+
+function autoLogWin(){
+
+    if(Math.random() > 0.95){
+
+        ledger.push("Maintained system stability");
+
+        localStorage.setItem("ledger", JSON.stringify(ledger));
+
+    }
+
+}
+
+/* =========================
+🔁 LOOP
+========================= */
+
+setInterval(godModeLoop, 4000);
+
+/* =========================
+🎛 TOGGLE BUTTON
+========================= */
+
+function toggleGodMode(){
+    godMode = !godMode;
+}
+
+/* =========================
+🧭 ADD BUTTON
+========================= */
+
+const oldRender9 = render;
+
+render = function(){
+
+    oldRender9();
+
+    const main = document.querySelector("#cockpit-main");
+
+    if(main && !document.getElementById("god-btn")){
+
+        const btn = document.createElement("button");
+
+        btn.innerText = godMode ? "GOD MODE ON" : "GOD MODE OFF";
+
+        btn.className = "glass p-2 text-xs mt-2";
+
+        btn.onclick = ()=>{
+            toggleGodMode();
+            render();
+        };
+
+        btn.id = "god-btn";
+
+        main.appendChild(btn);
+    }
+
+};
+
 </script>
 </script>
 
