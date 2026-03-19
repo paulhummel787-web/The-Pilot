@@ -429,9 +429,13 @@ appState.integrity = Number(appState.integrity) || 0;
            🧭 NAVIGATION & TAB ENGINE
            ========================================================================== */
         function switchTab(tabId) {
-            // Update UI
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            // Update UI safely
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+                if(el.getAttribute('onclick').includes(tabId)) {
+                    el.classList.add('active');
+                }
+            });
             
             appState.activeTab = tabId;
             renderView(tabId);
