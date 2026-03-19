@@ -1,0 +1,19 @@
+{
+  "short_name": "ArchitectOS",
+  "name": "Architect OS | Pilot Cockpit",
+  "description": "A high-performance navigation system for the complex mind.",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2503/2503150.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0a0a0b",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#0a0a0b",
+  "orientation": "portrait"
+}
