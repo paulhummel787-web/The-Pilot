@@ -288,7 +288,7 @@
             load: () => JSON.parse(localStorage.getItem('architect_os_data')) || null
         };
 
-        let appState = storage.load() || {
+        appState.wave = Number(appState.wave) || 70; {
             wave: 70,
             integrity: 0,
             mode: 'regulated',
