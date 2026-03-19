@@ -288,9 +288,7 @@
             load: () => JSON.parse(localStorage.getItem('architect_os_data')) || null
         };
 
-        appState.wave = Number(appState.wave) || 70; {
-            wave: 70,
-            integrity: 0,
+        appState.wave = Number(appState.wave) || 70;
             mode: 'regulated',
             habitsCompleted: {},
             lastUpdate: Date.now(),
