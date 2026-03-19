@@ -460,22 +460,6 @@ appState.integrity = Number(appState.integrity) || 0;
         }
 
         // Clock Update
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('system-clock').innerText = now.toLocaleTimeString([], { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-        }, 1000);
-
-        window.onload = () => {
-            initWaveChart();
-            updateSystemAtmosphere(appState.mode);
-            calculateIntegrity();
-            renderHabits();
-        };
 
         function renderHabits() {
             const container = document.getElementById('mini-habits-preview');
@@ -864,14 +848,7 @@ function triggerBlackout() {
 /* ==========================================================================
    🚀 SYSTEM INITIALIZATION (THE ENGINE START)
    ========================================================================== */
-window.onload = function() {
-    // 1. Sync State with LocalStorage
-    const savedState = localStorage.getItem('architect_state');
-    if (savedState) {
-        const parsed = JSON.parse(savedState);
-        appState.wave = Number(parsed.wave) || 50;
-        appState.activeProtocol = parsed.activeProtocol || 'yellow';
-    }
+
 
     // 2. Initial Atmosphere Calibration
     updateSystemAtmosphere(appState.activeProtocol);
