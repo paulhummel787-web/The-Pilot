@@ -760,7 +760,7 @@ appState.integrity = Number(appState.integrity) || 0;
             
             // Visual feedback
             logSystemEvent("Audit Step Completed: System Calibrating...");
-            setWave(appState.wave) + 4);
+            setWave(Number(appState.wave) + 4);
             
             // Check if all done
             const parent = el.parentElement;
