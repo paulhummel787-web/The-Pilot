@@ -369,20 +369,34 @@
         /* ==========================================================================
            🛠 CORE FUNCTIONALITY
            ========================================================================== */
-        function setWave(value) {
-            appState.wave = Math.max(0, Math.min(100, value));
-            document.getElementById('wave-value').innerText = `${appState.wave}%`;
-            
-            // Update Chart
-            waveChart.data.datasets[0].data.push(appState.wave);
-            waveChart.data.datasets[0].data.shift();
-            waveChart.update();
+       function setWave(value) {
+    // Force number conversion
+    let num = Number(value);
 
-            // Check for Shutdown Risk
-            if (appState.wave < 30) triggerAlert("CRITICAL CAPACITY: Initialize Sanctuary Mode.");
-            storage.save(appState);
-        }
+    // Prevent NaN
+    if (isNaN(num)) num = 0;
 
+    // Clamp between 0–100
+    appState.wave = Math.max(0, Math.min(100, num));
+
+    // Update UI
+    const el = document.getElementById('wave-value');
+    if (el) el.innerText = `${appState.wave}%`;
+
+    // Update Chart safely
+    if (waveChart) {
+        waveChart.data.datasets[0].data.push(appState.wave);
+        waveChart.data.datasets[0].data.shift();
+        waveChart.update();
+    }
+
+    // Critical check
+    if (appState.wave < 30) {
+        triggerAlert("CRITICAL CAPACITY: Initialize Sanctuary Mode.");
+    }
+
+    storage.save(appState);
+}
         function toggleHabit(id) {
             appState.habitsCompleted[id] = !appState.habitsCompleted[id];
             calculateIntegrity();
