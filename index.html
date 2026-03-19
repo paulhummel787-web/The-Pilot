@@ -3,109 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Architect OS | The Hive Master</title>
-    
+    <title>ZION OS | Apex Hive v33</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;800&display=swap" rel="stylesheet">
 </head>
 <body class="bg-[#050502] text-amber-500 font-mono overflow-hidden">
-
     <div class="crt-overlay"></div>
     <div class="hex-grid"></div>
 
     <div class="relative z-10 h-screen flex flex-col p-4 md:p-6">
-        
-        <header class="flex justify-between items-center border-b border-amber-500/10 pb-4 mb-4">
+        <header class="flex justify-between items-center border-b border-amber-500/20 pb-4 mb-4">
             <div class="flex items-center gap-4">
-                <div class="h-10 w-10 border border-amber-500/30 flex items-center justify-center bg-amber-500/5 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-                    <i class="fas fa-microchip animate-pulse"></i>
+                <div class="h-10 w-10 border border-amber-500/40 flex items-center justify-center bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                    <i class="fas fa-microchip animate-pulse text-amber-500"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black uppercase tracking-tighter text-white">Apex <span class="text-amber-500 opacity-50">Hive</span></h1>
-                    <p class="text-[8px] opacity-40 uppercase tracking-[0.3em]">Kernel: V30_PILOT_SYNC</p>
+                    <h1 class="text-xl font-black uppercase tracking-tighter text-white">ZION <span class="text-amber-500 opacity-50 italic">OS</span></h1>
+                    <p class="text-[8px] opacity-40 uppercase tracking-[0.4em]">Protocol: Infinite_Exchange_v33</p>
                 </div>
             </div>
-
-            <div class="flex gap-8 items-center text-right">
-                <div class="hidden md:block">
-                    <div class="text-[8px] opacity-30 uppercase mb-1">Atmospheric Calibration</div>
-                    <div id="sync-status" class="text-[10px] text-green-400 font-bold">STABLE_FLOW</div>
-                </div>
+            <div class="flex gap-8 text-right">
                 <div>
-                    <div class="text-[8px] opacity-30 uppercase mb-1">Yield</div>
+                    <div class="text-[8px] opacity-30 uppercase mb-1">Total Nectar</div>
                     <div id="fuel-display" class="text-2xl font-black text-white leading-none">000</div>
                 </div>
             </div>
         </header>
 
         <main class="flex-1 grid grid-cols-12 gap-4 overflow-hidden">
-            
-            <div class="col-span-12 md:col-span-2 flex flex-col gap-3">
+            <div class="col-span-12 md:col-span-2 flex flex-col gap-2">
                 <h3 class="text-[9px] font-black opacity-30 uppercase tracking-widest mb-1 italic">Rotation_Matrix</h3>
-                <div id="state-matrix" class="flex flex-col gap-2 flex-1">
-                    </div>
+                <div id="state-matrix" class="flex flex-col gap-2 flex-1 overflow-y-auto custom-scroll pr-1"></div>
                 <div class="glass-pane p-3 text-center border-t-2 border-amber-500/40">
-                    <div class="text-[8px] opacity-40 uppercase">Integrity</div>
-                    <div id="integrity-label" class="text-xl font-black text-white">0%</div>
-                    <div class="w-full bg-white/5 h-1 mt-2">
-                        <div id="integrity-bar" class="h-full bg-amber-500 transition-all duration-700" style="width: 0%"></div>
-                    </div>
+                    <div class="text-[8px] opacity-40 uppercase">System Integrity</div>
+                    <div id="integrity-label" class="text-xl font-black text-white mt-1">0%</div>
+                    <div class="w-full bg-white/5 h-1 mt-2"><div id="integrity-bar" class="h-full bg-amber-500 transition-all duration-700"></div></div>
                 </div>
             </div>
 
             <div class="col-span-12 md:col-span-5 flex flex-col gap-4">
                 <div class="glass-pane flex-1 flex flex-col p-6 relative overflow-hidden" id="pacer-container">
                     <div class="pacer-ring"></div>
-                    <div class="relative z-20">
-                        <span class="text-[9px] font-black text-amber-500/40 uppercase tracking-[0.4em] italic">// Volume I: Architect OS</span>
-                        <div id="tech-display" class="mt-6">
-                            <h2 class="text-2xl font-black text-white uppercase tracking-tighter">Initializing...</h2>
-                            <p class="text-sm italic opacity-60 mt-4 leading-relaxed">Waiting for state selection.</p>
-                        </div>
-                    </div>
+                    <div class="relative z-20" id="tech-display"></div>
                 </div>
-
-                <div class="glass-pane h-32 p-4 text-[9px] font-mono opacity-50 overflow-y-auto custom-scroll" id="system-log">
-                    <div class="text-amber-500/30">> Booting Zion protocols...</div>
-                </div>
+                <div class="glass-pane h-32 p-4 text-[9px] font-mono opacity-40 overflow-y-auto custom-scroll" id="system-log"></div>
             </div>
 
             <div class="col-span-12 md:col-span-5 flex flex-col gap-4">
-                <div class="glass-pane flex-1 p-8 flex flex-col border-l-4 border-amber-500 shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
-                    <span class="text-[9px] font-black text-amber-500/40 uppercase tracking-[0.4em] italic">// Volume II: Spirit</span>
-                    
-                    <div id="spirit-display" class="mt-6 flex-1 overflow-y-auto custom-scroll pr-2">
-                        </div>
-
-                    <button onclick="Core.executeDeposit()" class="mt-6 h-20 bg-amber-500 text-black font-black uppercase tracking-[0.5em] text-xs hover:bg-white transition-all shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-                        Deposit_Nectar
-                    </button>
+                <div class="glass-pane flex-1 p-6 flex flex-col border-l-4 border-amber-500 shadow-[25px_0_60px_rgba(0,0,0,0.6)] overflow-hidden">
+                    <div class="flex gap-4 mb-6 border-b border-white/5 pb-2">
+                        <button onclick="Core.toggleRightView('spirit')" id="tab-spirit" class="text-[10px] font-black uppercase">01_Spirit</button>
+                        <button onclick="Core.toggleRightView('vault')" id="tab-vault" class="text-[10px] font-black uppercase opacity-30">02_Vault</button>
+                    </div>
+                    <div id="right-viewport" class="flex-1 overflow-y-auto custom-scroll pr-2"></div>
+                    <div id="calibration-checklist" class="hidden mt-4 p-4 bg-amber-500/5 border border-amber-500/20">
+                        <h4 class="text-[9px] font-black uppercase mb-3 text-white opacity-60 underline decoration-amber-500">Atmospheric_Calibration</h4>
+                        <div id="checklist-items" class="space-y-2"></div>
+                    </div>
+                    <button onclick="Core.executeDeposit()" class="mt-6 h-16 bg-amber-500 text-black font-black uppercase tracking-[0.4em] text-xs hover:bg-white transition-all shadow-[0_0_30px_rgba(245,158,11,0.2)]">Deposit_Nectar</button>
                 </div>
             </div>
-
         </main>
-        
-        <footer class="h-16 mt-4 grid grid-cols-12 gap-4">
-            <div class="col-span-8 glass-pane flex items-center px-4 overflow-hidden">
-                <canvas id="yieldChart" class="h-full w-full opacity-40"></canvas>
-            </div>
-            <div class="col-span-4 glass-pane flex items-center justify-between px-6">
-                <div class="text-[9px] uppercase font-bold opacity-30">External_Scaffolding: <span class="text-green-400">Linked</span></div>
-                <button onclick="Telemetry.toggleVoice()" id="mic-node" class="h-8 w-8 border border-white/10 rounded-full flex items-center justify-center hover:text-white transition-all">
-                    <i class="fas fa-microphone-slash"></i>
-                </button>
-            </div>
-        </footer>
-
     </div>
-
     <script src="knowledge.js"></script>
     <script src="app.js"></script>
-    <script src="telemetry.js"></script>
-
 </body>
 </html>
