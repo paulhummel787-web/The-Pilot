@@ -473,6 +473,7 @@ const Visuals = {
 
         const glow = intensity * 0.6 + pulseVal * 0.2;
 
+        // SAFE (no template strings)
         document.body.style.boxShadow =
             "inset 0 0 " + (200 + glow*200) + "px rgba(" + c + "," + (0.2 + glow*0.4) + ")";
 
