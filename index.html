@@ -1527,6 +1527,211 @@ style.innerHTML = `
 }`;
 document.head.appendChild(style);
 
+</script><script>
+
+/* =========================
+🔊 SOUND ENGINE
+========================= */
+
+const sounds = {
+
+click: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"),
+
+calm: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-soft-bell-556.mp3"),
+
+alert: new Audio("https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3")
+
+};
+
+/* volume control */
+Object.values(sounds).forEach(s=>{
+    s.volume = 0.3;
+});
+
+/* =========================
+🖱 CLICK FEEDBACK
+========================= */
+
+document.addEventListener("click", e=>{
+    if(e.target.tagName === "BUTTON"){
+        sounds.click.currentTime = 0;
+        sounds.click.play();
+    }
+});
+
+/* =========================
+🌈 STATE SOUND RESPONSE
+========================= */
+
+let lastState = null;
+
+function playStateSound(){
+
+    const s = getStormState().name;
+
+    if(s === lastState) return;
+
+    lastState = s;
+
+    if(s === "Red Heat"){
+        sounds.alert.play();
+    }
+
+    if(s === "Green Flow"){
+        sounds.calm.play();
+    }
+
+}
+
+setInterval(playStateSound, 2000);
+
+/* =========================
+🔕 MUTE TOGGLE
+========================= */
+
+let muted = false;
+
+function toggleSound(){
+
+    muted = !muted;
+
+    Object.values(sounds).forEach(s=>{
+        s.muted = muted;
+    });
+
+}
+
+/* =========================
+🎛 ADD BUTTON
+========================= */
+
+const oldRender7 = render;
+
+render = function(){
+
+    oldRender7();
+
+    const btn = document.createElement("button");
+
+    btn.innerText = muted ? "Sound OFF" : "Sound ON";
+    btn.className = "glass p-2 text-xs mt-2";
+    btn.onclick = toggleSound;
+
+    const main = document.querySelector("#cockpit-main");
+
+    if(main && !document.getElementById("sound-btn")){
+        btn.id = "sound-btn";
+        main.appendChild(btn);
+    }
+
+};
+
+</script><script>
+
+/* =========================
+💾 EXPORT SYSTEM
+========================= */
+
+function exportData(){
+
+    const data = {
+        memory: memory || [],
+        ledger: ledger || [],
+        timestamp: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "pilot-system-backup.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* =========================
+📥 IMPORT SYSTEM
+========================= */
+
+function importData(e){
+
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        try{
+            const data = JSON.parse(event.target.result);
+
+            if(data.memory) memory = data.memory;
+            if(data.ledger) ledger = data.ledger;
+
+            localStorage.setItem("memory", JSON.stringify(memory));
+            localStorage.setItem("ledger", JSON.stringify(ledger));
+
+            alert("System restored successfully.");
+
+            render();
+
+        }catch(err){
+            alert("Invalid file.");
+        }
+
+    };
+
+    reader.readAsText(file);
+}
+
+/* =========================
+🎛 ADD UI BUTTONS
+========================= */
+
+const oldRender8 = render;
+
+render = function(){
+
+    oldRender8();
+
+    const main = document.querySelector("#cockpit-main");
+
+    if(main && !document.getElementById("export-btn")){
+
+        const wrap = document.createElement("div");
+        wrap.className = "mt-4 flex gap-2";
+
+        const exportBtn = document.createElement("button");
+        exportBtn.innerText = "Export Data";
+        exportBtn.className = "glass p-2 text-xs";
+        exportBtn.onclick = exportData;
+
+        const importBtn = document.createElement("label");
+        importBtn.innerText = "Import Data";
+        importBtn.className = "glass p-2 text-xs cursor-pointer";
+
+        const input = document.createElement("input");
+        input.type = "file";
+        input.style.display = "none";
+        input.onchange = importData;
+
+        importBtn.appendChild(input);
+
+        wrap.appendChild(exportBtn);
+        wrap.appendChild(importBtn);
+
+        wrap.id = "export-btn";
+
+        main.appendChild(wrap);
+    }
+
+};
+
 </script>
 </script>
 
